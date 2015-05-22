@@ -2,16 +2,25 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
-asdcascascsa
+ asdcascascsa
  */
 package view;
 
+import engine.BadParamsException;
 import engine.Game;
+import engine.Player;
+import engine.XMLGame;
 import engine.bets.Bet;
+import java.io.File;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.animation.FadeTransition;
+import javafx.animation.FadeTransitionBuilder;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,7 +29,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javax.xml.bind.JAXBException;
 
 /**
  * FXML Controller class
@@ -28,7 +40,7 @@ import javafx.stage.Stage;
  * @author yuvalsegall
  */
 public class GameSceneController implements Initializable {
-    
+
     private Stage primaryStage;
     @FXML
     private Button button0;
@@ -320,22 +332,26 @@ public class GameSceneController implements Initializable {
     private AnchorPane anchor;
 
     private Game game;
+    private String filePath;
     private ArrayList<Integer> numbers;
     private Bet bet;
     private final int NOM_OF_ROWS = 3;
     private final int FIRST_NUMBER_COLS = 3;
-    
-            
+
+    private static final Bet.BetType COMP_BET_TYPE = Bet.BetType.NOIR;
+    private static final int COMP_BET_MONEY = 1;
+    private static final int[] COMP_BET_NUMBERS = null;
+
+    private boolean isErrorMessageShown;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         numbers = new ArrayList<>();
-    }    
-//    private static final Bet.BetType COMP_BET_TYPE = Bet.BetType.NOIR;
-//    private static final int COMP_BET_MONEY = 1;
-//    private static final int[] COMP_BET_NUMBERS = null;
+        isErrorMessageShown = false;
+    }
 
     public Stage getPrimaryStage() {
         return primaryStage;
@@ -352,12 +368,19 @@ public class GameSceneController implements Initializable {
     public void setGame(Game game) {
         this.game = game;
     }
-    
-    
-//    private void playRound() {
-//        for (Player.PlayerDetails player : game.getGameDetails().getPlayersDetails()) {
-//            if (player.getIsActive()) {
-//                if (player.getIsHuman()) {
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    private void playRound() {
+        for (Player.PlayerDetails player : game.getGameDetails().getPlayersDetails()) {
+            if (player.getIsActive()) {
+                if (player.getIsHuman()) {
 //                    ConsoleUI.printToUser(player.getName() + "'s  turn!");
 //                    if (ConsoleUI.getIsSaveGameFromUser()) {
 //                        saveGame();
@@ -366,149 +389,178 @@ public class GameSceneController implements Initializable {
 //                        quitPlayer(player);
 //                        continue;
 //                    }
-//                }
-//                if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) {
+                }
+                if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) {
 //                    ConsoleUI.PrintUserIsBrokeGoingToNextPlayerToUser(player.getName());
-//                } else {
-//                    placeBets(player);
-//                }
-//            }
-//        }
+                } else {
+                    placeBets(player);
+                }
+            }
+        }
 //        ConsoleUI.printUserSpinRoulleteResult(game.getTable().spinRoulette());
-//
-//        endRound();
-//    }
-//
-//    private void saveGame() {
-//        Boolean badInput;
-//        do {
-//            if (filePath == null || !ConsoleUI.getYesNoAnswer("Save to: " + filePath + "?")) {
-//                filePath = ConsoleUI.getXmlFileNameFromUser();
-//            }
-//            try {
-//                XMLGame.setXMLGame(filePath, game);
-//                badInput = false;
-//            } catch (JAXBException ex) {
-//                badInput = true;
-//                ConsoleUI.printToUser("cannot save XML, try again");
-//            }
-//        } while (badInput);
-//    }
-//
-//    private void endRound() {
-//        for (Player player : game.getGameDetails().getPlayers()) {
-//            if (player.getPlayerDetails().getBets() != null) {
-//                for (Bet bet : player.getPlayerDetails().getBets()) {
-//                    player.getPlayerDetails().setMoney(player.getPlayerDetails().getMoney().add(bet.winningSum(game.getTable().getCurrentBallPosition(), game.getTable().getCells().length)));
-//                }
-//            }
-//            player.getPlayerDetails().setBets(null);
-//        }
-//    }
-//
-//    private void placeBets(Player.PlayerDetails player) {
-//        Bet.BetType betType;
-//        BigInteger betMoney;
-//        int[] numbers = null;
-//        int i;
-//        List<Bet> bets;
-//
-//        if (player.getBets() == null || player.getBets().isEmpty()) {
-//            bets = new ArrayList<>();
-//
-//            if (game.getGameDetails().getMinWages() == 0 && player.getIsHuman()) {
-//                if (!ConsoleUI.getYesNoAnswer("Do you want to place a bet?")) {
-//                    return;
-//                }
-//            }
-//            i = 0;
-//        } else {
-//            bets = player.getBets();
-//            i = bets.size();
-//        }
-//        while (i++ <= game.getGameDetails().getMaxWages()) {
-//            if (player.getIsHuman()) {
-//                betType = ConsoleUI.getBetTypeFromUser();
-//                betMoney = ConsoleUI.getBetMoneyFromUser();
-//                while (betMoney.compareTo(player.getMoney()) > 0 || betMoney.compareTo(BigInteger.ZERO) == 0) {
-//                    if (betMoney.compareTo(BigInteger.ZERO) == 0) {
-//                        ConsoleUI.printToUser("Cannot bet 0 money");
-//                    } else {
-//                        ConsoleUI.printToUser("You can't bet on more money that you owned, try again");
-//                    }
-//                    betMoney = ConsoleUI.getBetMoneyFromUser();
-//                }
-//                numbers = betType.isAskUserForNumbers() ? ConsoleUI.getBetNumbersFromUser(betType, game.getTable().getTableType()) : null;
-//
-//            } else {
-//                betType = COMP_BET_TYPE;
-//                betMoney = BigInteger.valueOf(COMP_BET_MONEY);
-//                numbers = COMP_BET_NUMBERS;
-//                if (numbers == null || numbers.length == 0) {
-//                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType);
-//                } else {
-//                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType + " with the numbers:" + Arrays.toString(numbers));
-//                }
-//            }
-//            try {
-//                bets.add(Bet.makeBet(betType, betMoney, numbers, game.getTable().getTableType()));
-//            } catch (BadParamsException ex) {
-//                ConsoleUI.printToUser(ex.getMessage() + ", try again");
-//                i--;
-//                continue;
-//            }
-//            player.setMoney(player.getMoney().add(betMoney.negate()));
-//            if (player.getIsHuman() && game.getGameDetails().getMaxWages() != i && player.getMoney().compareTo(BigInteger.ZERO) > 0) {
-//                if (ConsoleUI.getIsFinishedBettingFromUser()) {
-//                    break;
-//                }
-//            } else {
-//                break;
-//            }
-//        }
-//        player.setBets(bets);
-//    }
-//
-//    private void quitPlayer(Player.PlayerDetails player) {
-//        player.setIsActive(Boolean.FALSE);
-//    }
+
+        endRound();
+    }
+
+    private void saveGame() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML", Arrays.asList("xml")));
+        fileChooser.setTitle("Save Roulette Game");
+        if (filePath == null || filePath.trim().isEmpty()) {
+            fileChooser.setInitialDirectory(new File(filePath));
+        }
+        File XMLFile = fileChooser.showSaveDialog(primaryStage);
+        new Thread(() -> {
+            try {
+                XMLGame.setXMLGame(filePath, game);
+            } catch (JAXBException ex) {
+                showError("cannot save XML, try again");
+            }
+        }).start();
+    }
+
+    private void endRound() {
+        game.getGameDetails().getPlayers().stream().map((player) -> {
+            if (player.getPlayerDetails().getBets() != null) {
+                player.getPlayerDetails().getBets().stream().forEach((bet) -> {
+                    player.getPlayerDetails().setMoney(player.getPlayerDetails().getMoney().add(bet.winningSum(game.getTable().getCurrentBallPosition(), game.getTable().getCells().length)));
+                });
+            }
+            return player;
+        }).forEach((player) -> {
+            player.getPlayerDetails().setBets(null);
+        });
+    }
+
+    private void placeBets(Player.PlayerDetails player) {
+        Bet.BetType betType;
+        BigInteger betMoney;
+        int[] numbers = null;
+        int i;
+        List<Bet> bets;
+
+        if (player.getBets() == null || player.getBets().isEmpty()) {
+            bets = new ArrayList<>();
+
+            if (game.getGameDetails().getMinWages() == 0 && player.getIsHuman()) {
+                if (!ConsoleUI.getYesNoAnswer("Do you want to place a bet?")) {
+                    return;
+                }
+            }
+            i = 0;
+        } else {
+            bets = player.getBets();
+            i = bets.size();
+        }
+        while (i++ <= game.getGameDetails().getMaxWages()) {
+            if (player.getIsHuman()) {
+                betType = ConsoleUI.getBetTypeFromUser();
+                betMoney = ConsoleUI.getBetMoneyFromUser();
+                while (betMoney.compareTo(player.getMoney()) > 0 || betMoney.compareTo(BigInteger.ZERO) == 0) {
+                    if (betMoney.compareTo(BigInteger.ZERO) == 0) {
+                        ConsoleUI.printToUser("Cannot bet 0 money");
+                    } else {
+                        ConsoleUI.printToUser("You can't bet on more money that you owned, try again");
+                    }
+                    betMoney = ConsoleUI.getBetMoneyFromUser();
+                }
+                numbers = betType.isAskUserForNumbers() ? ConsoleUI.getBetNumbersFromUser(betType, game.getTable().getTableType()) : null;
+
+            } else {
+                betType = COMP_BET_TYPE;
+                betMoney = BigInteger.valueOf(COMP_BET_MONEY);
+                numbers = COMP_BET_NUMBERS;
+                if (numbers == null || numbers.length == 0) {
+                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType);
+                } else {
+                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType + " with the numbers:" + Arrays.toString(numbers));
+                }
+            }
+            try {
+                bets.add(Bet.makeBet(betType, betMoney, numbers, game.getTable().getTableType()));
+            } catch (BadParamsException ex) {
+                ConsoleUI.printToUser(ex.getMessage() + ", try again");
+                i--;
+                continue;
+            }
+            player.setMoney(player.getMoney().add(betMoney.negate()));
+            if (player.getIsHuman() && game.getGameDetails().getMaxWages() != i && player.getMoney().compareTo(BigInteger.ZERO) > 0) {
+                if (ConsoleUI.getIsFinishedBettingFromUser()) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        player.setBets(bets);
+    }
+
+    private void quitPlayer(Player.PlayerDetails player) {
+        player.setIsActive(Boolean.FALSE);
+    }
+
+    private void showError(String message) {
+        if (!isErrorMessageShown) {
+            isErrorMessageShown = true;
+            messageLabel.setText(message);
+            FadeTransition animation = new FadeTransition();
+            animation.setNode(messageLabel);
+            animation.setDuration(Duration.seconds(0.3));
+            animation.setFromValue(0.0);
+            animation.setToValue(1.0);
+            animation.play();
+        }
+    }
+
+    private void hideError() {
+        if (isErrorMessageShown) {
+            FadeTransition animation = FadeTransitionBuilder.create()
+                    .node(messageLabel)
+                    .duration(Duration.seconds(0.3))
+                    .fromValue(1.0)
+                    .toValue(0.0)
+                    .build();
+            animation.play();
+
+            isErrorMessageShown = false;
+            messageLabel.textProperty().setValue("");
+        }
+    }
 
     @FXML
     private void numberButtonClicked(ActionEvent event) {
-       HashMap<Integer,Integer> rows = new HashMap();
-       setRowsHashMap(rows);
-       Node node = ((Button)event.getSource()).getParent();
-       int row = GridPane.getRowIndex(node);     
-       int col = GridPane.getColumnIndex(node);
-       if(col % 2 == 0){
-           if (row % 2 == 0){
-               //vertical split
-               int myCol = col - FIRST_NUMBER_COLS;
-               myCol = myCol - myCol/2;
-               numbers.add(myCol * NOM_OF_ROWS - 1);
-               if (row > NOM_OF_ROWS)
-                   numbers.add(myCol * NOM_OF_ROWS);
-               else
-                   numbers.add(myCol * NOM_OF_ROWS - 2);
-           }
-           else{
-               //single number
-               int myRow = rows.get(row);
-               myRow -= myRow/2;
-               int myCol = col - FIRST_NUMBER_COLS;
-               myCol -= myCol/2;
-               numbers.add(NOM_OF_ROWS * myCol - (NOM_OF_ROWS - myRow));
-           }
-       }
-       else{
-           if (row % 2 == 0){
-               //corner
-           }
-           else{
-               //horizontal split
-           }
-       }
-       messageLabel.setText(numbers.toString());
+        HashMap<Integer, Integer> rows = new HashMap();
+        setRowsHashMap(rows);
+        Node node = ((Button) event.getSource()).getParent();
+        int row = GridPane.getRowIndex(node);
+        int col = GridPane.getColumnIndex(node);
+        if (col % 2 == 0) {
+            if (row % 2 == 0) {
+                //vertical split
+                int myCol = col - FIRST_NUMBER_COLS;
+                myCol = myCol - myCol / 2;
+                numbers.add(myCol * NOM_OF_ROWS - 1);
+                if (row > NOM_OF_ROWS) {
+                    numbers.add(myCol * NOM_OF_ROWS);
+                } else {
+                    numbers.add(myCol * NOM_OF_ROWS - 2);
+                }
+            } else {
+                //single number
+                int myRow = rows.get(row);
+                myRow -= myRow / 2;
+                int myCol = col - FIRST_NUMBER_COLS;
+                myCol -= myCol / 2;
+                numbers.add(NOM_OF_ROWS * myCol - (NOM_OF_ROWS - myRow));
+            }
+        } else {
+            if (row % 2 == 0) {
+                //corner
+            } else {
+                //horizontal split
+            }
+        }
+        messageLabel.setText(numbers.toString());
     }
 
     @FXML

@@ -249,23 +249,6 @@ public class PropertiesSceneController implements Initializable {
         }).start();
     }
 
-    private void saveGame() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML", Arrays.asList("xml")));
-        fileChooser.setTitle("Save Roulette Game");
-        File XMLFile = fileChooser.showSaveDialog(primaryStage);
-//            if (filePath == null || !ConsoleUI.getYesNoAnswer("Save to: " + filePath + "?")) {
-//                filePath = ConsoleUI.getXmlFileNameFromUser();
-//            }
-        new Thread(() -> {
-            try {
-                XMLGame.setXMLGame(filePath, game);
-            } catch (JAXBException ex) {
-                showError("cannot save XML, try again");
-            }
-        }).start();
-    }
-
     @FXML
     protected void addPlayer(ActionEvent event) {
         String name = getPlayerName();
@@ -401,5 +384,4 @@ public class PropertiesSceneController implements Initializable {
             updateStartGameButtonState();
         }
     }
-
 }
