@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
@@ -374,6 +373,10 @@ public class GameSceneController implements Initializable {
         currentPlayer = player;
     }
 
+    public Player getNextePlayer(Player player) {
+        return game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer)) % game.getGameDetails().getPlayers().size() + 1);
+    }
+
     public Stage getPrimaryStage() {
         return primaryStage;
     }
@@ -398,22 +401,22 @@ public class GameSceneController implements Initializable {
         this.filePath = filePath;
     }
 
-    private void playRound() {
-        for (Player.PlayerDetails player : game.getGameDetails().getPlayersDetails()) {
-            //TODO:player needs button to retire
-            if (player.getIsActive()) {
-                //TODO: current player name in bold
-
-                if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) {
-//                    //TODO: message player is broke... changing to next player
-                } else {
-                    placeBets(player);
-                }
-            }
-        }
-        //TODO: spin roulette
-        endRound();
-    }
+//    private void playRound() {
+//        for (Player.PlayerDetails player : game.getGameDetails().getPlayersDetails()) {
+//            //TODO:player needs button to retire
+//            if (player.getIsActive()) {
+//                //TODO: current player name in bold
+//
+//                if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) {
+////                    //TODO: message player is broke... changing to next player
+//                } else {
+//                    placeBets(player);
+//                }
+//            }
+//        }
+//        //TODO: spin roulette
+//        endRound();
+//    }
 
     private void saveGame() {
         //TODO: check + disabple while betting
@@ -446,72 +449,81 @@ public class GameSceneController implements Initializable {
         });
     }
 
-    private void placeBets(Player.PlayerDetails player) {
-        Bet.BetType betType;
-        BigInteger betMoney;
-        int[] numbers = null;
-        int i;
-        List<Bet> bets;
-
-        if (player.getBets() == null || player.getBets().isEmpty()) {
-            bets = new ArrayList<>();
-
-            if (game.getGameDetails().getMinWages() == 0 && player.getIsHuman()) {
-                //TODO check if 1 than disable finish
-                if (!ConsoleUI.getYesNoAnswer("Do you want to place a bet?")) {
-                    return;
-                }
-            }
-            i = 0;
-        } else {
-            bets = player.getBets();
-            i = bets.size();
-        }
-        while (i++ <= game.getGameDetails().getMaxWages()) {
-            if (player.getIsHuman()) {
-                betType = ConsoleUI.getBetTypeFromUser();
-                betMoney = ConsoleUI.getBetMoneyFromUser();
-                while (betMoney.compareTo(player.getMoney()) > 0 || betMoney.compareTo(BigInteger.ZERO) == 0) {
-                    if (betMoney.compareTo(BigInteger.ZERO) == 0) {
-                        ConsoleUI.printToUser("Cannot bet 0 money");
-                    } else {
-                        ConsoleUI.printToUser("You can't bet on more money that you owned, try again");
-                    }
-                    betMoney = ConsoleUI.getBetMoneyFromUser();
-                }
-                numbers = betType.isAskUserForNumbers() ? ConsoleUI.getBetNumbersFromUser(betType, game.getTable().getTableType()) : null;
-
-            } else {
-                betType = COMP_BET_TYPE;
-                betMoney = BigInteger.valueOf(COMP_BET_MONEY);
-                numbers = COMP_BET_NUMBERS;
-                if (numbers == null || numbers.length == 0) {
-                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType);
-                } else {
-                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType + " with the numbers:" + Arrays.toString(numbers));
-                }
-            }
-            try {
-                bets.add(Bet.makeBet(betType, betMoney, numbers, game.getTable().getTableType()));
-            } catch (BadParamsException ex) {
-                ConsoleUI.printToUser(ex.getMessage() + ", try again");
-                i--;
-                continue;
-            }
-            player.setMoney(player.getMoney().add(betMoney.negate()));
-            if (player.getIsHuman() && game.getGameDetails().getMaxWages() != i && player.getMoney().compareTo(BigInteger.ZERO) > 0) {
-                if (ConsoleUI.getIsFinishedBettingFromUser()) {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-        player.setBets(bets);
-    }
+//    private void placeBets(Player.PlayerDetails player) {
+//        Bet.BetType betType;
+//        BigInteger betMoney;
+//        int[] numbers = null;
+//        int i;
+//        List<Bet> bets;
+//
+//        if (player.getBets() == null || player.getBets().isEmpty()) {
+//            bets = new ArrayList<>();
+//
+//            if (game.getGameDetails().getMinWages() == 0 && player.getIsHuman()) {
+//                //TODO check if 1 than disable finish
+//                if (!ConsoleUI.getYesNoAnswer("Do you want to place a bet?")) {
+//                    return;
+//                }
+//            }
+//            i = 0;
+//        } else {
+//            bets = player.getBets();
+//            i = bets.size();
+//        }
+//        while (i++ <= game.getGameDetails().getMaxWages()) {
+//            if (player.getIsHuman()) {
+//                betType = ConsoleUI.getBetTypeFromUser();
+//                betMoney = ConsoleUI.getBetMoneyFromUser();
+//                while (betMoney.compareTo(player.getMoney()) > 0 || betMoney.compareTo(BigInteger.ZERO) == 0) {
+//                    if (betMoney.compareTo(BigInteger.ZERO) == 0) {
+//                        ConsoleUI.printToUser("Cannot bet 0 money");
+//                    } else {
+//                        ConsoleUI.printToUser("You can't bet on more money that you owned, try again");
+//                    }
+//                    betMoney = ConsoleUI.getBetMoneyFromUser();
+//                }
+//                numbers = betType.isAskUserForNumbers() ? ConsoleUI.getBetNumbersFromUser(betType, game.getTable().getTableType()) : null;
+//
+//            } else {
+//                betType = COMP_BET_TYPE;
+//                betMoney = BigInteger.valueOf(COMP_BET_MONEY);
+//                numbers = COMP_BET_NUMBERS;
+//                if (numbers == null || numbers.length == 0) {
+//                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType);
+//                } else {
+//                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType + " with the numbers:" + Arrays.toString(numbers));
+//                }
+//            }
+//            try {
+//                bets.add(Bet.makeBet(betType, betMoney, numbers, game.getTable().getTableType()));
+//            } catch (BadParamsException ex) {
+//                ConsoleUI.printToUser(ex.getMessage() + ", try again");
+//                i--;
+//                continue;
+//            }
+//            player.setMoney(player.getMoney().add(betMoney.negate()));
+//            if (player.getIsHuman() && game.getGameDetails().getMaxWages() != i && player.getMoney().compareTo(BigInteger.ZERO) > 0) {
+//                if (ConsoleUI.getIsFinishedBettingFromUser()) {
+//                    break;
+//                }
+//            } else {
+//                break;
+//            }
+//        }
+//        player.setBets(bets);
+//    }
 
     private void retirePlayer(Player.PlayerDetails player) {
         player.setIsActive(Boolean.FALSE);
+    }
+
+    private void computerPlay() {
+//TODO computer animation
+        try {
+            currentBets.add(Bet.makeBet(COMP_BET_TYPE, BigInteger.valueOf(COMP_BET_MONEY), COMP_BET_NUMBERS, game.getTable().getTableType()));
+        } catch (BadParamsException ex) {
+        }
+        currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
     }
 
     private void showError(String message) {
@@ -603,12 +615,8 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void finishedBettingClicked(ActionEvent event) {
-
-        placeBets(currentPlayer);
-        if //TODO:if next player computer create animation
-                 {
-
-        }
+        currentPlayer.getPlayerDetails().setBets(currentBets);
+        currentPlayer = getNextePlayer(currentPlayer);
     }
 
     @FXML
@@ -619,13 +627,16 @@ public class GameSceneController implements Initializable {
     @FXML
     private void placeBetClicked(ActionEvent event) {
         //betType =  ??
-        Integer[] nums = (Integer[]) numbers.toArray();
+        int[] nums = new int[numbers.size()];
+        int count = 0;
+        for (Integer n : numbers) {
+            nums[count++] = n;
+        }
         try {
             currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
         } catch (BadParamsException ex) {
             showError(ex.getMessage() + ", try again");
-            //TODO: hide erroe somehow
-
+            //TODO: hide error somehow
         }
         currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
     }
