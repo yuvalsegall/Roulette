@@ -342,17 +342,9 @@ public class GameSceneController implements Initializable {
     private String filePath;
     private ArrayList<Integer> numbers;
     private Bet bet;
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
-    
-            
-=======
-=======
->>>>>>> origin/master
-    private final int NOM_OF_ROWS = 3;
-    private final int FIRST_NUMBER_COLS = 3;
 
     private static final Bet.BetType COMP_BET_TYPE = Bet.BetType.NOIR;
     private static final int COMP_BET_MONEY = 1;
@@ -360,10 +352,6 @@ public class GameSceneController implements Initializable {
 
     private boolean isErrorMessageShown;
 
-<<<<<<< HEAD
->>>>>>> origin/master
-=======
->>>>>>> origin/master
     /**
      * Initializes the controller class.
      */
@@ -549,8 +537,6 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void numberButtonClicked(ActionEvent event) {
-<<<<<<< HEAD
-<<<<<<< HEAD
        HashMap<Integer,Integer> rows = new HashMap();
        Node node = ((Button)event.getSource()).getParent();
        setRowsHashMap(rows);
@@ -590,45 +576,6 @@ public class GameSceneController implements Initializable {
            }
        }
        messageLabel.setText(numbers.toString());
-=======
-=======
->>>>>>> origin/master
-        HashMap<Integer, Integer> rows = new HashMap();
-        setRowsHashMap(rows);
-        Node node = ((Button) event.getSource()).getParent();
-        int row = GridPane.getRowIndex(node);
-        int col = GridPane.getColumnIndex(node);
-        if (col % 2 == 0) {
-            if (row % 2 == 0) {
-                //vertical split
-                int myCol = col - FIRST_NUMBER_COLS;
-                myCol = myCol - myCol / 2;
-                numbers.add(myCol * NOM_OF_ROWS - 1);
-                if (row > NOM_OF_ROWS) {
-                    numbers.add(myCol * NOM_OF_ROWS);
-                } else {
-                    numbers.add(myCol * NOM_OF_ROWS - 2);
-                }
-            } else {
-                //single number
-                int myRow = rows.get(row);
-                myRow -= myRow / 2;
-                int myCol = col - FIRST_NUMBER_COLS;
-                myCol -= myCol / 2;
-                numbers.add(NOM_OF_ROWS * myCol - (NOM_OF_ROWS - myRow));
-            }
-        } else {
-            if (row % 2 == 0) {
-                //corner
-            } else {
-                //horizontal split
-            }
-        }
-        messageLabel.setText(numbers.toString());
-<<<<<<< HEAD
->>>>>>> origin/master
-=======
->>>>>>> origin/master
     }
 
     @FXML
