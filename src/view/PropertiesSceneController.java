@@ -263,6 +263,7 @@ public class PropertiesSceneController implements Initializable {
             }
             clearPlayerNameField();
             hideError();
+            updateStartGameButtonState();
         } catch (DuplicateNameException | EmptyNameException | NumOfPlayersException | NumOfHumanPlayersException ex) {
             showError(ex.getMessage());
         }
