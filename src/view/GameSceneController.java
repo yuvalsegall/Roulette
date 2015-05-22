@@ -361,16 +361,16 @@ public class GameSceneController implements Initializable {
         amount = new SimpleIntegerProperty();
         amount.set(0);
         AmmountLabel.textProperty().bind(
-        Bindings.concat(amount.getValue(), "$"));
-        
+                Bindings.concat(amount.getValue(), "$"));
+
         //TODO: create player's list + amounts + connect amount with listeners
-        
     }
+
     //TODOL program must run after init!
-    public void setCurrnetPlayer(Player player){
+    public void setCurrnetPlayer(Player player) {
         currentPlayer = player;
     }
-    
+
     public Stage getPrimaryStage() {
         return primaryStage;
     }
@@ -395,12 +395,11 @@ public class GameSceneController implements Initializable {
         this.filePath = filePath;
     }
 
- 
     private void playRound() {
         for (Player.PlayerDetails player : game.getGameDetails().getPlayersDetails()) {
             //TODO:player needs button to retire
             if (player.getIsActive()) {
-                    //TODO: current player name in bold
+                //TODO: current player name in bold
 
                 if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) {
 //                    //TODO: message player is broke... changing to next player
@@ -542,43 +541,41 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void numberButtonClicked(ActionEvent event) {
-       HashMap<Integer,Integer> rows = new HashMap();
-       Node node = ((Button)event.getSource()).getParent();
-       setRowsHashMap(rows);
-       int row = GridPane.getRowIndex(node);     
-       int col = GridPane.getColumnIndex(node);
-       int myCol = (col - COLS_TO_FIRST_NUMBER)/2;
-       int myRow = (rows.get(row))/2;
-       
-       if(col % 2 == 0){
-           if (row % 2 == 0){
-               //vertical split
-               numbers.add(myCol * NOM_OF_ACTUAL_ROWS - 1);
-               if (row < NOM_OF_ACTUAL_ROWS)
-                   numbers.add(myCol * NOM_OF_ACTUAL_ROWS);
-               else
-                   numbers.add(myCol * NOM_OF_ACTUAL_ROWS - 2);
-           }
-           else{
-               //single number
-               numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
-           }
-       }
-       else{
-           if (row % 2 == 0){
-               //corner
-               numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
-               numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow));
-               numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow - 1));
-               numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow - 1));
-           }
-           else{
-               //horizontal split
-               numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
-               numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow));
-           }
-       }
-       messageLabel.setText(numbers.toString());
+        HashMap<Integer, Integer> rows = new HashMap();
+        Node node = ((Button) event.getSource()).getParent();
+        setRowsHashMap(rows);
+        int row = GridPane.getRowIndex(node);
+        int col = GridPane.getColumnIndex(node);
+        int myCol = (col - COLS_TO_FIRST_NUMBER) / 2;
+        int myRow = (rows.get(row)) / 2;
+
+        if (col % 2 == 0) {
+            if (row % 2 == 0) {
+                //vertical split
+                numbers.add(myCol * NOM_OF_ACTUAL_ROWS - 1);
+                if (row < NOM_OF_ACTUAL_ROWS) {
+                    numbers.add(myCol * NOM_OF_ACTUAL_ROWS);
+                } else {
+                    numbers.add(myCol * NOM_OF_ACTUAL_ROWS - 2);
+                }
+            } else {
+                //single number
+                numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
+            }
+        } else {
+            if (row % 2 == 0) {
+                //corner
+                numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
+                numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow));
+                numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow - 1));
+                numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow - 1));
+            } else {
+                //horizontal split
+                numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
+                numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow));
+            }
+        }
+        messageLabel.setText(numbers.toString());
     }
 
     @FXML
@@ -603,10 +600,12 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void finishedBettingClicked(ActionEvent event) {
-        
+
         placeBets(currentPlayer);
-        if
-                //TODO:if next player computer create animation
+        if //TODO:if next player computer create animation
+                 {
+
+        }
     }
 
     @FXML
@@ -617,16 +616,15 @@ public class GameSceneController implements Initializable {
     @FXML
     private void placeBetClicked(ActionEvent event) {
         //betType =  ??
-        Integer[] tempArray = null;
-        numbers.toArray(tempArray);
+        Integer[] nums = (Integer[]) numbers.toArray();
         try {
-            currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), array, game.getTable().getTableType()));
-            } catch (BadParamsException ex) {
-                showError(ex.getMessage() + ", try again");
-                //TODO: hide erroe somehow
+            currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
+        } catch (BadParamsException ex) {
+            showError(ex.getMessage() + ", try again");
+            //TODO: hide erroe somehow
 
-            }
-            currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int)amount.getValue()*-1)));
+        }
+        currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
     }
 
     @FXML
