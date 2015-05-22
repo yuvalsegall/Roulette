@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -331,9 +334,13 @@ public class GameSceneController implements Initializable {
     private AnchorPane anchor;
 
     private Game game;
+    private Player currentPlayer;
     private String filePath;
     private ArrayList<Integer> numbers;
-    private Bet bet;
+    private Bet currentBet;
+    private ArrayList<Bet> currentBets;
+    private Bet.BetType betType;
+    private IntegerProperty amount;
 
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
@@ -351,8 +358,19 @@ public class GameSceneController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         numbers = new ArrayList<>();
         isErrorMessageShown = false;
+        amount = new SimpleIntegerProperty();
+        amount.set(0);
+        AmmountLabel.textProperty().bind(
+        Bindings.concat(amount.getValue(), "$"));
+        
+        //TODO: create player's list + amounts + connect amount with listeners
+        
     }
-
+    //TODOL program must run after init!
+    public void setCurrnetPlayer(Player player){
+        currentPlayer = player;
+    }
+    
     public Stage getPrimaryStage() {
         return primaryStage;
     }
@@ -377,32 +395,26 @@ public class GameSceneController implements Initializable {
         this.filePath = filePath;
     }
 
+ 
     private void playRound() {
         for (Player.PlayerDetails player : game.getGameDetails().getPlayersDetails()) {
+            //TODO:player needs button to retire
             if (player.getIsActive()) {
-                if (player.getIsHuman()) {
-//                    ConsoleUI.printToUser(player.getName() + "'s  turn!");
-//                    if (ConsoleUI.getIsSaveGameFromUser()) {
-//                        saveGame();
-//                    }
-//                    if (ConsoleUI.getYesNoAnswer("Do you want quit from the game?")) {
-//                        quitPlayer(player);
-//                        continue;
-//                    }
-                }
+                    //TODO: current player name in bold
+
                 if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) {
-//                    ConsoleUI.PrintUserIsBrokeGoingToNextPlayerToUser(player.getName());
+//                    //TODO: message player is broke... changing to next player
                 } else {
                     placeBets(player);
                 }
             }
         }
-//        ConsoleUI.printUserSpinRoulleteResult(game.getTable().spinRoulette());
-
+        //TODO: spin roulette
         endRound();
     }
 
     private void saveGame() {
+        //TODO: check + disabple while betting
         FileChooser fileChooser = new FileChooser();
         fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML", Arrays.asList("xml")));
         fileChooser.setTitle("Save Roulette Game");
@@ -443,6 +455,7 @@ public class GameSceneController implements Initializable {
             bets = new ArrayList<>();
 
             if (game.getGameDetails().getMinWages() == 0 && player.getIsHuman()) {
+                //TODO check if 1 than disable finish
                 if (!ConsoleUI.getYesNoAnswer("Do you want to place a bet?")) {
                     return;
                 }
@@ -495,7 +508,7 @@ public class GameSceneController implements Initializable {
         player.setBets(bets);
     }
 
-    private void quitPlayer(Player.PlayerDetails player) {
+    private void retirePlayer(Player.PlayerDetails player) {
         player.setIsActive(Boolean.FALSE);
     }
 
@@ -534,10 +547,8 @@ public class GameSceneController implements Initializable {
        setRowsHashMap(rows);
        int row = GridPane.getRowIndex(node);     
        int col = GridPane.getColumnIndex(node);
-       int myCol = col - COLS_TO_FIRST_NUMBER;
-       int myRow = rows.get(row);
-       myCol -= myCol/2;
-       myRow -= myRow/2;
+       int myCol = (col - COLS_TO_FIRST_NUMBER)/2;
+       int myRow = (rows.get(row))/2;
        
        if(col % 2 == 0){
            if (row % 2 == 0){
@@ -572,30 +583,50 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void AddOneClicked(ActionEvent event) {
+        amount.set(amount.get() + 1);
     }
 
     @FXML
     private void AddTwoClicked(ActionEvent event) {
+        amount.set(amount.get() + 2);
     }
 
     @FXML
     private void AddFiveClicked(ActionEvent event) {
+        amount.set(amount.get() + 5);
     }
 
     @FXML
     private void AddTenClicked(ActionEvent event) {
+        amount.set(amount.get() + 10);
     }
 
     @FXML
     private void finishedBettingClicked(ActionEvent event) {
+        
+        placeBets(currentPlayer);
+        if
+                //TODO:if next player computer create animation
     }
 
     @FXML
     private void clearAmountClicked(ActionEvent event) {
+        amount.set(0);
     }
 
     @FXML
     private void placeBetClicked(ActionEvent event) {
+        //betType =  ??
+        Integer[] tempArray = null;
+        numbers.toArray(tempArray);
+        try {
+            currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), array, game.getTable().getTableType()));
+            } catch (BadParamsException ex) {
+                showError(ex.getMessage() + ", try again");
+                //TODO: hide erroe somehow
+
+            }
+            currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int)amount.getValue()*-1)));
     }
 
     @FXML
