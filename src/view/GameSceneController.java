@@ -3,6 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+ asdcascascsa
+>>>>>>> origin/master
 =======
  asdcascascsa
 >>>>>>> origin/master
@@ -339,11 +343,14 @@ public class GameSceneController implements Initializable {
     private ArrayList<Integer> numbers;
     private Bet bet;
 <<<<<<< HEAD
+<<<<<<< HEAD
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
     
             
 =======
+=======
+>>>>>>> origin/master
     private final int NOM_OF_ROWS = 3;
     private final int FIRST_NUMBER_COLS = 3;
 
@@ -353,6 +360,9 @@ public class GameSceneController implements Initializable {
 
     private boolean isErrorMessageShown;
 
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
     /**
      * Initializes the controller class.
@@ -540,6 +550,7 @@ public class GameSceneController implements Initializable {
     @FXML
     private void numberButtonClicked(ActionEvent event) {
 <<<<<<< HEAD
+<<<<<<< HEAD
        HashMap<Integer,Integer> rows = new HashMap();
        Node node = ((Button)event.getSource()).getParent();
        setRowsHashMap(rows);
@@ -580,6 +591,8 @@ public class GameSceneController implements Initializable {
        }
        messageLabel.setText(numbers.toString());
 =======
+=======
+>>>>>>> origin/master
         HashMap<Integer, Integer> rows = new HashMap();
         setRowsHashMap(rows);
         Node node = ((Button) event.getSource()).getParent();
@@ -612,6 +625,9 @@ public class GameSceneController implements Initializable {
             }
         }
         messageLabel.setText(numbers.toString());
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
     }
 
