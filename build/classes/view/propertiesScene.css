@@ -1,0 +1,34 @@
+.mainFxmlClass {
+    -fx-font-family: "Tahoma";
+    -fx-font-size: 20px;
+    -fx-text-fill: white;
+    -fx-text-shadow: blue;
+}
+
+.mainAnchor{
+    -fx-background-color: green;
+}
+
+.labels{
+    -fx-padding: 30;
+}
+
+.error{
+    -fx-text-fill: red;
+    -fx-padding: 50;
+}
+
+.slider{
+    -fx-tick-label-color: red;
+}
+
+.button{
+    -fx-font: bold italic 10pt "Arial";
+    -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
+}
+
+.mainTitle{
+    -fx-padding: -5;
+    -fx-font: bold  40pt "Arial";
+    -fx-effect: dropshadow( one-pass-box , white , 10 , 0.4 , 3 , 0 );
+}

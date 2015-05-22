@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/Users/yuvalsegall/Documents/Roulette/../../Dropbox/Projects/Java/XML%20and%20XSD%20v1.1/roulette.xsd" uri="xml-resources/jaxb/JAXB/roulette.xsd"/>
+</catalog>
