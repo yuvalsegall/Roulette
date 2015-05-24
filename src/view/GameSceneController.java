@@ -349,10 +349,15 @@ public class GameSceneController implements Initializable {
     private ImageView tableImageView;
     @FXML
     private ImageView rouletteImageView;
-    @FXML
     private AnchorPane basketAnchor;
     @FXML
-    private Button buttonBasket;
+    private AnchorPane basketAnchor1;
+    @FXML
+    private Button button0_2_3;
+    @FXML
+    private AnchorPane basketAnchor2;
+    @FXML
+    private Button button0_1_2;
 
     /**
      * Initializes the controller class.
@@ -834,11 +839,18 @@ public class GameSceneController implements Initializable {
         addBetOnTable(event); 
     }
     
-    @FXML
     private void basketFRClicked(ActionEvent event) {
         betType = Bet.BetType.BASKET;
         for(int num : Game.ConstValuesForBets.BASKET_FR)
             numbers.add(num);
         addBetOnTable(event);        
+    }
+
+    @FXML
+    private void newGame(ActionEvent event) {
+    }
+
+    @FXML
+    private void loadGame(ActionEvent event) {
     }
 }

@@ -10,15 +10,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" fx:id="anchor" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: green;" styleClass="mainFxmlClass" stylesheets="@scenes.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.GameSceneController">
+<AnchorPane id="AnchorPane" fx:id="anchor" prefHeight="700.0" prefWidth="950.0" styleClass="mainAnchor" stylesheets="@scenes.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.GameSceneController">
    <children>
       <BorderPane prefHeight="700.0" prefWidth="950.0">
          <top>
             <MenuBar prefHeight="29.0" prefWidth="800.0" BorderPane.alignment="CENTER">
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="Game">
                   <items>
-                        <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Save Game" />
+                        <MenuItem mnemonicParsing="false" onAction="#newGame" text="New" />
+                        <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Load" />
+                        <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Save" />
                     <MenuItem mnemonicParsing="false" text="Close" />
                   </items>
                 </Menu>

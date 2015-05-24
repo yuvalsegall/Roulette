@@ -65,8 +65,6 @@ public class PropertiesSceneController implements Initializable {
 
     private Stage primaryStage;
     @FXML
-    private MenuItem loadXMLMenuItem;
-    @FXML
     private TextField gameNameTextField;
     @FXML
     private ComboBox tableTypeComboBox;
@@ -326,5 +324,9 @@ public class PropertiesSceneController implements Initializable {
             updateAddPlayerButtonState();
             updateStartGameButtonState();
         }
+    }
+
+    @FXML
+    private void newGame(ActionEvent event) {
     }
 }

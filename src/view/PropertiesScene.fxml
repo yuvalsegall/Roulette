@@ -17,9 +17,10 @@
          <top>
             <MenuBar prefHeight="25.0" prefWidth="961.0" BorderPane.alignment="CENTER">
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="Game">
                   <items>
-                        <MenuItem fx:id="loadXMLMenuItem" mnemonicParsing="false" onAction="#loadGame" text="Load from XML" />
+                        <MenuItem mnemonicParsing="false" onAction="#newGame" text="New" />
+                        <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Load" />
                     <MenuItem mnemonicParsing="false" text="Close" />
                   </items>
                 </Menu>
