@@ -390,12 +390,13 @@ public class GameSceneController implements Initializable {
         moveToNextHumanPlayer();
     }
 
-    public void updateCurrentPlayer() {
+    public Boolean updateCurrentPlayerReturnIfLast() {
         if (currentPlayer != null) {
             getCurrentPlayerView().setIsBold(false);
         }
         currentPlayer = currentPlayer == null ? game.getGameDetails().getPlayers().get(0) : game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
         getCurrentPlayerView().setIsBold(true);
+        return currentPlayer.equals(game.getGameDetails().getPlayers().get(0));
     }
 
     public Stage getPrimaryStage() {
@@ -447,6 +448,7 @@ public class GameSceneController implements Initializable {
     }
 
     private void endRound() {
+        spinRoulette();
         game.getGameDetails().getPlayers().stream().map((player) -> {
             if (player.getPlayerDetails().getBets() != null) {
                 player.getPlayerDetails().getBets().stream().forEach((bet) -> {
@@ -579,7 +581,9 @@ public class GameSceneController implements Initializable {
         do {
             currentBets = new ArrayList<>();
             clearChips();
-            updateCurrentPlayer();
+            if (updateCurrentPlayerReturnIfLast()) {
+                endRound();
+            }
             if (!currentPlayer.getPlayerDetails().getIsHuman()) {
                 computerPlay();
             }
@@ -901,8 +905,8 @@ public class GameSceneController implements Initializable {
     private boolean playerHasMoneyForBet() {
         return currentPlayer.getPlayerDetails().getMoney().intValue() >= amount.intValue();
     }
-    
-    private void spinRoulette (){
+
+    private void spinRoulette() {
         RotateTransition rt = new RotateTransition(Duration.millis(3000), rouletteImageView);
         rt.setByAngle(360);
         rt.setCycleCount(1);
