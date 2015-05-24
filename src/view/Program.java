@@ -37,7 +37,7 @@ public class Program extends Application {
 
         FXMLLoader propertiesFxmlLoader = getFXMLLoader(PROPERTIES_SCENE_FXML_PATH);
         Parent propertiesRoot = getRoot(propertiesFxmlLoader);
-        PropertiesSceneController propertiesController = getPropertiesController(propertiesFxmlLoader, primaryStage, gameScene);
+        PropertiesSceneController propertiesController = getPropertiesController(propertiesFxmlLoader, primaryStage, gameScene, gameController);
         Scene propertiesScene = new Scene(propertiesRoot);
 
         primaryStage.setTitle("Roulette!");
@@ -52,7 +52,7 @@ public class Program extends Application {
         return fxmlLoader;
     }
 
-    private PropertiesSceneController getPropertiesController(FXMLLoader fxmlLoader, final Stage primaryStage, Scene nextScene) {
+    private PropertiesSceneController getPropertiesController(FXMLLoader fxmlLoader, final Stage primaryStage, Scene nextScene, GameSceneController gameController) {
         PropertiesSceneController propertiesSceneController = (PropertiesSceneController) fxmlLoader.getController();
         game = propertiesSceneController.getGame();
         filePath = propertiesSceneController.getFilePath();
@@ -60,6 +60,7 @@ public class Program extends Application {
         propertiesSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
             if (newValue) {
                 primaryStage.setScene(nextScene);
+                gameController.init();
             }
         });
         return propertiesSceneController;
@@ -70,7 +71,6 @@ public class Program extends Application {
         gameSceneController.setGame(game);
         gameSceneController.setFilePath(filePath);
         gameSceneController.setPrimaryStage(primaryStage);
-        gameSceneController.init();
 //        gameSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
 //            if (newValue) {
 //                primaryStage.setScene(gameScene);
