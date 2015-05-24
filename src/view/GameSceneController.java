@@ -30,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -351,6 +352,8 @@ public class GameSceneController implements Initializable {
     private boolean isErrorMessageShown;
     @FXML
     private Label AmountLabel;
+    @FXML
+    private FlowPane playersPane;
 
     /**
      * Initializes the controller class.
