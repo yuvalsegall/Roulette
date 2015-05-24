@@ -461,6 +461,7 @@ public class GameSceneController implements Initializable {
         }).forEach((player) -> {
             player.getPlayerDetails().setBets(null);
         });
+        clearButtons();
     }
 
 //    private void placeBets(Player.PlayerDetails player) {
@@ -606,6 +607,7 @@ public class GameSceneController implements Initializable {
             }
         }
         messageLabel.setText(numbers.toString());
+        addBetOnTable(event);
     }
 
     @FXML
@@ -641,7 +643,6 @@ public class GameSceneController implements Initializable {
             currentPlayer = getNextPlayer(currentPlayer);
         }
         currentBets = new ArrayList<>();
-        clearButtons();
     }
 
     @FXML
@@ -673,41 +674,49 @@ public class GameSceneController implements Initializable {
     @FXML
     private void thirdRowClicked(ActionEvent event) {
         betType = Bet.BetType.COLUMN_3;
+        addBetOnTable(event);
     }
 
     @FXML
     private void secondRowClicked(ActionEvent event) {
         betType = Bet.BetType.COLUMN_2;
+        addBetOnTable(event);
     }
 
     @FXML
     private void firstRowClicked(ActionEvent event) {
         betType = Bet.BetType.COLUMN_1;
+        addBetOnTable(event);
     }
 
     @FXML
     private void first12Clicked(ActionEvent event) {
         betType = Bet.BetType.PREMIERE_DOUZAINE;
+        addBetOnTable(event);
     }
 
     @FXML
     private void second12Clicked(ActionEvent event) {
         betType = Bet.BetType.MOYENNE_DOUZAINE;
+        addBetOnTable(event);
     }
 
     @FXML
     private void third12Clicked(ActionEvent event) {
         betType = Bet.BetType.DERNIERE_DOUZAINE;
+        addBetOnTable(event);
     }
 
     @FXML
     private void firstHalfClicked(ActionEvent event) {
         betType = Bet.BetType.MANQUE;
+        addBetOnTable(event);
     }
 
     @FXML
     private void evenClicked(ActionEvent event) {
         betType = Bet.BetType.PAIR;
+        addBetOnTable(event);
     }
 
     @FXML
@@ -719,19 +728,19 @@ public class GameSceneController implements Initializable {
     @FXML
     private void blackClicked(ActionEvent event) {
         betType = Bet.BetType.NOIR;
-
-//        Button current = (Button)event.getSource();
-//        current.setOpacity(50L);
+        addBetOnTable(event);
     }
 
     @FXML
     private void oddClicked(ActionEvent event) {
         betType = Bet.BetType.IMPAIR;
+        addBetOnTable(event);
     }
 
     @FXML
     private void secondHalfClicked(ActionEvent event) {
         betType = Bet.BetType.PASSE;
+        addBetOnTable(event);
     }
 
     private void setRowsHashMap(HashMap<Integer, Integer> rows) {
