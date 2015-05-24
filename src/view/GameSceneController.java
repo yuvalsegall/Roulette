@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
@@ -23,7 +24,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -432,13 +435,16 @@ public class GameSceneController implements Initializable {
             fileChooser.setInitialDirectory(new File(filePath));
         }
         File XMLFile = fileChooser.showSaveDialog(primaryStage);
-        new Thread(() -> {
-            try {
-                XMLGame.setXMLGame(XMLFile.getAbsolutePath(), game);
-            } catch (JAXBException ex) {
-                showError("cannot save XML, try again");
-            }
-        }).start();
+        if (XMLFile != null) {
+            new Thread(() -> {
+                try {
+                    filePath = XMLFile.getPath();
+                    XMLGame.setXMLGame(filePath, game);
+                } catch (JAXBException ex) {
+                    showError("cannot save XML, try again");
+                }
+            }).start();
+        }
     }
 
     private void endRound() {
@@ -498,12 +504,12 @@ public class GameSceneController implements Initializable {
     @FXML
     private void numberButtonClicked(ActionEvent event) {
         Node node = ((Button) event.getSource()).getParent();
-        int row = GridPane.getRowIndex(node);     
+        int row = GridPane.getRowIndex(node);
         int col = GridPane.getColumnIndex(node);
         int myCol = col - COLS_TO_FIRST_NUMBER;
         int myRow = rowsReverse.get(row);
-        myCol -= myCol/2;
-        myRow -= myRow/2;
+        myCol -= myCol / 2;
+        myRow -= myRow / 2;
 
         if (col % 2 == 0) {
             if (row % 2 == 0) {
@@ -867,14 +873,20 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void onNewGame(ActionEvent event) {
-        //TODO promt massage are you sure, if yes:
-        newGame.set(true);
+        saveGame();
+        newGame.set(popupDialog("New Game", "Are you sure you want to start a new game?"));
     }
 
     @FXML
     private void onExitGame(ActionEvent event) {
-        //TODO promt massage are you sure, if yes:
-        exitGame.set(true);
+        exitGame.set(popupDialog("Exit Game", "Are you sure you want to leave?"));
     }
 
+    private Boolean popupDialog(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == ButtonType.OK;
+    }
 }

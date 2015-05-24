@@ -124,7 +124,7 @@ public class Program extends Application {
     }
 
     private static void popupErrorDialog() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setContentText("Something went wrong... lets start over...");
         alert.showAndWait();
