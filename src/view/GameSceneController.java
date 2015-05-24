@@ -728,7 +728,7 @@ public class GameSceneController implements Initializable {
         removeFrenchZero();
         removeFrenchBaskets();
         addAmericanZeros();
-        addAmericanBasket();
+        addAmericanBaskets();
     }
 
     private void removeFrenchBaskets() {
@@ -787,39 +787,58 @@ public class GameSceneController implements Initializable {
         addBetOnTable(event);
     }    
 
-    private void addAmericanBasket() {
-        AnchorPane basket1 = createNewBasketAnchor();
-        AnchorPane basket2 = createNewBasketAnchor();
+    private void addAmericanBaskets() {
+        AnchorPane basket1 = createNewBasketAnchor("V1");
+        AnchorPane basket2 = createNewBasketAnchor("V2");
+        AnchorPane basket3 = createNewBasketAnchor("V3");
         tableGridPane.add(basket1, 2, 3, 2, 1);
         tableGridPane.add(basket2, 2, 4, 2, 1);
+        tableGridPane.add(basket3, 2, 4, 2, 1);
     }
 
-    private AnchorPane createNewBasketAnchor(){
+    private AnchorPane createNewBasketAnchor(String version){
         AnchorPane anchor = new AnchorPane();
         Button newbutton = new Button();
-        newbutton.setOnAction((e) -> basketClicked(e));
         setButtonProperties(newbutton);
         setButtonToAnchor(newbutton);
         anchor.getChildren().add(newbutton);
         anchor.prefWidthProperty().set(35.0); 
         
+        if(version.equals("V1"))
+            newbutton.setOnAction((e) -> basketAM_V1Clicked(e));
+        else if(version.equals("V2"))
+            newbutton.setOnAction((e) -> basketAM_V2Clicked(e));
+        else
+            newbutton.setOnAction((e) -> basketAM_V3Clicked(e));
         return anchor;
     }
-    /*
-        public static final int[] BASKET_FR = {0, 1, 2, 3};
-        public static final int[] BASKET_AM_V1 = {0, 1, 2};
-        public static final int[] BASKET_AM_V2 = {0, 2, 37};
-        public static final int[] BASKET_AM_V3 = {2, 3, 37};
-    */
-    private void basketClicked(ActionEvent event) {
+
+    private void basketAM_V1Clicked(ActionEvent event) {
         betType = Bet.BetType.BASKET;
-        addBetOnTable(event);
+        for(int num : Game.ConstValuesForBets.BASKET_AM_V1)
+            numbers.add(num);
+        addBetOnTable(event); 
     }
 
+    private void basketAM_V2Clicked(ActionEvent event) {
+        betType = Bet.BetType.BASKET;
+        for(int num : Game.ConstValuesForBets.BASKET_AM_V2)
+            numbers.add(num);
+        addBetOnTable(event); 
+    }
+    
+    private void basketAM_V3Clicked(ActionEvent event) {
+        betType = Bet.BetType.BASKET;
+        for(int num : Game.ConstValuesForBets.BASKET_AM_V3)
+            numbers.add(num);
+        addBetOnTable(event); 
+    }
+    
     @FXML
     private void basketFRClicked(ActionEvent event) {
         betType = Bet.BetType.BASKET;
-        //numbers = Game.ConstValuesForBets.BASKET_FR;
+        for(int num : Game.ConstValuesForBets.BASKET_FR)
+            numbers.add(num);
         addBetOnTable(event);        
     }
 }
