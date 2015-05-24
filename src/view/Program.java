@@ -22,11 +22,12 @@ public class Program extends Application {
     private static final String GAME_SCENE_FXML_PATH = "GameScene.fxml";
     private Game game;
     private String filePath;
+    private Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         game = new Game();
-
+        this.primaryStage = primaryStage;
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
         Parent gameRoot = getRoot(gameFxmlLoader);
         GameSceneController gameController = getGameController(gameFxmlLoader, primaryStage);
@@ -62,16 +63,12 @@ public class Program extends Application {
         });
         propertiesSceneController.getNewGame().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                try {
-                    start(primaryStage);
-                } catch (IOException ex) {
-                    //TODO what todo??
-                }
+                onNew();
             }
         });
         propertiesSceneController.getExitGame().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                System.exit(1);
+                onExit();
             }
         });
         return propertiesSceneController;
@@ -82,12 +79,34 @@ public class Program extends Application {
         gameSceneController.setGame(game);
         gameSceneController.setFilePath(filePath);
         gameSceneController.setPrimaryStage(primaryStage);
+        gameSceneController.getNewGame().addListener((source, oldValue, newValue) -> {
+            if (newValue) {
+                onNew();
+            }
+        });
+        gameSceneController.getExitGame().addListener((source, oldValue, newValue) -> {
+            if (newValue) {
+                onExit();
+            }
+        });
         return gameSceneController;
     }
 
     private Parent getRoot(FXMLLoader fxmlLoader) throws IOException {
         InputStream inputStream = fxmlLoader.getLocation().openStream();
         return (Parent) fxmlLoader.load(inputStream);
+    }
+
+    private void onExit() {
+        System.exit(1);
+    }
+
+    private void onNew() {
+        try {
+            start(primaryStage);
+        } catch (IOException ex) {
+            //TODO what todo??
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -342,6 +343,8 @@ public class GameSceneController implements Initializable {
     private final String AMERICAN_WHEEL_IMAGE_PATH = "/resources/roulette00_300.png";
 
     private boolean isErrorMessageShown;
+    private SimpleBooleanProperty newGame;
+    private SimpleBooleanProperty exitGame;
 
     @FXML
     private AnchorPane frenchZeroAnchor;
@@ -372,6 +375,8 @@ public class GameSceneController implements Initializable {
         setRowsHashMap(rowsReverse);
         //betNameLabel.textProperty().bind(betType);
         //TODO: create player's list + amounts + connect amount with listeners
+        newGame = new SimpleBooleanProperty(false);
+        exitGame = new SimpleBooleanProperty(false);
     }
 
     public void init() {
@@ -697,7 +702,6 @@ public class GameSceneController implements Initializable {
     private void placeBet() {
         //TODO: check if user has money for the bet!!!
         int[] nums = null;
-
         if (!numbers.isEmpty()) {
             nums = new int[numbers.size()];
             int count = 0;
@@ -735,7 +739,7 @@ public class GameSceneController implements Initializable {
     private void removeFrenchBaskets() {
         tableGridPane.getChildren().remove(basketAnchor);
     }
-        
+
     private void removeFrenchZero() {
         tableGridPane.getChildren().remove(frenchZeroAnchor);
     }
@@ -759,20 +763,20 @@ public class GameSceneController implements Initializable {
         tableGridPane.add(anchor0, 1, 4, 1, 2);
         tableGridPane.add(anchor00, 1, 1, 1, 2);
     }
-    
-    private void setButtonProperties(Button button){
+
+    private void setButtonProperties(Button button) {
         button.setOpacity(0);
     }
-    
-    private void setAnchorProperties (AnchorPane anchor){
+
+    private void setAnchorProperties(AnchorPane anchor) {
         anchor.prefWidthProperty().set(46.0);
     }
-    
-    private void setButtonToAnchor(Button button){
+
+    private void setButtonToAnchor(Button button) {
         AnchorPane.setTopAnchor(button, 0.0);
         AnchorPane.setLeftAnchor(button, 0.0);
         AnchorPane.setRightAnchor(button, 0.0);
-        AnchorPane.setBottomAnchor(button, 0.0);       
+        AnchorPane.setBottomAnchor(button, 0.0);
     }
 
     @FXML
@@ -781,12 +785,12 @@ public class GameSceneController implements Initializable {
         numbers.add(0);
         addBetOnTable(event);
     }
-    
+
     private void doubleZeroClicked(ActionEvent event) {
         betType = Bet.BetType.STRAIGHT;
         numbers.add(37);
         addBetOnTable(event);
-    }    
+    }
 
     private void addAmericanBaskets() {
         AnchorPane basket1 = createNewBasketAnchor("V1");
@@ -797,56 +801,74 @@ public class GameSceneController implements Initializable {
         tableGridPane.add(basket3, 2, 2, 2, 1);
     }
 
-    private AnchorPane createNewBasketAnchor(String version){
+    private AnchorPane createNewBasketAnchor(String version) {
         AnchorPane anchor = new AnchorPane();
         Button newbutton = new Button();
         setButtonProperties(newbutton);
         setButtonToAnchor(newbutton);
         anchor.getChildren().add(newbutton);
-        anchor.prefWidthProperty().set(35.0); 
-        
-        if(version.equals("V1"))
+        anchor.prefWidthProperty().set(35.0);
+
+        if (version.equals("V1")) {
             newbutton.setOnAction((e) -> basketAM_V1Clicked(e));
-        else if(version.equals("V2"))
+        } else if (version.equals("V2")) {
             newbutton.setOnAction((e) -> basketAM_V2Clicked(e));
-        else
+        } else {
             newbutton.setOnAction((e) -> basketAM_V3Clicked(e));
+        }
         return anchor;
     }
 
     private void basketAM_V1Clicked(ActionEvent event) {
         betType = Bet.BetType.BASKET;
-        for(int num : Game.ConstValuesForBets.BASKET_AM_V1)
+        for (int num : Game.ConstValuesForBets.BASKET_AM_V1) {
             numbers.add(num);
-        addBetOnTable(event); 
+        }
+        addBetOnTable(event);
     }
 
     private void basketAM_V2Clicked(ActionEvent event) {
         betType = Bet.BetType.BASKET;
-        for(int num : Game.ConstValuesForBets.BASKET_AM_V2)
+        for (int num : Game.ConstValuesForBets.BASKET_AM_V2) {
             numbers.add(num);
-        addBetOnTable(event); 
+        }
+        addBetOnTable(event);
     }
-    
+
     private void basketAM_V3Clicked(ActionEvent event) {
         betType = Bet.BetType.BASKET;
-        for(int num : Game.ConstValuesForBets.BASKET_AM_V3)
+        for (int num : Game.ConstValuesForBets.BASKET_AM_V3) {
             numbers.add(num);
-        addBetOnTable(event); 
+        }
+        addBetOnTable(event);
     }
-    
+
     private void basketFRClicked(ActionEvent event) {
         betType = Bet.BetType.BASKET;
-        for(int num : Game.ConstValuesForBets.BASKET_FR)
+        for (int num : Game.ConstValuesForBets.BASKET_FR) {
             numbers.add(num);
-        addBetOnTable(event);        
+        }
+        addBetOnTable(event);
+    }
+
+    public SimpleBooleanProperty getNewGame() {
+        return newGame;
+    }
+
+    public SimpleBooleanProperty getExitGame() {
+        return exitGame;
     }
 
     @FXML
-    private void newGame(ActionEvent event) {
+    private void onNewGame(ActionEvent event) {
+        //TODO promt massage are you sure, if yes:
+        newGame.set(true);
     }
 
     @FXML
-    private void loadGame(ActionEvent event) {
+    private void onExitGame(ActionEvent event) {
+        //TODO promt massage are you sure, if yes:
+        exitGame.set(true);
     }
+
 }
