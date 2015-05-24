@@ -4,12 +4,11 @@ import engine.Game;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 /**
@@ -102,10 +101,12 @@ public class Program extends Application {
     }
 
     private void onNew() {
-        try {
-            start(primaryStage);
-        } catch (IOException ex) {
-            //TODO what todo??
+        while (true) {
+            try {
+                start(primaryStage);
+            } catch (IOException ex) {
+                popupErrorDialog();
+            }
         }
     }
 
@@ -113,7 +114,19 @@ public class Program extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+        while (true) {
+            try {
+                launch(args);
+            } catch (Exception ex) {
+                popupErrorDialog();
+            }
+        }
     }
 
+    private static void popupErrorDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Error");
+        alert.setContentText("Something went wrong... lets start over...");
+        alert.showAndWait();
+    }
 }
