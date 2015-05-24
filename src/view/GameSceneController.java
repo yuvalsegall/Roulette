@@ -377,7 +377,7 @@ public class GameSceneController implements Initializable {
         setCurrnetPlayer(game.getGameDetails().getPlayers().get(0));
         while (!currentPlayer.getPlayerDetails().getIsHuman()) {
             computerPlay();
-            currentPlayer = getNextePlayer(currentPlayer);
+            currentPlayer = getNextPlayer(currentPlayer);
         }
     }
 
@@ -386,7 +386,7 @@ public class GameSceneController implements Initializable {
         currentPlayer = player;
     }
 
-    public Player getNextePlayer(Player player) {
+    public Player getNextPlayer(Player player) {
         return game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer)) % game.getGameDetails().getPlayers().size() + 1);
     }
 
@@ -629,10 +629,14 @@ public class GameSceneController implements Initializable {
     @FXML
     private void finishedBettingClicked(ActionEvent event) {
         currentPlayer.getPlayerDetails().setBets(currentBets);
-        currentPlayer = getNextePlayer(currentPlayer);
+        PlayerViewWithAmount currentPlayerView = getCurrentPlayerView();
+        currentPlayerView.setIsBold(false);
+        currentPlayer = getNextPlayer(currentPlayer);
+        currentPlayerView = getCurrentPlayerView();
+        currentPlayerView.setIsBold(true);
         while (!currentPlayer.getPlayerDetails().getIsHuman()) {
             computerPlay();
-            currentPlayer = getNextePlayer(currentPlayer);
+            currentPlayer = getNextPlayer(currentPlayer);
         }
         currentBets = new ArrayList<>();
     }
@@ -729,10 +733,19 @@ public class GameSceneController implements Initializable {
     
     public void buildPlayersPane (){
         for(Player player : game.getGameDetails().getPlayers()){
-            PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman());
+            PlayerViewWithAmount playerView = new PlayerViewWithAmount(player);
             playersPane.getChildren().add(playerView);
             playerView.getPlayerAmountLabel().textProperty().bind(
                 Bindings.concat(player.getPlayerDetails().getMoney(), "$")); 
         }       
+    }
+
+    private PlayerViewWithAmount getCurrentPlayerView() {
+        for(Node playerView : playersPane.getChildren()){
+            PlayerViewWithAmount view = (PlayerViewWithAmount)playerView;
+            if(view.getPlayer() == currentPlayer)
+                return view;
+        }
+        return null;
     }
 }
