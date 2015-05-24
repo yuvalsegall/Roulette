@@ -802,21 +802,25 @@ public class GameSceneController implements Initializable {
     }
 
     private AnchorPane createNewBasketAnchor(String version) {
-        AnchorPane anchor = new AnchorPane();
+        AnchorPane anchorBasket = new AnchorPane();
         Button newbutton = new Button();
         setButtonProperties(newbutton);
         setButtonToAnchor(newbutton);
-        anchor.getChildren().add(newbutton);
-        anchor.prefWidthProperty().set(35.0);
+        anchorBasket.getChildren().add(newbutton);
+        anchorBasket.prefWidthProperty().set(35.0);
 
-        if (version.equals("V1")) {
-            newbutton.setOnAction((e) -> basketAM_V1Clicked(e));
-        } else if (version.equals("V2")) {
-            newbutton.setOnAction((e) -> basketAM_V2Clicked(e));
-        } else {
-            newbutton.setOnAction((e) -> basketAM_V3Clicked(e));
+        switch (version) {
+            case "V1":
+                newbutton.setOnAction((e) -> basketAM_V1Clicked(e));
+                break;
+            case "V2":
+                newbutton.setOnAction((e) -> basketAM_V2Clicked(e));
+                break;
+            default:
+                newbutton.setOnAction((e) -> basketAM_V3Clicked(e));
+                break;
         }
-        return anchor;
+        return anchorBasket;
     }
 
     private void basketAM_V1Clicked(ActionEvent event) {
