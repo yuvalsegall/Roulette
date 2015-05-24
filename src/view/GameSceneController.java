@@ -28,7 +28,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -357,6 +356,9 @@ public class GameSceneController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -610,7 +612,7 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void AddTwoClicked(ActionEvent event) {
-        amount.set(amount.get()+ 2);
+        amount.set(amount.get() + 2);
     }
 
     @FXML
@@ -714,7 +716,6 @@ public class GameSceneController implements Initializable {
     private void secondHalfClicked(ActionEvent event) {
         betType = Bet.BetType.PASSE;
     }
-
 
     private void setRowsHashMap(HashMap<Integer, Integer> rows) {
         rows.put(1, 5);

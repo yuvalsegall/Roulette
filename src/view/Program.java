@@ -54,7 +54,7 @@ public class Program extends Application {
 
     private PropertiesSceneController getPropertiesController(FXMLLoader fxmlLoader, final Stage primaryStage, Scene nextScene, GameSceneController gameController) {
         PropertiesSceneController propertiesSceneController = (PropertiesSceneController) fxmlLoader.getController();
-        game = propertiesSceneController.getGame();
+        propertiesSceneController.setGame(game);
         filePath = propertiesSceneController.getFilePath();
         propertiesSceneController.setPrimaryStage(primaryStage);
         propertiesSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {

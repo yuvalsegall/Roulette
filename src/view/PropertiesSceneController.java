@@ -101,14 +101,10 @@ public class PropertiesSceneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        game = new Game();
         isErrorMessageShown = false;
         isPlayersCountCheckBad = new SimpleBooleanProperty(false);
         finishedInit = new SimpleBooleanProperty(false);
         tableTypeComboBox.getItems().addAll(Arrays.asList(Table.TableType.AMERICAN.name(), Table.TableType.FRENCH.name()));
-        onPlayerNameChange();
-        onGameNameOrTableTypeOrPlayersChange();
-
         playerNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onPlayerNameChange();
         });
@@ -132,6 +128,8 @@ public class PropertiesSceneController implements Initializable {
 
     public void setGame(Game game) {
         this.game = game;
+        onPlayerNameChange();
+        onGameNameOrTableTypeOrPlayersChange();
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -343,9 +341,9 @@ public class PropertiesSceneController implements Initializable {
     }
 
     private void addPlayerToList(Player player) {
-        PlayerView playerView = new PlayerView(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman()
+        PlayerViewWithImage playerViewWithImage = new PlayerViewWithImage(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman()
         );
-        playersPane.getChildren().add(playerView);
+        playersPane.getChildren().add(playerViewWithImage);
     }
 
     private void clearPlayerNameField() {
