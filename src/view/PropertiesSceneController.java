@@ -75,13 +75,13 @@ public class PropertiesSceneController implements Initializable {
     @FXML
     private TextField gameNameTextField;
     @FXML
-    private Slider initialSumOfMoneySlider;
-    @FXML
-    private Slider maxWagesSlider;
+    private ComboBox tableTypeComboBox;
     @FXML
     private Slider minWagesSlider;
     @FXML
-    private ComboBox tableTypeComboBox;
+    private Slider maxWagesSlider;
+    @FXML
+    private Slider initialSumOfMoneySlider;
     @FXML
     private TextField playerNameTextField;
     @FXML
@@ -89,9 +89,9 @@ public class PropertiesSceneController implements Initializable {
     @FXML
     private Button addPlayerButton;
     @FXML
-    private VBox playersVBox;
-    @FXML
     private Button startGameButton;
+    @FXML
+    private VBox playersVBox;
     @FXML
     private Label errorMessageLabel;
     @FXML

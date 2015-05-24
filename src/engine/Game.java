@@ -19,6 +19,7 @@ public class Game {
 
     public Game() {
         this.gameDetails = new GameDetails();
+        this.table = new Table(gameDetails.getTableType());
         this.rulesChecker = new RulesChecker();
     }
 

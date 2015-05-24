@@ -363,6 +363,7 @@ public class GameSceneController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         numbers = new ArrayList<>();
+        currentBets = new ArrayList<>();
         isErrorMessageShown = false;
         amount = new SimpleIntegerProperty();
         amount.set(0);
@@ -633,6 +634,7 @@ public class GameSceneController implements Initializable {
             computerPlay();
             currentPlayer = getNextePlayer(currentPlayer);
         }
+        currentBets = new ArrayList<>();
     }
 
     @FXML
