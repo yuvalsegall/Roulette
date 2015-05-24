@@ -651,51 +651,64 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void thirdRowClicked(ActionEvent event) {
+        betType = Bet.BetType.COLUMN_3;
     }
 
     @FXML
     private void secondRowClicked(ActionEvent event) {
+        betType = Bet.BetType.COLUMN_2;
     }
 
     @FXML
     private void firstRowClicked(ActionEvent event) {
+        betType = Bet.BetType.COLUMN_1;
     }
 
     @FXML
     private void first12Clicked(ActionEvent event) {
+        betType = Bet.BetType.PREMIERE_DOUZAINE;
     }
 
     @FXML
     private void second12Clicked(ActionEvent event) {
+        betType = Bet.BetType.MOYENNE_DOUZAINE;
     }
 
     @FXML
     private void third12Clicked(ActionEvent event) {
+        betType = Bet.BetType.DERNIERE_DOUZAINE;
     }
 
     @FXML
     private void firstHalfClicked(ActionEvent event) {
+        betType = Bet.BetType.MANQUE;
     }
 
     @FXML
     private void evenClicked(ActionEvent event) {
+        betType = Bet.BetType.PAIR;
     }
 
     @FXML
     private void redClicked(ActionEvent event) {
+        betType = Bet.BetType.ROUGE;
     }
 
     @FXML
     private void blackClicked(ActionEvent event) {
+        betType = Bet.BetType.NOIR;
     }
 
     @FXML
     private void oddClicked(ActionEvent event) {
+        betType = Bet.BetType.IMPAIR;
     }
 
     @FXML
     private void secondHalfClicked(ActionEvent event) {
+        betType = Bet.BetType.PASSE;
     }
+
 
     private void setRowsHashMap(HashMap<Integer, Integer> rows) {
         rows.put(1, 5);
