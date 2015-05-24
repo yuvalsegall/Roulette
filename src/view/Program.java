@@ -4,6 +4,8 @@ import engine.Game;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -56,6 +58,20 @@ public class Program extends Application {
             if (newValue) {
                 gameController.init();
                 primaryStage.setScene(nextScene);
+            }
+        });
+        propertiesSceneController.getNewGame().addListener((source, oldValue, newValue) -> {
+            if (newValue) {
+                try {
+                    start(primaryStage);
+                } catch (IOException ex) {
+                    //TODO what todo??
+                }
+            }
+        });
+        propertiesSceneController.getExitGame().addListener((source, oldValue, newValue) -> {
+            if (newValue) {
+                System.exit(1);
             }
         });
         return propertiesSceneController;

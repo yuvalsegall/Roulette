@@ -19,9 +19,9 @@
               <menus>
                 <Menu mnemonicParsing="false" text="Game">
                   <items>
-                        <MenuItem fx:id="newGameMenuItem" mnemonicParsing="false" text="New" />
+                        <MenuItem mnemonicParsing="false" onAction="#onNewGame" text="New" />
                         <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Load" />
-                    <MenuItem fx:id="exitGameMenuItem" mnemonicParsing="false" text="Exit" />
+                    <MenuItem mnemonicParsing="false" onAction="#onExitGame" text="Exit" />
                   </items>
                 </Menu>
               </menus>

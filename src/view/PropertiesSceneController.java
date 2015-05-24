@@ -60,6 +60,8 @@ public class PropertiesSceneController implements Initializable {
     private boolean isErrorMessageShown;
     private SimpleBooleanProperty isPlayersCountCheckBad;
     private SimpleBooleanProperty finishedInit;
+    private SimpleBooleanProperty newGame;
+    private SimpleBooleanProperty exitGame;
     private String filePath;
 
     private Stage primaryStage;
@@ -95,6 +97,8 @@ public class PropertiesSceneController implements Initializable {
         isErrorMessageShown = false;
         isPlayersCountCheckBad = new SimpleBooleanProperty(false);
         finishedInit = new SimpleBooleanProperty(false);
+        newGame = new SimpleBooleanProperty(false);
+        exitGame = new SimpleBooleanProperty(false);
         tableTypeComboBox.getItems().addAll(Arrays.asList(Table.TableType.AMERICAN.name(), Table.TableType.FRENCH.name()));
         playerNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onPlayerNameChange();
@@ -233,6 +237,14 @@ public class PropertiesSceneController implements Initializable {
         return finishedInit;
     }
 
+    public SimpleBooleanProperty getNewGame() {
+        return newGame;
+    }
+
+    public SimpleBooleanProperty getExitGame() {
+        return exitGame;
+    }
+
     private void updateAddPlayerButtonState() {
         int computerPlayers = game.getGameDetails().getComputerPlayers();
         int humanPlayers = game.getGameDetails().getHumanPlayers();
@@ -326,11 +338,13 @@ public class PropertiesSceneController implements Initializable {
     }
 
     @FXML
-    private void newGame(ActionEvent event) {
-
+    private void onNewGame(ActionEvent event) {
+        newGame.set(true);
     }
 
     @FXML
-    private void exit(ActionEvent event) {
+    private void onExitGame(ActionEvent event) {
+        exitGame.set(true);
     }
+
 }
