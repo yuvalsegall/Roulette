@@ -51,10 +51,6 @@ public class GameSceneController implements Initializable {
     @FXML
     private Button button1;
     @FXML
-    private Button button0_2_3;
-    @FXML
-    private Button button0_1_2;
-    @FXML
     private Button button1_2;
     @FXML
     private Button button2_3;
@@ -354,9 +350,9 @@ public class GameSceneController implements Initializable {
     @FXML
     private ImageView rouletteImageView;
     @FXML
-    private AnchorPane basketAnchor1;
+    private AnchorPane basketAnchor;
     @FXML
-    private AnchorPane basketAnchor2;
+    private Button buttonBasket;
 
     /**
      * Initializes the controller class.
@@ -736,8 +732,7 @@ public class GameSceneController implements Initializable {
     }
 
     private void removeFrenchBaskets() {
-        tableGridPane.getChildren().remove(basketAnchor1);
-        tableGridPane.getChildren().remove(basketAnchor2);
+        tableGridPane.getChildren().remove(basketAnchor);
     }
         
     private void removeFrenchZero() {
@@ -773,7 +768,7 @@ public class GameSceneController implements Initializable {
     }
     
     private void setButtonToAnchor(Button button){
-         AnchorPane.setTopAnchor(button, 0.0);
+        AnchorPane.setTopAnchor(button, 0.0);
         AnchorPane.setLeftAnchor(button, 0.0);
         AnchorPane.setRightAnchor(button, 0.0);
         AnchorPane.setBottomAnchor(button, 0.0);       
@@ -788,12 +783,43 @@ public class GameSceneController implements Initializable {
     
     private void doubleZeroClicked(ActionEvent event) {
         betType = Bet.BetType.STRAIGHT;
-        //TODO: check if 00 is 37
         numbers.add(37);
         addBetOnTable(event);
     }    
 
     private void addAmericanBasket() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        AnchorPane basket1 = createNewBasketAnchor();
+        AnchorPane basket2 = createNewBasketAnchor();
+        tableGridPane.add(basket1, 2, 3, 2, 1);
+        tableGridPane.add(basket2, 2, 4, 2, 1);
+    }
+
+    private AnchorPane createNewBasketAnchor(){
+        AnchorPane anchor = new AnchorPane();
+        Button newbutton = new Button();
+        newbutton.setOnAction((e) -> basketClicked(e));
+        setButtonProperties(newbutton);
+        setButtonToAnchor(newbutton);
+        anchor.getChildren().add(newbutton);
+        anchor.prefWidthProperty().set(35.0); 
+        
+        return anchor;
+    }
+    /*
+        public static final int[] BASKET_FR = {0, 1, 2, 3};
+        public static final int[] BASKET_AM_V1 = {0, 1, 2};
+        public static final int[] BASKET_AM_V2 = {0, 2, 37};
+        public static final int[] BASKET_AM_V3 = {2, 3, 37};
+    */
+    private void basketClicked(ActionEvent event) {
+        betType = Bet.BetType.BASKET;
+        addBetOnTable(event);
+    }
+
+    @FXML
+    private void basketFRClicked(ActionEvent event) {
+        betType = Bet.BetType.BASKET;
+        //numbers = Game.ConstValuesForBets.BASKET_FR;
+        addBetOnTable(event);        
     }
 }
