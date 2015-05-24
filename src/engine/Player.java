@@ -43,8 +43,8 @@ public class Player implements Comparable<Player> {
             this.name = name;
             this.isHuman = isHuman;
             this.amount = new SimpleIntegerProperty();
-            setMoney(money);
             this.isActive = true;
+            setMoney(money);
         }
 
         public PlayerDetails() {
@@ -52,8 +52,8 @@ public class Player implements Comparable<Player> {
             this.name = new String();
             this.isHuman = true;
             this.amount = new SimpleIntegerProperty();
-            setMoney(money);
             this.isActive = true;
+            setMoney(money);
         }
 
         public void setName(String name) {
