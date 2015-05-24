@@ -746,8 +746,13 @@ public class GameSceneController implements Initializable {
 
     private void clearChips() {
         for (Node node : tableGridPane.getChildren()) {
-            if (node instanceof ChipForTable) {
-                tableGridPane.getChildren().remove(node);
+            if (node instanceof AnchorPane){
+                AnchorPane parent = (AnchorPane)node;
+                for(Node child : parent.getChildren()){
+                    if (child instanceof ChipForTable) {
+                        parent.getChildren().remove(child);
+                    }
+                }
             }
         }
     }
