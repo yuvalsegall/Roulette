@@ -660,6 +660,8 @@ public class GameSceneController implements Initializable {
         }
         try {
             currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
+            amount.set(0);
+            clearButtons();
         } catch (BadParamsException ex) {
             showError(ex.getMessage() + ", try again");
             //TODO: hide error somehow
@@ -753,5 +755,11 @@ public class GameSceneController implements Initializable {
                 return view;
         }
         return null;
+    }
+
+    private void clearButtons() {
+        for(Node node : tableGridPane.getChildren())
+            if(node instanceof Button)
+                ((Button)node).setOpacity(0);
     }
 }
