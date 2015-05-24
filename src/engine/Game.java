@@ -12,37 +12,55 @@ import java.util.List;
  * @author yuvalsegall
  */
 public class Game {
-
+    
     private GameDetails gameDetails = null;
     private Table table = null;
     private RulesChecker rulesChecker = null;
-
+    
     public Game() {
         this.gameDetails = new GameDetails();
         this.table = new Table(gameDetails.getTableType());
         this.rulesChecker = new RulesChecker();
     }
-
+    
     public Game(GameDetails gameDetails) {
         this.gameDetails = gameDetails;
         this.table = new Table(gameDetails.getTableType());
         this.rulesChecker = new RulesChecker();
     }
-
+    
     public GameDetails getGameDetails() {
         return gameDetails;
     }
-
+    
     public Table getTable() {
         return table;
     }
-
+    
     public RulesChecker getRulesChecker() {
         return rulesChecker;
     }
-
+    
+    public void setGameDetails(GameDetails gameDetails) {
+        this.gameDetails = gameDetails;
+    }
+    
+    public void setTable(Table table) {
+        this.table = table;
+    }
+    
+    public void setRulesChecker(RulesChecker rulesChecker) {
+        this.rulesChecker = rulesChecker;
+    }
+    
+    public void copyGame(Game dest) {
+        dest.setGameDetails(this.getGameDetails());
+        dest.setRulesChecker(this.getRulesChecker());
+        dest.setTable(this.getTable());
+    }
+    
     public static class GameDetails {
-
+        
         private String gameName;
         private int minWages;
         private int maxWages;
@@ -51,7 +69,7 @@ public class Game {
         private List<Player> players;
         private int computerPlayers;
         private int humanPlayers;
-
+        
         public GameDetails(String gameName, int computerPlayers, int humanPlayers, int minWages, int maxWages, TableType tableType, int initialSumOfMoney) {
             this.gameName = gameName;
             this.minWages = minWages;
@@ -62,7 +80,7 @@ public class Game {
             this.humanPlayers = humanPlayers;
             this.players = initiateComputerPlayers(computerPlayers);
         }
-
+        
         public GameDetails(String gameName, int minWages, int maxWages, TableType tableType, int initialSumOfMoney) {
             this.gameName = gameName;
             this.minWages = minWages;
@@ -70,7 +88,7 @@ public class Game {
             this.tableType = tableType;
             this.initialSumOfMoney = initialSumOfMoney;
         }
-
+        
         public GameDetails(String gameName, int minWages, int maxWages, TableType tableType, int initialSumOfMoney, List<Player> players) {
             this.gameName = gameName;
             this.minWages = minWages;
@@ -88,84 +106,84 @@ public class Game {
                 }
             });
         }
-
+        
         public GameDetails() {
             this.players = new ArrayList<>();
         }
-
+        
         public int getComputerPlayers() {
             return computerPlayers;
         }
-
+        
         public int getHumanPlayers() {
             return humanPlayers;
         }
-
+        
         public int getInitialSumOfMoney() {
             return initialSumOfMoney;
         }
-
+        
         public TableType getTableType() {
             return tableType;
         }
-
+        
         public int getMinWages() {
             return minWages;
         }
-
+        
         public int getMaxWages() {
             return maxWages;
         }
-
+        
         public List<Player> getPlayers() {
             return players;
         }
-
+        
         public String getGameName() {
             return gameName;
         }
-
+        
         public PlayerDetails[] getPlayersDetails() {
             PlayerDetails[] details = new PlayerDetails[computerPlayers + humanPlayers];
             for (int i = 0; i < details.length; i++) {
                 details[i] = players.get(i).getPlayerDetails();
             }
-
+            
             return details;
         }
-
+        
         PlayerDetails getPlayerDetails(int playerID) throws PlayerIdNotFoundException {
             return findPlayerById(playerID).getPlayerDetails();
         }
-
+        
         public void setGameName(String gameName) {
             this.gameName = gameName;
         }
-
+        
         public void setMinWages(int minWages) {
             this.minWages = minWages;
         }
-
+        
         public void setMaxWages(int maxWages) {
             this.maxWages = maxWages;
         }
-
+        
         public void setTableType(TableType tableType) {
             this.tableType = tableType;
         }
-
+        
         public void setInitialSumOfMoney(int initialSumOfMoney) {
             this.initialSumOfMoney = initialSumOfMoney;
         }
-
+        
         public void setComputerPlayers(int computerPlayers) {
             this.computerPlayers = computerPlayers;
         }
-
+        
         public void setHumanPlayers(int humanPlayers) {
             this.humanPlayers = humanPlayers;
         }
-
+        
         public Player findPlayerById(int playerID) throws PlayerIdNotFoundException {
             for (Player player : players) {
                 if (player.getPlayerDetails().getPlayerID() == playerID) {
@@ -174,7 +192,7 @@ public class Game {
             }
             throw new PlayerIdNotFoundException();
         }
-
+        
         private ArrayList<Player> initiateComputerPlayers(int computerPlayers) {
             ArrayList<Player> allPlayers = new ArrayList<>();
             for (int i = 0; i < computerPlayers; i++) {
@@ -183,14 +201,15 @@ public class Game {
             }
             return allPlayers;
         }
-
+        
         public void addPlayer(Player newPlayer) {
             players.add(newPlayer);
         }
+        
     }
-
+    
     public static class ConstValuesForBets {
-
+        
         public static final int MIN_MANQUE = 1;
         public static final int MAX_MANQUE = 18;
         public static final int MIN_PASSE = 19;

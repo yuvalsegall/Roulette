@@ -51,7 +51,7 @@ import javax.xml.bind.JAXBException;
  * @author yuvalsegall
  */
 public class PropertiesSceneController implements Initializable {
-
+    
     private static final int MIN_NUM = 0;
     private static final int MAX_COMP_PLAYERS = 6;
     private static final int MAX_HUMAN_PLAYERS = 6;
@@ -62,13 +62,13 @@ public class PropertiesSceneController implements Initializable {
     private static final int TO_MAX_WAGES = 10;
     private static final int MIN_INITIAL_SUM_OF_MONEY = 10;
     private static final int MAX_INITIAL_SUM_OF_MONEY = 100;
-
+    
     private Game game;
     private boolean isErrorMessageShown;
     private SimpleBooleanProperty isPlayersCountCheckBad;
     private SimpleBooleanProperty finishedInit;
     private String filePath;
-
+    
     private Stage primaryStage;
     @FXML
     private MenuItem loadXMLMenuItem;
@@ -98,7 +98,7 @@ public class PropertiesSceneController implements Initializable {
     private FlowPane playersPane;
     @FXML
     private AnchorPane anchorPane;
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         isErrorMessageShown = false;
@@ -115,31 +115,31 @@ public class PropertiesSceneController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends ComboBox> observable, ComboBox oldValue, ComboBox newValue) {
                 onGameNameOrTableTypeOrPlayersChange();
-            }
+            }//TODO work???
         });
         isPlayersCountCheckBad.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });
     }
-
+    
     public Game getGame() {
         return game;
     }
-
+    
     public void setGame(Game game) {
         this.game = game;
         onPlayerNameChange();
         onGameNameOrTableTypeOrPlayersChange();
     }
-
+    
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
-
+    
     public String getFilePath() {
         return filePath;
     }
-
+    
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
@@ -152,13 +152,13 @@ public class PropertiesSceneController implements Initializable {
         playersCountCheck(computerPlayers, humanPlayers);
         propertiesCheck(minWages, maxWages, initalSumOfMoney);
     }
-
+    
     private void propertiesCheck(int minWages, int maxWages, int initalSumOfMoney) throws OutOfRangeException {
         if (minWages < FROM_MIN_WAGES || minWages > TO_MIN_WAGES || maxWages < FROM_MAX_WAGES || maxWages > TO_MAX_WAGES || initalSumOfMoney < MIN_INITIAL_SUM_OF_MONEY || initalSumOfMoney > MAX_INITIAL_SUM_OF_MONEY) {
             throw new OutOfRangeException();
         }
     }
-
+    
     private void playersCountCheck(int computerPlayers, int humanPlayers) throws NumOfHumanPlayersException, NumOfPlayersException {
         if (computerPlayers < MIN_NUM || computerPlayers > MAX_COMP_PLAYERS || humanPlayers < MIN_NUM || humanPlayers > MAX_HUMAN_PLAYERS || computerPlayers + humanPlayers > MAX_PLAYERS || computerPlayers + humanPlayers < MIN_NUM + 1) {
             throw new NumOfPlayersException(MIN_NUM + 1, MAX_PLAYERS);
@@ -167,7 +167,7 @@ public class PropertiesSceneController implements Initializable {
             throw new NumOfHumanPlayersException(MIN_NUM + 1, MAX_PLAYERS);
         }
     }
-
+    
     private Player joinGame(String playerName, Boolean isHuman) throws DuplicateNameException, EmptyNameException, NumOfPlayersException, NumOfHumanPlayersException {
 //        int computerPlayers = 0, humanPlayers = 0;
 //        if (playerName.trim().isEmpty()) {
@@ -206,10 +206,10 @@ public class PropertiesSceneController implements Initializable {
         if (XMLFile == null) {
             throw new XmlException();
         }
-        game = XMLGame.getXMLGame(XMLFile);
+        XMLGame.getXMLGame(XMLFile).copyGame(game);
         paramsCheck(game.getGameDetails().getComputerPlayers(), game.getGameDetails().getHumanPlayers(), game.getGameDetails().getMinWages(), game.getGameDetails().getMaxWages(), game.getGameDetails().getInitialSumOfMoney());
     }
-
+    
     public void playGame() {
         while (true) {
 //            if (ConsoleUI.getIsLoadFromXMLFromUser()) {
@@ -227,7 +227,7 @@ public class PropertiesSceneController implements Initializable {
 //            }
         }
     }
-
+    
     @FXML
     private void loadGame() {
         FileChooser fileChooser = new FileChooser();
@@ -246,7 +246,7 @@ public class PropertiesSceneController implements Initializable {
             });
         }).start();
     }
-
+    
     @FXML
     protected void addPlayer(ActionEvent event) {
         String name = getPlayerName();
@@ -266,17 +266,17 @@ public class PropertiesSceneController implements Initializable {
             showError(ex.getMessage());
         }
     }
-
+    
     protected void onPlayerNameChange() {
         updateAddPlayerButtonState();
         hideError();
     }
-
+    
     protected void onGameNameOrTableTypeOrPlayersChange() {
         updateStartGameButtonState();
         hideError();
     }
-
+    
     @FXML
     protected void onStartGame(ActionEvent event) {
         Game.GameDetails details = game.getGameDetails();
@@ -287,11 +287,11 @@ public class PropertiesSceneController implements Initializable {
         details.setTableType(Table.TableType.valueOf(tableTypeComboBox.getValue().toString()));
         finishedInit.set(true);
     }
-
+    
     public SimpleBooleanProperty getFinishedInit() {
         return finishedInit;
     }
-
+    
     private void updateAddPlayerButtonState() {
         int computerPlayers = game.getGameDetails().getComputerPlayers();
         int humanPlayers = game.getGameDetails().getHumanPlayers();
@@ -317,41 +317,41 @@ public class PropertiesSceneController implements Initializable {
         boolean disable = isEmptyName || isNameExist || (isPlayersCountCheckBad.getValue() && humanPlayers + computerPlayers == 0) || isErrorMessageShown;
         addPlayerButton.setDisable(disable);
     }
-
+    
     private void updateStartGameButtonState() {
         boolean isEmptyFields = getGameName().trim().isEmpty() || getTableType() == null || getTableType().toString().trim().isEmpty();
         boolean disable = isEmptyFields || isPlayersCountCheckBad.getValue() || isErrorMessageShown;
         startGameButton.setDisable(disable);
     }
-
+    
     private String getPlayerName() {
         return playerNameTextField.getText();
     }
-
+    
     private boolean isPlayerHuman() {
         return isHumanCheckBox.isSelected();
     }
-
+    
     public String getGameName() {
         return gameNameTextField.getText();
     }
-
+    
     public Object getTableType() {
         return tableTypeComboBox.getValue();
     }
-
+    
     private void addPlayerToList(Player player) {
         PlayerViewWithImage playerViewWithImage = new PlayerViewWithImage(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman()
         );
         playersPane.getChildren().add(playerViewWithImage);
     }
-
+    
     private void clearPlayerNameField() {
         playerNameTextField.clear();
         isHumanCheckBox.setSelected(false);
         playerNameTextField.requestFocus();
     }
-
+    
     private void showError(String message) {
         if (!isErrorMessageShown) {
             isErrorMessageShown = true;
@@ -366,7 +366,7 @@ public class PropertiesSceneController implements Initializable {
         updateAddPlayerButtonState();
         updateStartGameButtonState();
     }
-
+    
     private void hideError() {
         if (isErrorMessageShown) {
             FadeTransition animation = FadeTransitionBuilder.create()
@@ -376,7 +376,7 @@ public class PropertiesSceneController implements Initializable {
                     .toValue(0.0)
                     .build();
             animation.play();
-
+            
             isErrorMessageShown = false;
             errorMessageLabel.textProperty().setValue("");
             updateAddPlayerButtonState();
