@@ -577,9 +577,11 @@ public class GameSceneController implements Initializable {
                 } else {
                     numbers.add(myCol * NOM_OF_ACTUAL_ROWS - 2);
                 }
+                betType = Bet.BetType.SPLIT;
             } else {
                 //single number
                 numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
+                betType = Bet.BetType.STRAIGHT;
             }
         } else {
             if (row % 2 == 0) {
@@ -588,10 +590,12 @@ public class GameSceneController implements Initializable {
                 numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow));
                 numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow - 1));
                 numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow - 1));
+                betType = Bet.BetType.CORNER;
             } else {
                 //horizontal split
                 numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
                 numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow));
+                betType = Bet.BetType.SPLIT;
             }
         }
         messageLabel.setText(numbers.toString());
