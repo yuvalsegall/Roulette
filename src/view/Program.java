@@ -8,7 +8,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 /**
@@ -122,10 +121,11 @@ public class Program extends Application {
     }
 
     private static void popupErrorDialog(String[] args) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setContentText("Something went wrong... lets start over...");
-        alert.showAndWait();
+//        Alert alert = new Alert(Alert.AlertType.ERROR);
+//        alert.setTitle("Error");
+//        alert.setContentText("Something went wrong... lets start over...");
+//        alert.showAndWait();
+        //TODO return alert
         if (args != null) {
             launch(args);
         }
