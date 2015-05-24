@@ -3,6 +3,7 @@ package view;
 import engine.BadParamsException;
 import engine.Game;
 import engine.Player;
+import engine.Table;
 import engine.XMLGame;
 import engine.bets.Bet;
 import java.io.File;
@@ -18,11 +19,13 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
@@ -30,6 +33,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javax.swing.event.HyperlinkEvent;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -335,19 +339,22 @@ public class GameSceneController implements Initializable {
     private Bet.BetType betType;
     private IntegerProperty amount;
     private final HashMap<Integer, Integer> rowsReverse = new HashMap();
-
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
-
     private static final Bet.BetType COMP_BET_TYPE = Bet.BetType.NOIR;
     private static final int COMP_BET_MONEY = 1;
     private static final int[] COMP_BET_NUMBERS = null;
+    private final String AMERICAN_TABLE_IMAGE_PATH = "/resources/table00.png";
+    private final String AMERICAN_WHEEL_IMAGE_PATH = "/resources/roulette00_300.png";
 
     private boolean isErrorMessageShown;
+
     @FXML
-    private ImageView rouletteImageView;
+    private AnchorPane frenchZeroAnchor;
     @FXML
     private ImageView tableImageView;
+    @FXML
+    private ImageView rouletteImageView;
 
     /**
      * Initializes the controller class.
@@ -370,6 +377,9 @@ public class GameSceneController implements Initializable {
     }
 
     public void init() {
+        if(game.getGameDetails().getTableType() == Table.TableType.AMERICAN){
+            setTableToAmerican();
+        }
         buildPlayersPane();
         setCurrnetPlayer(game.getGameDetails().getPlayers().get(0));
         while (!currentPlayer.getPlayerDetails().getIsHuman()) {
@@ -714,16 +724,36 @@ public class GameSceneController implements Initializable {
         addBetOnTable(event);
     }
 
-    public GridPane getTableGridPane() {
-        return tableGridPane;
+    void setTableToAmerican() {
+        tableImageView.setImage(new Image(AMERICAN_TABLE_IMAGE_PATH));
+        rouletteImageView.setImage(new Image(AMERICAN_WHEEL_IMAGE_PATH));
+        removeFrenchZero();
+        addAmericanZeros();
+    }   
+
+    private void removeFrenchZero() {
+        tableGridPane.getChildren().remove(frenchZeroAnchor);
     }
 
-    public ImageView getRouletteImageView() {
-        return rouletteImageView;
+    private void addAmericanZeros() {
+        AnchorPane anchor0 = new AnchorPane();
+        AnchorPane anchor00 = new AnchorPane();
+        Button newbutton0 = new Button();
+        Button newbutton00 = new Button();
+//        newbutton0.setOpacity(0);
+//        newbutton00.setOpacity(0);
+        //TODO: is 0 / 00 numbers bet?
+        newbutton0.setOnAction((e) -> numberButtonClicked(e));
+        newbutton00.setOnAction((e) -> numberButtonClicked(e));
+        anchor0.getChildren().add(newbutton0);
+        anchor00.getChildren().add(newbutton00);
+        tableGridPane.add(anchor0, 1, 4, 1, 2);
+        AnchorPane.setTopAnchor(newbutton0, 0.0);
+        AnchorPane.setLeftAnchor(newbutton0, 0.0);
+        AnchorPane.setRightAnchor(newbutton0, 0.0);
+        AnchorPane.setBottomAnchor(newbutton0, 0.0);
+//        anchor0.setScaleShape(true);
+//        newbutton0.setScaleShape(true);
+        tableGridPane.add(anchor00, 1, 1, 1, 2);
     }
-
-    public ImageView getTableImageView() {
-        return tableImageView;
-    }
-    
 }

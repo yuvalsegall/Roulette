@@ -60,8 +60,8 @@ public class Program extends Application {
         propertiesSceneController.setPrimaryStage(primaryStage);
         propertiesSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                primaryStage.setScene(nextScene);
                 gameController.init();
+                primaryStage.setScene(nextScene);
             }
         });
         return propertiesSceneController;
@@ -73,9 +73,7 @@ public class Program extends Application {
         gameSceneController.setGame(game);
         gameSceneController.setFilePath(filePath);
         gameSceneController.setPrimaryStage(primaryStage);
-        if(game.getTable().getTableType() == Table.TableType.FRENCH){
-            //gameSceneController.
-        }
+        
 //        gameSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
 //            if (newValue) {
 //                primaryStage.setScene(gameScene);

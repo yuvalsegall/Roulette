@@ -88,7 +88,7 @@
                               <Insets bottom="19.0" left="90.0" right="100.0" top="12.0" />
                            </StackPane.margin>
                            <children>
-                              <AnchorPane prefHeight="57.0" prefWidth="46.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="3">
+                              <AnchorPane fx:id="frenchZeroAnchor" prefHeight="57.0" prefWidth="46.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="3">
                                  <children>
                                     <Button fx:id="button0" mnemonicParsing="false" onAction="#numberButtonClicked" opacity="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
                                  </children>
