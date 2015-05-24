@@ -19,7 +19,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -33,7 +32,6 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javax.swing.event.HyperlinkEvent;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -377,23 +375,19 @@ public class GameSceneController implements Initializable {
     }
 
     public void init() {
-        if(game.getGameDetails().getTableType() == Table.TableType.AMERICAN){
+        if (game.getGameDetails().getTableType() == Table.TableType.AMERICAN) {
             setTableToAmerican();
         }
         buildPlayersPane();
-        setCurrnetPlayer(game.getGameDetails().getPlayers().get(0));
-        while (!currentPlayer.getPlayerDetails().getIsHuman()) {
-            computerPlay();
-            currentPlayer = getNextPlayer(currentPlayer);
+        moveToNextHumanPlayer();
+    }
+
+    public void updateCurrentPlayer() {
+        if (currentPlayer != null) {
+            getCurrentPlayerView().setIsBold(false);
         }
-    }
-
-    public void setCurrnetPlayer(Player player) {
-        currentPlayer = player;
-    }
-
-    public Player getNextPlayer(Player player) {
-        return game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
+        currentPlayer = currentPlayer == null ? game.getGameDetails().getPlayers().get(0) : game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
+        getCurrentPlayerView().setIsBold(true);
     }
 
     public Stage getPrimaryStage() {
@@ -455,7 +449,6 @@ public class GameSceneController implements Initializable {
         });
     }
 
-    //TODO check if 1 than disable finish: if (game.getGameDetails().getMinWages() == 0 && player.getIsHuman()) {
     private void retirePlayer(Player.PlayerDetails player) {
         player.setIsActive(Boolean.FALSE);
     }
@@ -561,18 +554,22 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void finishedBettingClicked(ActionEvent event) {
+        FinishBettingButton.setDisable(true);
         currentPlayer.getPlayerDetails().setBets(currentBets);
-        PlayerViewWithAmount currentPlayerView = getCurrentPlayerView();
-        currentPlayerView.setIsBold(false);
-        currentPlayer = getNextPlayer(currentPlayer);
-        currentPlayerView = getCurrentPlayerView();
-        currentPlayerView.setIsBold(true);
-        while (!currentPlayer.getPlayerDetails().getIsHuman()) {
-            computerPlay();
-            currentPlayer = getNextPlayer(currentPlayer);
-        }
-        currentBets = new ArrayList<>();
-        clearChips();
+        moveToNextHumanPlayer();
+    }
+
+    private void moveToNextHumanPlayer() {
+        do {
+            currentBets = new ArrayList<>();
+            clearChips();
+            updateCurrentPlayer();
+            if (!currentPlayer.getPlayerDetails().getIsHuman()) {
+                computerPlay();
+                //TODO computer animation
+            }
+        } while (!currentPlayer.getPlayerDetails().getIsHuman());
+        FinishBettingButton.setDisable(game.getGameDetails().getMinWages() == 1);
     }
 
     @FXML
@@ -716,6 +713,7 @@ public class GameSceneController implements Initializable {
         currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
         amount.set(0);
         numbers.clear();
+        FinishBettingButton.setDisable(false);
     }
 
     @FXML
@@ -729,7 +727,7 @@ public class GameSceneController implements Initializable {
         rouletteImageView.setImage(new Image(AMERICAN_WHEEL_IMAGE_PATH));
         removeFrenchZero();
         addAmericanZeros();
-    }   
+    }
 
     private void removeFrenchZero() {
         tableGridPane.getChildren().remove(frenchZeroAnchor);
