@@ -349,15 +349,10 @@ public class GameSceneController implements Initializable {
     private ImageView tableImageView;
     @FXML
     private ImageView rouletteImageView;
+    @FXML
     private AnchorPane basketAnchor;
     @FXML
-    private AnchorPane basketAnchor1;
-    @FXML
     private Button button0_2_3;
-    @FXML
-    private AnchorPane basketAnchor2;
-    @FXML
-    private Button button0_1_2;
 
     /**
      * Initializes the controller class.
@@ -796,9 +791,9 @@ public class GameSceneController implements Initializable {
         AnchorPane basket1 = createNewBasketAnchor("V1");
         AnchorPane basket2 = createNewBasketAnchor("V2");
         AnchorPane basket3 = createNewBasketAnchor("V3");
-        tableGridPane.add(basket1, 2, 3, 2, 1);
-        tableGridPane.add(basket2, 2, 4, 2, 1);
-        tableGridPane.add(basket3, 2, 4, 2, 1);
+        tableGridPane.add(basket1, 2, 4, 2, 1);
+        tableGridPane.add(basket2, 2, 3, 2, 1);
+        tableGridPane.add(basket3, 2, 2, 2, 1);
     }
 
     private AnchorPane createNewBasketAnchor(String version){
