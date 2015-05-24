@@ -70,6 +70,7 @@ public class Program extends Application {
         gameSceneController.setGame(game);
         gameSceneController.setFilePath(filePath);
         gameSceneController.setPrimaryStage(primaryStage);
+        gameSceneController.init();
 //        gameSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
 //            if (newValue) {
 //                primaryStage.setScene(gameScene);

@@ -337,10 +337,10 @@ public class GameSceneController implements Initializable {
     private Player currentPlayer;
     private String filePath;
     private ArrayList<Integer> numbers;
-    private Bet currentBet;
     private ArrayList<Bet> currentBets;
     private Bet.BetType betType;
     private IntegerProperty amount;
+    private final HashMap<Integer, Integer> rowsReverse = new HashMap();
 
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
@@ -364,8 +364,16 @@ public class GameSceneController implements Initializable {
         amount.set(0);
         AmmountLabel.textProperty().bind(
                 Bindings.concat(amount.getValue(), "$"));
-
+        setRowsHashMap(rowsReverse);
         //TODO: create player's list + amounts + connect amount with listeners
+    }
+
+    public void init() {
+        setCurrnetPlayer(game.getGameDetails().getPlayers().get(0));
+        while (!currentPlayer.getPlayerDetails().getIsHuman()) {
+            computerPlay();
+            currentPlayer = getNextePlayer(currentPlayer);
+        }
     }
 
     //TODOL program must run after init!
@@ -417,7 +425,6 @@ public class GameSceneController implements Initializable {
 //        //TODO: spin roulette
 //        endRound();
 //    }
-
     private void saveGame() {
         //TODO: check + disabple while betting
         FileChooser fileChooser = new FileChooser();
@@ -512,7 +519,6 @@ public class GameSceneController implements Initializable {
 //        }
 //        player.setBets(bets);
 //    }
-
     private void retirePlayer(Player.PlayerDetails player) {
         player.setIsActive(Boolean.FALSE);
     }
@@ -556,13 +562,11 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void numberButtonClicked(ActionEvent event) {
-        HashMap<Integer, Integer> rows = new HashMap();
         Node node = ((Button) event.getSource()).getParent();
-        setRowsHashMap(rows);
         int row = GridPane.getRowIndex(node);
         int col = GridPane.getColumnIndex(node);
         int myCol = (col - COLS_TO_FIRST_NUMBER) / 2;
-        int myRow = (rows.get(row)) / 2;
+        int myRow = (rowsReverse.get(row)) / 2;
 
         if (col % 2 == 0) {
             if (row % 2 == 0) {
@@ -617,6 +621,10 @@ public class GameSceneController implements Initializable {
     private void finishedBettingClicked(ActionEvent event) {
         currentPlayer.getPlayerDetails().setBets(currentBets);
         currentPlayer = getNextePlayer(currentPlayer);
+        while (!currentPlayer.getPlayerDetails().getIsHuman()) {
+            computerPlay();
+            currentPlayer = getNextePlayer(currentPlayer);
+        }
     }
 
     @FXML
