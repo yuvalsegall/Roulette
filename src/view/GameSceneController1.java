@@ -45,7 +45,7 @@ import javax.xml.bind.JAXBException;
  *
  * @author yuvalsegall
  */
-public class GameSceneController implements Initializable {
+public class GameSceneController1 implements Initializable {
 
     private Stage primaryStage;
     @FXML
