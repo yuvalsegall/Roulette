@@ -745,7 +745,7 @@
                                  <children>
                                     <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../../snake.png" />
+                                          <Image url="@../resources/snake.png" />
                                        </image>
                                     </ImageView>
                                     <Button fx:id="buttonSnake" mnemonicParsing="false" onAction="#numberButtonClicked" opacity="0.0" prefHeight="81.0" prefWidth="90.0" />
@@ -824,7 +824,7 @@
                                        <children>
                                           <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../../../yellow%20chip.png" />
+                                                <Image url="@../resources/yellow%20chip.png" />
                                              </image>
                                           </ImageView>
                                           <Button fx:id="plus1Button" mnemonicParsing="false" onAction="#AddOneClicked" text="1" />
@@ -834,7 +834,7 @@
                                        <children>
                                           <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
                                              <image>
-                                                <Image url="@../../../red%20chip.png" />
+                                                <Image url="@../resources/red%20chip.png" />
                                              </image>
                                           </ImageView>
                                           <Button fx:id="plus2Button" mnemonicParsing="false" onAction="#AddTwoClicked" text="2" />
@@ -855,7 +855,7 @@
                                        <children>
                                           <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../../../white%20chip.png" />
+                                                <Image url="@../resources/white%20chip.png" />
                                              </image>
                                           </ImageView>
                                           <Button fx:id="plus5Button" mnemonicParsing="false" onAction="#AddFiveClicked" text="5" />
@@ -865,7 +865,7 @@
                                        <children>
                                           <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../../../green%20chip.png" />
+                                                <Image url="@../resources/green%20chip.png" />
                                              </image>
                                           </ImageView>
                                           <Button fx:id="plus10Button" mnemonicParsing="false" onAction="#AddTenClicked" text="10" />
