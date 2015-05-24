@@ -32,3 +32,7 @@
     -fx-font: bold  40pt "Arial";
     -fx-effect: dropshadow( one-pass-box , white , 10 , 0.4 , 3 , 0 );
 }
+
+.boldLabel{
+    -fx-font: bold  40pt "Arial";
+}

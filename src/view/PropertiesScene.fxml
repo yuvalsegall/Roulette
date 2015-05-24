@@ -11,7 +11,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="950.0" styleClass="mainAnchor" stylesheets="@propertiesScene.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.PropertiesSceneController">
+<AnchorPane id="AnchorPane" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="950.0" styleClass="mainAnchor" stylesheets="@scenes.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.PropertiesSceneController">
    <children>
       <BorderPane>
          <top>
@@ -53,27 +53,27 @@
                   <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label stylesheets="@propertiesScene.css" text="Table Type:" GridPane.rowIndex="3">
+                  <Label stylesheets="@scenes.css" text="Table Type:" GridPane.rowIndex="3">
                      <styleClass>
                         <String fx:value="mainFxmlClass" />
                         <String fx:value="labels" />
                      </styleClass></Label>
-                  <Label stylesheets="@propertiesScene.css" text="Min bets per player:" GridPane.rowIndex="5">
+                  <Label stylesheets="@scenes.css" text="Min bets per player:" GridPane.rowIndex="5">
                      <styleClass>
                         <String fx:value="mainFxmlClass" />
                         <String fx:value="labels" />
                      </styleClass></Label>
-                  <Label stylesheets="@propertiesScene.css" text="Max bets per player:" GridPane.rowIndex="7">
+                  <Label stylesheets="@scenes.css" text="Max bets per player:" GridPane.rowIndex="7">
                      <styleClass>
                         <String fx:value="mainFxmlClass" />
                         <String fx:value="labels" />
                      </styleClass></Label>
-                  <Label stylesheets="@propertiesScene.css" text="Initial sum of money per player:" GridPane.rowIndex="9">
+                  <Label stylesheets="@scenes.css" text="Initial sum of money per player:" GridPane.rowIndex="9">
                      <styleClass>
                         <String fx:value="mainFxmlClass" />
                         <String fx:value="labels" />
                      </styleClass></Label>
-                  <Label stylesheets="@propertiesScene.css" text="Game name:" GridPane.rowIndex="1">
+                  <Label stylesheets="@scenes.css" text="Game name:" GridPane.rowIndex="1">
                      <styleClass>
                         <String fx:value="mainFxmlClass" />
                         <String fx:value="labels" />
@@ -84,13 +84,13 @@
                   <Slider fx:id="maxWagesSlider" blockIncrement="0.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                   <Slider fx:id="minWagesSlider" blockIncrement="0.0" majorTickUnit="1.0" max="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <ComboBox fx:id="tableTypeComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label stylesheets="@propertiesScene.css" text="Add Players:" GridPane.rowIndex="12">
+                  <Label stylesheets="@scenes.css" text="Add Players:" GridPane.rowIndex="12">
                      <styleClass>
                         <String fx:value="mainFxmlClass" />
                         <String fx:value="labels" />
                      </styleClass></Label>
                   <TextField fx:id="playerNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                  <CheckBox fx:id="isHumanCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="mainFxmlClass" stylesheets="@propertiesScene.css" text="Human?" GridPane.columnIndex="2" GridPane.rowIndex="12">
+                  <CheckBox fx:id="isHumanCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="mainFxmlClass" stylesheets="@scenes.css" text="Human?" GridPane.columnIndex="2" GridPane.rowIndex="12">
                      <GridPane.margin>
                         <Insets left="20.0" />
                      </GridPane.margin></CheckBox>
@@ -99,7 +99,7 @@
                         <Insets left="50.0" />
                      </GridPane.margin></Button>
                   <VBox fx:id="playersVBox" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.rowSpan="4" />
-                  <Label fx:id="errorMessageLabel" alignment="CENTER" stylesheets="@propertiesScene.css" text="" textAlignment="CENTER" textFill="RED" GridPane.columnSpan="2147483647" GridPane.rowIndex="14" GridPane.rowSpan="2147483647">
+                  <Label fx:id="errorMessageLabel" alignment="CENTER" stylesheets="@scenes.css" text="" textAlignment="CENTER" textFill="RED" GridPane.columnSpan="2147483647" GridPane.rowIndex="14" GridPane.rowSpan="2147483647">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
@@ -117,7 +117,7 @@
                         <Insets left="30.0" />
                      </GridPane.margin>
                   </Button>
-                  <Label styleClass="mainTitle" stylesheets="@propertiesScene.css" text="Roulette" GridPane.columnIndex="1" />
+                  <Label styleClass="mainTitle" stylesheets="@scenes.css" text="Roulette" GridPane.columnIndex="1" />
                </children>
                <BorderPane.margin>
                   <Insets />
