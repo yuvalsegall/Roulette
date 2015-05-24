@@ -69,6 +69,7 @@ public class Program extends Application {
     private GameSceneController getGameController(FXMLLoader fxmlLoader, final Stage primaryStage) {
         GameSceneController gameSceneController = (GameSceneController) fxmlLoader.getController();
         gameSceneController.setGame(game);
+        gameSceneController.buildPlayersPane();
         gameSceneController.setFilePath(filePath);
         gameSceneController.setPrimaryStage(primaryStage);
 //        gameSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {

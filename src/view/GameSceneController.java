@@ -726,4 +726,13 @@ public class GameSceneController implements Initializable {
         rows.put(4, 2);
         rows.put(5, 1);
     }
+    
+    public void buildPlayersPane (){
+        for(Player player : game.getGameDetails().getPlayers()){
+            PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman());
+            playersPane.getChildren().add(playerView);
+            playerView.getPlayerAmountLabel().textProperty().bind(
+                Bindings.concat(player.getPlayerDetails().getMoney(), "$")); 
+        }       
+    }
 }
