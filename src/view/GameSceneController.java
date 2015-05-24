@@ -432,18 +432,19 @@ public class GameSceneController implements Initializable {
 //        //TODO: spin roulette
 //        endRound();
 //    }
+    @FXML
     private void saveGame() {
         //TODO: check + disabple while betting
         FileChooser fileChooser = new FileChooser();
         fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML", Arrays.asList("xml")));
         fileChooser.setTitle("Save Roulette Game");
-        if (filePath == null || filePath.trim().isEmpty()) {
+        if (filePath != null && filePath.trim().isEmpty()) {
             fileChooser.setInitialDirectory(new File(filePath));
         }
         File XMLFile = fileChooser.showSaveDialog(primaryStage);
         new Thread(() -> {
             try {
-                XMLGame.setXMLGame(filePath, game);
+                XMLGame.setXMLGame(XMLFile.getAbsolutePath(), game);
             } catch (JAXBException ex) {
                 showError("cannot save XML, try again");
             }
