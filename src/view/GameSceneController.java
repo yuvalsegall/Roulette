@@ -31,7 +31,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -653,8 +652,8 @@ public class GameSceneController implements Initializable {
     @FXML
     private void placeBetClicked(ActionEvent event) {
         int[] nums = null;
-        
-        if(!numbers.isEmpty()){
+
+        if (!numbers.isEmpty()) {
             nums = new int[numbers.size()];
             int count = 0;
             for (Integer n : numbers) {
@@ -663,12 +662,12 @@ public class GameSceneController implements Initializable {
         }
         try {
             currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
-            amount.set(0);
         } catch (BadParamsException ex) {
             showError(ex.getMessage() + ", try again");
             //TODO: hide error somehow
         }
         currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
+        amount.set(0);
     }
 
     @FXML
@@ -720,7 +719,7 @@ public class GameSceneController implements Initializable {
     @FXML
     private void blackClicked(ActionEvent event) {
         betType = Bet.BetType.NOIR;
-        
+
 //        Button current = (Button)event.getSource();
 //        current.setOpacity(50L);
     }
@@ -742,35 +741,38 @@ public class GameSceneController implements Initializable {
         rows.put(4, 2);
         rows.put(5, 1);
     }
-    
-    public void buildPlayersPane (){
-        for(Player player : game.getGameDetails().getPlayers()){
+
+    public void buildPlayersPane() {
+        for (Player player : game.getGameDetails().getPlayers()) {
             PlayerViewWithAmount playerView = new PlayerViewWithAmount(player);
             playersPane.getChildren().add(playerView);
             playerView.getPlayerAmountLabel().textProperty().bind(
-                Bindings.concat(player.getPlayerDetails().getAmount(), "$")); 
-        }       
+                    Bindings.concat(player.getPlayerDetails().getAmount(), "$"));
+        }
     }
 
     private PlayerViewWithAmount getCurrentPlayerView() {
-        for(Node playerView : playersPane.getChildren()){
-            PlayerViewWithAmount view = (PlayerViewWithAmount)playerView;
-            if(view.getPlayer() == currentPlayer)
+        for (Node playerView : playersPane.getChildren()) {
+            PlayerViewWithAmount view = (PlayerViewWithAmount) playerView;
+            if (view.getPlayer() == currentPlayer) {
                 return view;
+            }
         }
         return null;
     }
 
     private void clearButtons() {
-        for(Node node : tableGridPane.getChildren())
-            if(node instanceof ChipForTable)
+        for (Node node : tableGridPane.getChildren()) {
+            if (node instanceof ChipForTable) {
                 tableGridPane.getChildren().remove(node);
+            }
+        }
     }
 
     private void addBetOnTable(ActionEvent event) {
         ChipForTable newChip = new ChipForTable(amount.getValue().toString() + '$');
-        Button initiatingButton = (Button)event.getSource();
-        AnchorPane parent = (AnchorPane)initiatingButton.getParent();
+        Button initiatingButton = (Button) event.getSource();
+        AnchorPane parent = (AnchorPane) initiatingButton.getParent();
         parent.getChildren().add(newChip);
     }
 }
