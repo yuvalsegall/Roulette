@@ -15,7 +15,6 @@ import java.io.File;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
@@ -25,10 +24,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -184,7 +180,7 @@ public class PropertiesSceneController implements Initializable {
             Platform.runLater(() -> {
                 try {
                     initiateXMLGame(XMLFile);
-                    filePath=XMLFile.getPath();
+                    filePath = XMLFile.getPath();
                     finishedInit.set(true);
                 } catch (XmlException | NumOfPlayersException | OutOfRangeException | BadParamsException | JAXBException | NumOfHumanPlayersException ex) {
                     showError(ex.getMessage());
@@ -352,10 +348,12 @@ public class PropertiesSceneController implements Initializable {
     }
 
     private Boolean popupDialog(String title, String content) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.get() == ButtonType.OK;
+//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//        alert.setTitle(title);
+//        alert.setContentText(content);
+//        Optional<ButtonType> result = alert.showAndWait();
+//        return result.get() == ButtonType.OK;
+        //TODO return notes
+        return false;
     }
 }
