@@ -738,20 +738,33 @@ public class GameSceneController implements Initializable {
         AnchorPane anchor00 = new AnchorPane();
         Button newbutton0 = new Button();
         Button newbutton00 = new Button();
-//        newbutton0.setOpacity(0);
-//        newbutton00.setOpacity(0);
+
         //TODO: is 0 / 00 numbers bet?
-        newbutton0.setOnAction((e) -> numberButtonClicked(e));
-        newbutton00.setOnAction((e) -> numberButtonClicked(e));
+        setButtonProperties(newbutton0);
+        setButtonProperties(newbutton00);
+        setButtonToAnchor(newbutton0);
+        setButtonToAnchor(newbutton00);
         anchor0.getChildren().add(newbutton0);
         anchor00.getChildren().add(newbutton00);
+        setAnchorProperties(anchor0);
+        setAnchorProperties(anchor00);
         tableGridPane.add(anchor0, 1, 4, 1, 2);
-        AnchorPane.setTopAnchor(newbutton0, 0.0);
-        AnchorPane.setLeftAnchor(newbutton0, 0.0);
-        AnchorPane.setRightAnchor(newbutton0, 0.0);
-        AnchorPane.setBottomAnchor(newbutton0, 0.0);
-//        anchor0.setScaleShape(true);
-//        newbutton0.setScaleShape(true);
         tableGridPane.add(anchor00, 1, 1, 1, 2);
+    }
+    
+    private void setButtonProperties(Button button){
+        button.setOpacity(0);
+        button.setOnAction((e) -> numberButtonClicked(e));
+    }
+    
+    private void setAnchorProperties (AnchorPane anchor){
+        anchor.prefWidthProperty().set(46.0);
+    }
+    
+    private void setButtonToAnchor(Button button){
+         AnchorPane.setTopAnchor(button, 0.0);
+        AnchorPane.setLeftAnchor(button, 0.0);
+        AnchorPane.setRightAnchor(button, 0.0);
+        AnchorPane.setBottomAnchor(button, 0.0);       
     }
 }
