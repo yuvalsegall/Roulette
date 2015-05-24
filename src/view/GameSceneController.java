@@ -713,4 +713,17 @@ public class GameSceneController implements Initializable {
         betType = Bet.BetType.SNAKE;
         addBetOnTable(event);
     }
+
+    public GridPane getTableGridPane() {
+        return tableGridPane;
+    }
+
+    public ImageView getRouletteImageView() {
+        return rouletteImageView;
+    }
+
+    public ImageView getTableImageView() {
+        return tableImageView;
+    }
+    
 }
