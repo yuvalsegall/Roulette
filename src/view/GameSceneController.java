@@ -780,6 +780,7 @@ public class GameSceneController implements Initializable {
         }
         currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
         amount.set(0);
+        numbers.clear();
     }
 
     @FXML
