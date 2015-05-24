@@ -498,10 +498,12 @@ public class GameSceneController implements Initializable {
     @FXML
     private void numberButtonClicked(ActionEvent event) {
         Node node = ((Button) event.getSource()).getParent();
-        int row = GridPane.getRowIndex(node);
+        int row = GridPane.getRowIndex(node);     
         int col = GridPane.getColumnIndex(node);
-        int myCol = (col - COLS_TO_FIRST_NUMBER) / 2;
-        int myRow = (rowsReverse.get(row)) / 2;
+        int myCol = col - COLS_TO_FIRST_NUMBER;
+        int myRow = rowsReverse.get(row);
+        myCol -= myCol/2;
+        myRow -= myRow/2;
 
         if (col % 2 == 0) {
             if (row % 2 == 0) {
