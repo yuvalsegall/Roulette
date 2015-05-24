@@ -745,7 +745,7 @@
                                           <Image url="@../resources/snake.png" />
                                        </image>
                                     </ImageView>
-                                    <Button fx:id="buttonSnake" mnemonicParsing="false" onAction="#numberButtonClicked" opacity="0.0" prefHeight="81.0" prefWidth="90.0" />
+                                    <Button fx:id="buttonSnake" mnemonicParsing="false" onAction="#snakeClicked" opacity="0.0" prefHeight="81.0" prefWidth="90.0" />
                                  </children>
                               </StackPane>
                            </children>
@@ -871,8 +871,6 @@
                                  </children>
                               </GridPane>
                               <Label text="Bet Amount:" textFill="WHITE" GridPane.rowIndex="1" />
-                              <Label text="Current bet:" textFill="WHITE" />
-                              <Label fx:id="betNameLabel" text="betName" textFill="WHITE" GridPane.columnIndex="1" />
                               <Label fx:id="AmountLabel" text="ammount" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Button fx:id="FinishBettingButton" mnemonicParsing="false" onAction="#finishedBettingClicked" text="Finish Betting" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <GridPane GridPane.rowIndex="3">
@@ -885,7 +883,6 @@
                                  </rowConstraints>
                                  <children>
                                     <Button fx:id="clearAmmountButton" mnemonicParsing="false" onAction="#clearAmountClicked" text="Clear" />
-                                    <Button fx:id="placeBetButton" mnemonicParsing="false" onAction="#placeBetClicked" text="Place Bet" GridPane.columnIndex="1" />
                                  </children>
                               </GridPane>
                            </children>

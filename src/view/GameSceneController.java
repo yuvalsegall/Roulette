@@ -313,13 +313,9 @@ public class GameSceneController implements Initializable {
     @FXML
     private Button plus10Button;
     @FXML
-    private Label betNameLabel;
-    @FXML
     private Button FinishBettingButton;
     @FXML
     private Button clearAmmountButton;
-    @FXML
-    private Button placeBetButton;
     @FXML
     private Button buttonSnake;
     @FXML
@@ -388,7 +384,7 @@ public class GameSceneController implements Initializable {
     }
 
     public Player getNextPlayer(Player player) {
-        return game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer)) % game.getGameDetails().getPlayers().size() + 1);
+        return game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
     }
 
     public Stage getPrimaryStage() {
@@ -461,7 +457,6 @@ public class GameSceneController implements Initializable {
         }).forEach((player) -> {
             player.getPlayerDetails().setBets(null);
         });
-        clearButtons();
     }
 
 //    private void placeBets(Player.PlayerDetails player) {
@@ -643,31 +638,11 @@ public class GameSceneController implements Initializable {
             currentPlayer = getNextPlayer(currentPlayer);
         }
         currentBets = new ArrayList<>();
+        clearChips();
     }
 
     @FXML
     private void clearAmountClicked(ActionEvent event) {
-        amount.set(0);
-    }
-
-    @FXML
-    private void placeBetClicked(ActionEvent event) {
-        int[] nums = null;
-
-        if (!numbers.isEmpty()) {
-            nums = new int[numbers.size()];
-            int count = 0;
-            for (Integer n : numbers) {
-                nums[count++] = n;
-            }
-        }
-        try {
-            currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
-        } catch (BadParamsException ex) {
-            showError(ex.getMessage() + ", try again");
-            //TODO: hide error somehow
-        }
-        currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
         amount.set(0);
     }
 
@@ -770,7 +745,7 @@ public class GameSceneController implements Initializable {
         return null;
     }
 
-    private void clearButtons() {
+    private void clearChips() {
         for (Node node : tableGridPane.getChildren()) {
             if (node instanceof ChipForTable) {
                 tableGridPane.getChildren().remove(node);
@@ -783,5 +758,32 @@ public class GameSceneController implements Initializable {
         Button initiatingButton = (Button) event.getSource();
         AnchorPane parent = (AnchorPane) initiatingButton.getParent();
         parent.getChildren().add(newChip);
+        placeBet();
+    }
+
+    private void placeBet() {
+        int[] nums = null;
+
+        if (!numbers.isEmpty()) {
+            nums = new int[numbers.size()];
+            int count = 0;
+            for (Integer n : numbers) {
+                nums[count++] = n;
+            }
+        }
+        try {
+            currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
+        } catch (BadParamsException ex) {
+            showError(ex.getMessage() + ", try again");
+            //TODO: hide error somehow
+        }
+        currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
+        amount.set(0);
+    }
+
+    @FXML
+    private void snakeClicked(ActionEvent event) {
+        betType = Bet.BetType.SNAKE;
+        addBetOnTable(event);        
     }
 }

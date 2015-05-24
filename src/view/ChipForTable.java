@@ -20,8 +20,11 @@ public class ChipForTable extends StackPane{
     
     public ChipForTable(String value){
         this.value = new Label();
+        //TODO: create "chipAmountLabel" in CSS
+        this.value.getStyleClass().add("chipAmountLabel");
         this.imageView = new ImageView(imageUrl);
         this.value.textProperty().set(value);
         this.getChildren().addAll(this.imageView, this.value);
+        this.imageView.setX(USE_PREF_SIZE);
     }
 }
