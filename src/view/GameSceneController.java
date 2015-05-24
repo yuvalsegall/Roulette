@@ -859,22 +859,16 @@ public class GameSceneController implements Initializable {
         return exitGame;
     }
 
+    @FXML
     private void onNewGame(ActionEvent event) {
         //TODO promt massage are you sure, if yes:
         newGame.set(true);
     }
 
+    @FXML
     private void onExitGame(ActionEvent event) {
         //TODO promt massage are you sure, if yes:
         exitGame.set(true);
-    }
-
-    @FXML
-    private void newGame(ActionEvent event) {
-    }
-
-    @FXML
-    private void loadGame(ActionEvent event) {
     }
 
 }
