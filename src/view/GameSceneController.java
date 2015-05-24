@@ -378,7 +378,6 @@ public class GameSceneController implements Initializable {
         }
     }
 
-    //TODOL program must run after init!
     public void setCurrnetPlayer(Player player) {
         currentPlayer = player;
     }

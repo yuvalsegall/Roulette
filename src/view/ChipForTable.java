@@ -25,6 +25,5 @@ public class ChipForTable extends StackPane{
         this.imageView = new ImageView(imageUrl);
         this.value.textProperty().set(value);
         this.getChildren().addAll(this.imageView, this.value);
-        this.imageView.setX(USE_PREF_SIZE);
     }
 }
