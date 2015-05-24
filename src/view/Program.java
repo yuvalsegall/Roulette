@@ -67,6 +67,7 @@ public class Program extends Application {
     }
 
     private GameSceneController getGameController(FXMLLoader fxmlLoader, final Stage primaryStage) {
+        //TODO: set table type
         GameSceneController gameSceneController = (GameSceneController) fxmlLoader.getController();
         gameSceneController.setGame(game);
         gameSceneController.setFilePath(filePath);

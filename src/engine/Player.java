@@ -3,6 +3,8 @@ package engine;
 import engine.bets.Bet;
 import java.math.BigInteger;
 import java.util.List;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  *
@@ -34,12 +36,14 @@ public class Player implements Comparable<Player> {
         private BigInteger money;
         private List<Bet> bets;
         private Boolean isActive;
+        private IntegerProperty amount;
 
         public PlayerDetails(String name, Boolean isHuman, BigInteger money) {
             this.playerID = idCounter++;
             this.name = name;
             this.isHuman = isHuman;
-            this.money = money;
+            this.amount = new SimpleIntegerProperty();
+            setMoney(money);
             this.isActive = true;
         }
 
@@ -77,6 +81,7 @@ public class Player implements Comparable<Player> {
 
         public void setMoney(BigInteger money) {
             this.money = money;
+            this.amount.setValue(money);
         }
 
         public List<Bet> getBets() {
@@ -95,5 +100,9 @@ public class Player implements Comparable<Player> {
             this.isActive = isActive;
         }
 
+        public IntegerProperty getAmount() {
+            return amount;
+        }
+        
     }
 }

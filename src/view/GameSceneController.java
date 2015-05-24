@@ -742,7 +742,7 @@ public class GameSceneController implements Initializable {
             PlayerViewWithAmount playerView = new PlayerViewWithAmount(player);
             playersPane.getChildren().add(playerView);
             playerView.getPlayerAmountLabel().textProperty().bind(
-                Bindings.concat(player.getPlayerDetails().getMoney(), "$")); 
+                Bindings.concat(player.getPlayerDetails().getAmount(), "$")); 
         }       
     }
 
