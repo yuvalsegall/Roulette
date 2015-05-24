@@ -745,16 +745,13 @@ public class GameSceneController implements Initializable {
     }
 
     private void clearChips() {
-        for (Node node : tableGridPane.getChildren()) {
-            if (node instanceof AnchorPane){
-                AnchorPane parent = (AnchorPane)node;
-                for(Node child : parent.getChildren()){
-                    if (child instanceof ChipForTable) {
-                        parent.getChildren().remove(child);
-                    }
+        tableGridPane.getChildren().stream().filter((node) -> (node instanceof AnchorPane)).map((node) -> (AnchorPane) node).forEach((parent) -> {
+            for (int i = 0; i < parent.getChildren().size(); i++) {
+                if (parent.getChildren().get(i) instanceof ChipForTable) {
+                    parent.getChildren().remove(i);
                 }
             }
-        }
+        });
     }
 
     private void addBetOnTable(ActionEvent event) {
@@ -788,6 +785,6 @@ public class GameSceneController implements Initializable {
     @FXML
     private void snakeClicked(ActionEvent event) {
         betType = Bet.BetType.SNAKE;
-        addBetOnTable(event);        
+        addBetOnTable(event);
     }
 }
