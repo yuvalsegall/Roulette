@@ -31,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -640,6 +641,7 @@ public class GameSceneController implements Initializable {
             currentPlayer = getNextPlayer(currentPlayer);
         }
         currentBets = new ArrayList<>();
+        clearButtons();
     }
 
     @FXML
@@ -661,7 +663,6 @@ public class GameSceneController implements Initializable {
         try {
             currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
             amount.set(0);
-            clearButtons();
         } catch (BadParamsException ex) {
             showError(ex.getMessage() + ", try again");
             //TODO: hide error somehow
@@ -712,13 +713,15 @@ public class GameSceneController implements Initializable {
     @FXML
     private void redClicked(ActionEvent event) {
         betType = Bet.BetType.ROUGE;
+        addBetOnTable(event);
     }
 
     @FXML
     private void blackClicked(ActionEvent event) {
         betType = Bet.BetType.NOIR;
-        Button current = (Button)event.getSource();
-        current.setOpacity(50L);
+        
+//        Button current = (Button)event.getSource();
+//        current.setOpacity(50L);
     }
 
     @FXML
@@ -759,7 +762,14 @@ public class GameSceneController implements Initializable {
 
     private void clearButtons() {
         for(Node node : tableGridPane.getChildren())
-            if(node instanceof Button)
-                ((Button)node).setOpacity(0);
+            if(node instanceof ChipForTable)
+                tableGridPane.getChildren().remove(node);
+    }
+
+    private void addBetOnTable(ActionEvent event) {
+        ChipForTable newChip = new ChipForTable(amount.getValue().toString() + '$');
+        Button initiatingButton = (Button)event.getSource();
+        AnchorPane parent = (AnchorPane)initiatingButton.getParent();
+        parent.getChildren().add(newChip);
     }
 }
