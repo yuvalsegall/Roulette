@@ -19,6 +19,7 @@ public class PlayerViewWithAmount extends PlayerView{
     
     public PlayerViewWithAmount(Player player) {
         super(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman());
+        this.player = player;
         playerAmountLabel = new Label();
         getChildren().addAll(playerAmountLabel);
     }
