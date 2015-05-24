@@ -579,11 +579,11 @@ public class GameSceneController implements Initializable {
 
     private void moveToNextHumanPlayer() {
         do {
-            currentBets = new ArrayList<>();
             clearChips();
             if (updateCurrentPlayerReturnIfLast()) {
                 endRound();
             }
+            currentBets = new ArrayList<>();
             if (!currentPlayer.getPlayerDetails().getIsHuman()) {
                 computerPlay();
             }
