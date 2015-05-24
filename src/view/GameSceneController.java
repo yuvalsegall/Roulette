@@ -353,6 +353,10 @@ public class GameSceneController implements Initializable {
     private ImageView tableImageView;
     @FXML
     private ImageView rouletteImageView;
+    @FXML
+    private AnchorPane basketAnchor1;
+    @FXML
+    private AnchorPane basketAnchor2;
 
     /**
      * Initializes the controller class.
@@ -726,9 +730,16 @@ public class GameSceneController implements Initializable {
         tableImageView.setImage(new Image(AMERICAN_TABLE_IMAGE_PATH));
         rouletteImageView.setImage(new Image(AMERICAN_WHEEL_IMAGE_PATH));
         removeFrenchZero();
+        removeFrenchBaskets();
         addAmericanZeros();
+        addAmericanBasket();
     }
 
+    private void removeFrenchBaskets() {
+        tableGridPane.getChildren().remove(basketAnchor1);
+        tableGridPane.getChildren().remove(basketAnchor2);
+    }
+        
     private void removeFrenchZero() {
         tableGridPane.getChildren().remove(frenchZeroAnchor);
     }
@@ -739,7 +750,8 @@ public class GameSceneController implements Initializable {
         Button newbutton0 = new Button();
         Button newbutton00 = new Button();
 
-        //TODO: is 0 / 00 numbers bet?
+        newbutton0.setOnAction((e) -> zeroClicked(e));
+        newbutton00.setOnAction((e) -> doubleZeroClicked(e));
         setButtonProperties(newbutton0);
         setButtonProperties(newbutton00);
         setButtonToAnchor(newbutton0);
@@ -754,7 +766,6 @@ public class GameSceneController implements Initializable {
     
     private void setButtonProperties(Button button){
         button.setOpacity(0);
-        button.setOnAction((e) -> numberButtonClicked(e));
     }
     
     private void setAnchorProperties (AnchorPane anchor){
@@ -766,5 +777,23 @@ public class GameSceneController implements Initializable {
         AnchorPane.setLeftAnchor(button, 0.0);
         AnchorPane.setRightAnchor(button, 0.0);
         AnchorPane.setBottomAnchor(button, 0.0);       
+    }
+
+    @FXML
+    private void zeroClicked(ActionEvent event) {
+        betType = Bet.BetType.STRAIGHT;
+        numbers.add(0);
+        addBetOnTable(event);
+    }
+    
+    private void doubleZeroClicked(ActionEvent event) {
+        betType = Bet.BetType.STRAIGHT;
+        //TODO: check if 00 is 37
+        numbers.add(37);
+        addBetOnTable(event);
+    }    
+
+    private void addAmericanBasket() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

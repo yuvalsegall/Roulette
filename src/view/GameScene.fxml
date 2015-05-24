@@ -90,7 +90,7 @@
                            <children>
                               <AnchorPane fx:id="frenchZeroAnchor" prefHeight="57.0" prefWidth="46.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="3">
                                  <children>
-                                    <Button fx:id="button0" mnemonicParsing="false" onAction="#numberButtonClicked" opacity="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+                                    <Button fx:id="button0" mnemonicParsing="false" onAction="#zeroClicked" opacity="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="28.0" prefWidth="23.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
@@ -108,12 +108,12 @@
                                     <Button fx:id="button1" mnemonicParsing="false" onAction="#numberButtonClicked" opacity="0.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="26.0" prefWidth="35.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                              <AnchorPane fx:id="basketAnchor1" prefHeight="26.0" prefWidth="35.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                  <children>
                                     <Button fx:id="button0_2_3" mnemonicParsing="false" onAction="#numberButtonClicked" opacity="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="26.0" prefWidth="35.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                              <AnchorPane fx:id="basketAnchor2" prefHeight="26.0" prefWidth="35.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4">
                                  <children>
                                     <Button fx:id="button0_1_2" mnemonicParsing="false" onAction="#numberButtonClicked" opacity="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                  </children>
