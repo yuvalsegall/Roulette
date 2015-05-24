@@ -51,7 +51,8 @@ public class Player implements Comparable<Player> {
             this.playerID = idCounter++;
             this.name = new String();
             this.isHuman = true;
-            this.money = null;
+            this.amount = new SimpleIntegerProperty();
+            setMoney(money);
             this.isActive = true;
         }
 
@@ -103,6 +104,6 @@ public class Player implements Comparable<Player> {
         public IntegerProperty getAmount() {
             return amount;
         }
-        
+
     }
 }
