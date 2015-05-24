@@ -313,8 +313,6 @@ public class GameSceneController implements Initializable {
     @FXML
     private Button FinishBettingButton;
     @FXML
-    private Button clearAmmountButton;
-    @FXML
     private Button buttonSnake;
     @FXML
     private Label messageLabel;
@@ -359,6 +357,8 @@ public class GameSceneController implements Initializable {
     private AnchorPane basketAnchor;
     @FXML
     private Button button0_2_3;
+    @FXML
+    private Button retireButton;
 
     /**
      * Initializes the controller class.
@@ -591,7 +591,6 @@ public class GameSceneController implements Initializable {
         FinishBettingButton.setDisable(game.getGameDetails().getMinWages() == 1);
     }
 
-    @FXML
     private void clearAmountClicked(ActionEvent event) {
         amount.set(0);
     }
@@ -914,5 +913,9 @@ public class GameSceneController implements Initializable {
         rt.setAutoReverse(false);
 
         rt.play();
+    }
+
+    @FXML
+    private void onRetire(ActionEvent event) {
     }
 }

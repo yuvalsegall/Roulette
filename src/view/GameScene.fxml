@@ -879,7 +879,7 @@
                                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                             <children>
-                                                <Button fx:id="clearAmmountButton" mnemonicParsing="false" onAction="#clearAmountClicked" text="Clear" />
+                                    <Button fx:id="retireButton" mnemonicParsing="false" onAction="#onRetire" text="Retire" GridPane.columnIndex="1" />
                                             </children>
                                         </GridPane>
                                     </children>
