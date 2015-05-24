@@ -4,7 +4,7 @@
 		<xjc-options>
 		</xjc-options>
 		<schema-sources>
-			<schema-source location='xml-resources/jaxb/JAXB/roulette.xsd' origLocation='../../Dropbox/Projects/Java/XML and XSD v1.1/roulette.xsd'/>
+			<schema-source location='xml-resources/jaxb/JAXB/roulette.xsd' origLocation='src/resources/roulette.xsd'/>
 		</schema-sources>
 		<bindings>
 		</bindings>
