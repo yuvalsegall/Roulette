@@ -1,12 +1,6 @@
 package view;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 import engine.Game;
-import engine.Table;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -68,17 +62,10 @@ public class Program extends Application {
     }
 
     private GameSceneController getGameController(FXMLLoader fxmlLoader, final Stage primaryStage) {
-        //TODO: set table type
         GameSceneController gameSceneController = (GameSceneController) fxmlLoader.getController();
         gameSceneController.setGame(game);
         gameSceneController.setFilePath(filePath);
         gameSceneController.setPrimaryStage(primaryStage);
-        
-//        gameSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
-//            if (newValue) {
-//                primaryStage.setScene(gameScene);
-//            }
-//        });
         return gameSceneController;
     }
 
