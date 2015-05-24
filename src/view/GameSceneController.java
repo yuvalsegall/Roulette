@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import engine.BadParamsException;
@@ -326,6 +321,10 @@ public class GameSceneController implements Initializable {
     private GridPane tableGridPane;
     @FXML
     private AnchorPane anchor;
+    @FXML
+    private Label AmountLabel;
+    @FXML
+    private FlowPane playersPane;
 
     private Game game;
     private Player currentPlayer;
@@ -344,10 +343,6 @@ public class GameSceneController implements Initializable {
     private static final int[] COMP_BET_NUMBERS = null;
 
     private boolean isErrorMessageShown;
-    @FXML
-    private Label AmountLabel;
-    @FXML
-    private FlowPane playersPane;
 
     /**
      * Initializes the controller class.
@@ -410,22 +405,9 @@ public class GameSceneController implements Initializable {
         this.filePath = filePath;
     }
 
-//    private void playRound() {
-//        for (Player.PlayerDetails player : game.getGameDetails().getPlayersDetails()) {
-//            //TODO:player needs button to retire
-//            if (player.getIsActive()) {
-//                //TODO: current player name in bold
-//
-//                if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) {
-////                    //TODO: message player is broke... changing to next player
-//                } else {
-//                    placeBets(player);
-//                }
-//            }
-//        }
-//        //TODO: spin roulette
-//        endRound();
-//    }
+    //TODO:player needs button to retire
+    //TODO: message player is broke... changing to next player:if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) 
+    //TODO: spin roulette
     @FXML
     private void saveGame() {
         //TODO: check + disabple while betting
@@ -458,69 +440,7 @@ public class GameSceneController implements Initializable {
         });
     }
 
-//    private void placeBets(Player.PlayerDetails player) {
-//        Bet.BetType betType;
-//        BigInteger betMoney;
-//        int[] numbers = null;
-//        int i;
-//        List<Bet> bets;
-//
-//        if (player.getBets() == null || player.getBets().isEmpty()) {
-//            bets = new ArrayList<>();
-//
-//            if (game.getGameDetails().getMinWages() == 0 && player.getIsHuman()) {
-//                //TODO check if 1 than disable finish
-//                if (!ConsoleUI.getYesNoAnswer("Do you want to place a bet?")) {
-//                    return;
-//                }
-//            }
-//            i = 0;
-//        } else {
-//            bets = player.getBets();
-//            i = bets.size();
-//        }
-//        while (i++ <= game.getGameDetails().getMaxWages()) {
-//            if (player.getIsHuman()) {
-//                betType = ConsoleUI.getBetTypeFromUser();
-//                betMoney = ConsoleUI.getBetMoneyFromUser();
-//                while (betMoney.compareTo(player.getMoney()) > 0 || betMoney.compareTo(BigInteger.ZERO) == 0) {
-//                    if (betMoney.compareTo(BigInteger.ZERO) == 0) {
-//                        ConsoleUI.printToUser("Cannot bet 0 money");
-//                    } else {
-//                        ConsoleUI.printToUser("You can't bet on more money that you owned, try again");
-//                    }
-//                    betMoney = ConsoleUI.getBetMoneyFromUser();
-//                }
-//                numbers = betType.isAskUserForNumbers() ? ConsoleUI.getBetNumbersFromUser(betType, game.getTable().getTableType()) : null;
-//
-//            } else {
-//                betType = COMP_BET_TYPE;
-//                betMoney = BigInteger.valueOf(COMP_BET_MONEY);
-//                numbers = COMP_BET_NUMBERS;
-//                if (numbers == null || numbers.length == 0) {
-//                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType);
-//                } else {
-//                    ConsoleUI.printToUser(player.getName() + " bet " + betMoney + "$ on: " + betType + " with the numbers:" + Arrays.toString(numbers));
-//                }
-//            }
-//            try {
-//                bets.add(Bet.makeBet(betType, betMoney, numbers, game.getTable().getTableType()));
-//            } catch (BadParamsException ex) {
-//                ConsoleUI.printToUser(ex.getMessage() + ", try again");
-//                i--;
-//                continue;
-//            }
-//            player.setMoney(player.getMoney().add(betMoney.negate()));
-//            if (player.getIsHuman() && game.getGameDetails().getMaxWages() != i && player.getMoney().compareTo(BigInteger.ZERO) > 0) {
-//                if (ConsoleUI.getIsFinishedBettingFromUser()) {
-//                    break;
-//                }
-//            } else {
-//                break;
-//            }
-//        }
-//        player.setBets(bets);
-//    }
+    //TODO check if 1 than disable finish: if (game.getGameDetails().getMinWages() == 0 && player.getIsHuman()) {
     private void retirePlayer(Player.PlayerDetails player) {
         player.setIsActive(Boolean.FALSE);
     }
@@ -726,12 +646,12 @@ public class GameSceneController implements Initializable {
     }
 
     public void buildPlayersPane() {
-        for (Player player : game.getGameDetails().getPlayers()) {
+        game.getGameDetails().getPlayers().stream().forEach((player) -> {
             PlayerViewWithAmount playerView = new PlayerViewWithAmount(player);
             playersPane.getChildren().add(playerView);
             playerView.getPlayerAmountLabel().textProperty().bind(
                     Bindings.concat(player.getPlayerDetails().getAmount(), "$"));
-        }
+        });
     }
 
     private PlayerViewWithAmount getCurrentPlayerView() {
