@@ -7,7 +7,6 @@ package view;
 
 import engine.Player;
 import javafx.scene.control.Label;
-import javafx.scene.text.FontWeight;
 
 /**
  *
@@ -15,7 +14,7 @@ import javafx.scene.text.FontWeight;
  */
 public class PlayerViewWithAmount extends PlayerView{
     private Label playerAmountLabel;
-    private Player player;
+    private final Player player;
     
     public PlayerViewWithAmount(Player player) {
         super(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman());
@@ -30,10 +29,14 @@ public class PlayerViewWithAmount extends PlayerView{
     }
     
     public void setIsBold(Boolean isBold){
-        if(isBold)
+        if(isBold){
             playerAmountLabel.getStyleClass().add("boldLabel");
-        else
+            getName().getStyleClass().add("boldLabel");
+        }
+        else{
             playerAmountLabel.getStyleClass().remove("boldLabel");
+            getName().getStyleClass().remove("boldLabel");
+        }
     }
 
     public Player getPlayer() {
