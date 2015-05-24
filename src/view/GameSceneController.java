@@ -388,7 +388,6 @@ public class GameSceneController implements Initializable {
         }
         buildPlayersPane();
         moveToNextHumanPlayer();
-        ballPossitionLabel.textProperty().set("");
     }
 
     public Boolean updateCurrentPlayerReturnIfLast() {
@@ -397,7 +396,7 @@ public class GameSceneController implements Initializable {
         }
         currentPlayer = currentPlayer == null ? game.getGameDetails().getPlayers().get(0) : game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
         getCurrentPlayerView().setIsBold(true);
-        return currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size()-1));
+        return currentPlayer.equals(game.getGameDetails().getPlayers().get(0));
     }
 
     public Stage getPrimaryStage() {
@@ -450,7 +449,6 @@ public class GameSceneController implements Initializable {
 
     private void endRound() {
         spinRoulette();
-        updateBallPosLabel();
         game.getGameDetails().getPlayers().stream().map((player) -> {
             if (player.getPlayerDetails().getBets() != null) {
                 player.getPlayerDetails().getBets().stream().forEach((bet) -> {
@@ -910,16 +908,11 @@ public class GameSceneController implements Initializable {
 
     private void spinRoulette() {
         RotateTransition rt = new RotateTransition(Duration.millis(3000), rouletteImageView);
-        game.getTable().spinRoulette();
         rt.setByAngle(360);
         rt.setCycleCount(1);
         rt.setDuration(Duration.seconds(3));
         rt.setAutoReverse(false);
 
         rt.play();
-    }
-    
-    private void updateBallPosLabel(){
-        ballPossitionLabel.textProperty().set("Ball on: " + game.getTable().getCurrentBallPosition().getValue());
     }
 }
