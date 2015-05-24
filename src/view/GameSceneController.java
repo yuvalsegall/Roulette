@@ -426,7 +426,6 @@ public class GameSceneController implements Initializable {
     //TODO: spin roulette
     @FXML
     private void saveGame() {
-        //TODO: check + disabple while betting
         FileChooser fileChooser = new FileChooser();
         fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML", Arrays.asList("xml")));
         fileChooser.setTitle("Save Roulette Game");
