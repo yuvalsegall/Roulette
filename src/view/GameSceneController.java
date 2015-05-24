@@ -314,7 +314,6 @@ public class GameSceneController implements Initializable {
     private Button plus10Button;
     @FXML
     private Label betNameLabel;
-    private Label AmmountLabel;
     @FXML
     private Button FinishBettingButton;
     @FXML
@@ -374,6 +373,7 @@ public class GameSceneController implements Initializable {
     }
 
     public void init() {
+        buildPlayersPane();
         setCurrnetPlayer(game.getGameDetails().getPlayers().get(0));
         while (!currentPlayer.getPlayerDetails().getIsHuman()) {
             computerPlay();
