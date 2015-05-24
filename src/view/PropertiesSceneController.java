@@ -25,7 +25,6 @@ import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -111,12 +110,10 @@ public class PropertiesSceneController implements Initializable {
         gameNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });
-        tableTypeComboBox.selectionModelProperty().addListener(new ChangeListener<ComboBox>() {
-            @Override
-            public void changed(ObservableValue<? extends ComboBox> observable, ComboBox oldValue, ComboBox newValue) {
-                onGameNameOrTableTypeOrPlayersChange();
-            }//TODO work???
-        });
+//        tableTypeComboBox.buttonCellProperty().addListener((ObservableValue<? extends Object> observable, Object oldValue, Object newValue) -> {
+//            onGameNameOrTableTypeOrPlayersChange();
+//            //TODO work???
+//        });
         isPlayersCountCheckBad.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });

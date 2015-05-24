@@ -5,7 +5,6 @@
  */
 package engine;
 
-import engine.Table.TableType;
 import engine.bets.Bet;
 import engine.bets.Bet.BetType;
 import static engine.bets.Bet.BetType.BASKET;
@@ -57,7 +56,7 @@ public class XMLGame {
             Roulette xmlGame = (Roulette) jaxbUnmarshaller.unmarshal(XMLFile);
 
             String gameName = xmlGame.getName();
-            Table.TableType tableType = xmlGame.getTableType().equals(TableType.AMERICAN) ? Table.TableType.AMERICAN : Table.TableType.FRENCH;
+            Table.TableType tableType = xmlGame.getTableType().equals(generated.TableType.AMERICAN) ? Table.TableType.AMERICAN : Table.TableType.FRENCH;
             int minWages = xmlGame.getMinBetsPerPlayer();
             int maxWages = xmlGame.getMaxBetsPerPlayer();
             int initalSumOfMoney = xmlGame.getInitSumOfMoney();
