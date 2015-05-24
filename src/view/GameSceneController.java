@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
+import javafx.animation.RotateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -726,7 +727,6 @@ public class GameSceneController implements Initializable {
                 currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
             } catch (BadParamsException ex) {
                 showError(ex.getMessage() + ", try again");
-                //TODO: hide error somehow
             }
             currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
             amount.set(0);
@@ -900,5 +900,15 @@ public class GameSceneController implements Initializable {
 
     private boolean playerHasMoneyForBet() {
         return currentPlayer.getPlayerDetails().getMoney().intValue() >= amount.intValue();
+    }
+    
+    private void spinRoulette (){
+        RotateTransition rt = new RotateTransition(Duration.millis(3000), rouletteImageView);
+        rt.setByAngle(360);
+        rt.setCycleCount(1);
+        rt.setDuration(Duration.seconds(3));
+        rt.setAutoReverse(false);
+
+        rt.play();
     }
 }
