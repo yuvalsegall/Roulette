@@ -23,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -343,6 +344,10 @@ public class GameSceneController implements Initializable {
     private static final int[] COMP_BET_NUMBERS = null;
 
     private boolean isErrorMessageShown;
+    @FXML
+    private ImageView rouletteImageView;
+    @FXML
+    private ImageView tableImageView;
 
     /**
      * Initializes the controller class.

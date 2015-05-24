@@ -6,6 +6,7 @@ package view;
  * and open the template in the editor.
  */
 import engine.Game;
+import engine.Table;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -72,6 +73,9 @@ public class Program extends Application {
         gameSceneController.setGame(game);
         gameSceneController.setFilePath(filePath);
         gameSceneController.setPrimaryStage(primaryStage);
+        if(game.getTable().getTableType() == Table.TableType.FRENCH){
+            //gameSceneController.
+        }
 //        gameSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
 //            if (newValue) {
 //                primaryStage.setScene(gameScene);

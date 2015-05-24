@@ -37,7 +37,7 @@
                <children>
                   <StackPane>
                      <children>
-                        <ImageView fitHeight="500.0" fitWidth="700.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="tableImageView" fitHeight="500.0" fitWidth="700.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../resources/table0.png" />
                            </image>
@@ -791,7 +791,7 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <ImageView fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" rotate="-0.0">
+                        <ImageView fx:id="rouletteImageView" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" rotate="-0.0">
                            <image>
                               <Image url="@../resources/roulette0_300.png" />
                            </image>
