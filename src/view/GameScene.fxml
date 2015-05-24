@@ -873,10 +873,10 @@
                                     </StackPane>
                                  </children>
                               </GridPane>
-                              <Label text="Bet Ammount:" textFill="WHITE" GridPane.rowIndex="1" />
+                              <Label text="Bet Amount:" textFill="WHITE" GridPane.rowIndex="1" />
                               <Label text="Current bet:" textFill="WHITE" />
                               <Label fx:id="betNameLabel" text="betName" textFill="WHITE" GridPane.columnIndex="1" />
-                              <Label fx:id="AmmountLabel" text="ammount" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="AmountLabel" text="ammount" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Button fx:id="FinishBettingButton" mnemonicParsing="false" onAction="#finishedBettingClicked" text="Finish Betting" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <GridPane GridPane.rowIndex="3">
                                  <columnConstraints>

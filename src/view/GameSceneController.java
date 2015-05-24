@@ -314,7 +314,6 @@ public class GameSceneController implements Initializable {
     private Button plus10Button;
     @FXML
     private Label betNameLabel;
-    @FXML
     private Label AmmountLabel;
     @FXML
     private Button FinishBettingButton;
@@ -351,7 +350,7 @@ public class GameSceneController implements Initializable {
 
     private boolean isErrorMessageShown;
     @FXML
-    private ImageView wheelImageView;
+    private Label AmountLabel;
 
     /**
      * Initializes the controller class.
@@ -362,8 +361,8 @@ public class GameSceneController implements Initializable {
         isErrorMessageShown = false;
         amount = new SimpleIntegerProperty();
         amount.set(0);
-        AmmountLabel.textProperty().bind(
-                Bindings.concat(amount.getValue(), "$"));
+        AmountLabel.textProperty().bind(
+                Bindings.concat(amount, "$"));
         setRowsHashMap(rowsReverse);
         //TODO: create player's list + amounts + connect amount with listeners
     }
@@ -608,7 +607,7 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void AddTwoClicked(ActionEvent event) {
-        amount.set(amount.get() + 2);
+        amount.set(amount.get()+ 2);
     }
 
     @FXML
