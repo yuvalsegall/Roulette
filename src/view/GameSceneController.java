@@ -12,10 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.beans.binding.Bindings;
@@ -491,7 +488,7 @@ public class GameSceneController implements Initializable {
 
         }
     }
-    
+
     private void hideError() {
         if (isErrorMessageShown) {
             FadeTransition animation = FadeTransitionBuilder.create()
@@ -713,12 +710,11 @@ public class GameSceneController implements Initializable {
     }
 
     private void placeBet() {
-        if(!playerHasMoneyForBet()){
+        if (!playerHasMoneyForBet()) {
             showError("You cannot place money you do not have");
             amount.set(0);
             numbers.clear();
-        }
-        else{
+        } else {
             int[] nums = null;
             if (!numbers.isEmpty()) {
                 nums = new int[numbers.size()];
@@ -736,7 +732,7 @@ public class GameSceneController implements Initializable {
             currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
             amount.set(0);
             numbers.clear();
-            FinishBettingButton.setDisable(false);            
+            FinishBettingButton.setDisable(false);
         }
     }
 
@@ -885,21 +881,23 @@ public class GameSceneController implements Initializable {
     @FXML
     private void onNewGame(ActionEvent event) {
         saveGame();
-//        newGame.set(popupDialog("New Game", "Are you sure you want to start a new game?"));
+        newGame.set(popupDialog("New Game", "Are you sure you want to start a new game?"));
     }
 
     @FXML
     private void onExitGame(ActionEvent event) {
-//        exitGame.set(popupDialog("Exit Game", "Are you sure you want to leave?"));
+        exitGame.set(popupDialog("Exit Game", "Are you sure you want to leave?"));
     }
 
-//    private Boolean popupDialog(String title, String content) {
+    private Boolean popupDialog(String title, String content) {
 //        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 //        alert.setTitle(title);
 //        alert.setContentText(content);
 //        Optional<ButtonType> result = alert.showAndWait();
 //        return result.get() == ButtonType.OK;
-//    }
+        //TODO return notes
+        return false;
+    }
 
     private boolean playerHasMoneyForBet() {
         return currentPlayer.getPlayerDetails().getMoney().intValue() >= amount.intValue();
