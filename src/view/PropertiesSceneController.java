@@ -110,10 +110,9 @@ public class PropertiesSceneController implements Initializable {
         gameNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });
-//        tableTypeComboBox.buttonCellProperty().addListener((ObservableValue<? extends Object> observable, Object oldValue, Object newValue) -> {
-//            onGameNameOrTableTypeOrPlayersChange();
-//            //TODO work???
-//        });
+        tableTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            onGameNameOrTableTypeOrPlayersChange();
+        });
         isPlayersCountCheckBad.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });
