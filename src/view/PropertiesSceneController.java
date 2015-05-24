@@ -184,7 +184,7 @@ public class PropertiesSceneController implements Initializable {
             Platform.runLater(() -> {
                 try {
                     initiateXMLGame(XMLFile);
-                    filePath = XMLFile.getPath();
+                    filePath=XMLFile.getPath();
                     finishedInit.set(true);
                 } catch (XmlException | NumOfPlayersException | OutOfRangeException | BadParamsException | JAXBException | NumOfHumanPlayersException ex) {
                     showError(ex.getMessage());

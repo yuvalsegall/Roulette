@@ -433,7 +433,7 @@ public class GameSceneController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML", Arrays.asList("xml")));
         fileChooser.setTitle("Save Roulette Game");
-        if (filePath != null && filePath.trim().isEmpty()) {
+        if (filePath != null && !filePath.trim().isEmpty()) {
             fileChooser.setInitialDirectory(new File(filePath));
         }
         File XMLFile = fileChooser.showSaveDialog(primaryStage);

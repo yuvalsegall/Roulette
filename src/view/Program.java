@@ -25,8 +25,10 @@ public class Program extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        game = new Game();
+        this.game = new Game();
         this.primaryStage = primaryStage;
+        this.filePath = new String();
+
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
         Parent gameRoot = getRoot(gameFxmlLoader);
         GameSceneController gameController = getGameController(gameFxmlLoader, primaryStage);
@@ -52,7 +54,7 @@ public class Program extends Application {
     private PropertiesSceneController getPropertiesController(FXMLLoader fxmlLoader, final Stage primaryStage, Scene nextScene, GameSceneController gameController) {
         PropertiesSceneController propertiesSceneController = (PropertiesSceneController) fxmlLoader.getController();
         propertiesSceneController.setGame(game);
-        filePath = propertiesSceneController.getFilePath();
+        propertiesSceneController.setFilePath(filePath);
         propertiesSceneController.setPrimaryStage(primaryStage);
         propertiesSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
             if (newValue) {
@@ -101,12 +103,10 @@ public class Program extends Application {
     }
 
     private void onNew() {
-        while (true) {
-            try {
-                start(primaryStage);
-            } catch (IOException ex) {
-                popupErrorDialog();
-            }
+        try {
+            start(primaryStage);
+        } catch (IOException ex) {
+            popupErrorDialog(null);
         }
     }
 
@@ -114,19 +114,20 @@ public class Program extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        while (true) {
-            try {
-                launch(args);
-            } catch (Exception ex) {
-                popupErrorDialog();
-            }
+        try {
+            launch(args);
+        } catch (Exception ex) {
+            popupErrorDialog(args);
         }
     }
 
-    private static void popupErrorDialog() {
+    private static void popupErrorDialog(String[] args) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setContentText("Something went wrong... lets start over...");
         alert.showAndWait();
+        if (args != null) {
+            launch(args);
+        }
     }
 }
