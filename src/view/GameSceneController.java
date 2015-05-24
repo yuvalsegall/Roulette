@@ -695,6 +695,7 @@ public class GameSceneController implements Initializable {
     }
 
     private void placeBet() {
+        //TODO: check if user has money for the bet!!!
         int[] nums = null;
 
         if (!numbers.isEmpty()) {
