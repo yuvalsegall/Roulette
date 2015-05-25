@@ -587,7 +587,7 @@ public class GameSceneController implements Initializable {
             if (!currentPlayer.getPlayerDetails().getIsHuman()) {
                 computerPlay();
             }
-        } while (!currentPlayer.getPlayerDetails().getIsHuman());
+        } while (!currentPlayer.getPlayerDetails().getIsHuman() || !currentPlayer.getPlayerDetails().getIsActive());
         FinishBettingButton.setDisable(game.getGameDetails().getMinWages() == 1);
     }
 
@@ -917,5 +917,8 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void onRetire(ActionEvent event) {
+        retirePlayer(currentPlayer.getPlayerDetails());
+        moveToNextHumanPlayer();
+
     }
 }
