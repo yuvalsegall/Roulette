@@ -396,7 +396,7 @@ public class GameSceneController implements Initializable {
         }
         currentPlayer = currentPlayer == null ? game.getGameDetails().getPlayers().get(0) : game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
         getCurrentPlayerView().setIsBold(true);
-        return currentPlayer.equals(game.getGameDetails().getPlayers().get(0));
+        return currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size()-1));
     }
 
     public Stage getPrimaryStage() {
