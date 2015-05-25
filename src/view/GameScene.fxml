@@ -757,7 +757,7 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <Label fx:id="messageLabel" text="Label" textFill="WHITE">
+                                <Label fx:id="messageLabel" styleClass="themeLabel" text="Label" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="18.0" />
                                     </font>
@@ -765,7 +765,7 @@
                                         <Insets left="10.0" />
                                     </GridPane.margin>
                                 </Label>
-                                <Label fx:id="ballPossitionLabel" text="ball pos" textFill="WHITE" GridPane.rowIndex="1">
+                                <Label fx:id="ballPossitionLabel" styleClass="themeLabel" text="ball pos" textFill="WHITE" GridPane.rowIndex="1">
                                     <GridPane.margin>
                                         <Insets left="10.0" />
                                     </GridPane.margin>
@@ -821,7 +821,7 @@
                                                                 <Image url="@../resources/yellow%20chip.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <Button fx:id="plus1Button" mnemonicParsing="false" onAction="#AddOneClicked" text="1" />
+                                                        <Button fx:id="plus1Button" mnemonicParsing="false" onAction="#AddOneClicked" opacity="0.0" text="1" />
                                                     </children>
                                                 </StackPane>
                                                 <StackPane GridPane.columnIndex="1">
@@ -831,7 +831,7 @@
                                                                 <Image url="@../resources/red%20chip.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <Button fx:id="plus2Button" mnemonicParsing="false" onAction="#AddTwoClicked" text="2" />
+                                                        <Button fx:id="plus2Button" mnemonicParsing="false" onAction="#AddTwoClicked" opacity="0.0" text="2" />
                                                     </children>
                                                 </StackPane>
                                             </children>
@@ -852,7 +852,7 @@
                                                                 <Image url="@../resources/white%20chip.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <Button fx:id="plus5Button" mnemonicParsing="false" onAction="#AddFiveClicked" text="5" />
+                                                        <Button fx:id="plus5Button" mnemonicParsing="false" onAction="#AddFiveClicked" opacity="0.0" text="5" />
                                                     </children>
                                                 </StackPane>
                                                 <StackPane GridPane.columnIndex="1">
@@ -862,13 +862,13 @@
                                                                 <Image url="@../resources/green%20chip.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <Button fx:id="plus10Button" mnemonicParsing="false" onAction="#AddTenClicked" text="10" />
+                                                        <Button fx:id="plus10Button" mnemonicParsing="false" onAction="#AddTenClicked" opacity="0.0" text="10" />
                                                     </children>
                                                 </StackPane>
                                             </children>
                                         </GridPane>
-                                        <Label text="Bet Amount:" textFill="WHITE" GridPane.rowIndex="1" />
-                                        <Label fx:id="AmountLabel" text="ammount" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                        <Label styleClass="themeLabel" text="Bet Amount:" textFill="WHITE" GridPane.rowIndex="1" />
+                                        <Label fx:id="AmountLabel" styleClass="themeLabel" text="ammount" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                         <Button fx:id="FinishBettingButton" mnemonicParsing="false" onAction="#finishedBettingClicked" text="Finish Betting" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                         <GridPane GridPane.rowIndex="3">
                                             <columnConstraints>

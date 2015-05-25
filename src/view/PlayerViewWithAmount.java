@@ -22,6 +22,8 @@ public class PlayerViewWithAmount extends PlayerView{
         this.player = player;
         playerAmountLabel = new Label();
         getChildren().addAll(playerAmountLabel);
+        getName().getStyleClass().add("themeLabel");
+        playerAmountLabel.getStyleClass().add("themeLabel");
     }
 
     public Label getPlayerAmountLabel() {
