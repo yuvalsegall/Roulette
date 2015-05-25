@@ -741,7 +741,11 @@
                                                         <Image url="@../resources/snake.png" />
                                                     </image>
                                                 </ImageView>
-                                                <Button fx:id="buttonSnake" mnemonicParsing="false" onAction="#snakeClicked" opacity="0.0" prefHeight="81.0" prefWidth="90.0" />
+                                    <AnchorPane fx:id="snakeAnchor">
+                                       <children>
+                                                      <Button fx:id="buttonSnake" layoutX="1.0" layoutY="3.0" mnemonicParsing="false" onAction="#snakeClicked" opacity="0.0" prefHeight="81.0" prefWidth="90.0" />
+                                       </children>
+                                    </AnchorPane>
                                             </children>
                                         </StackPane>
                                     </children>

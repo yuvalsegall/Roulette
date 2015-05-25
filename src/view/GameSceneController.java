@@ -359,6 +359,8 @@ public class GameSceneController implements Initializable {
     private Button button0_2_3;
     @FXML
     private Button retireButton;
+    @FXML
+    private AnchorPane snakeAnchor;
 
     /**
      * Initializes the controller class.
@@ -710,6 +712,12 @@ public class GameSceneController implements Initializable {
                 }
             }
         });
+        for(Node node : snakeAnchor.getChildren()){
+            if(node instanceof ChipForTable){
+                snakeAnchor.getChildren().remove(node);
+                break;
+            }
+        }
     }
 
     private void addBetOnTable(ActionEvent event) {
