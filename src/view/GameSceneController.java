@@ -337,9 +337,9 @@ public class GameSceneController implements Initializable {
     private final HashMap<Integer, Integer> rowsReverse = new HashMap();
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
-    private static final Bet.BetType COMP_BET_TYPE = Bet.BetType.NOIR;
-    private static final int COMP_BET_MONEY = 1;
-    private static final int[] COMP_BET_NUMBERS = null;
+//    private static final Bet.BetType COMP_BET_TYPE = Bet.BetType.NOIR;
+//    private static final int COMP_BET_MONEY = 1;//        TODO delete
+//    private static final int[] COMP_BET_NUMBERS = null;
     private final String AMERICAN_TABLE_IMAGE_PATH = "/resources/table00.png";
     private final String AMERICAN_WHEEL_IMAGE_PATH = "/resources/roulette00_300.png";
 
@@ -425,7 +425,6 @@ public class GameSceneController implements Initializable {
         this.filePath = filePath;
     }
 
-    //TODO: message player is broke... changing to next player:if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) 
     @FXML
     private void saveGame() {
         FileChooser fileChooser = new FileChooser();
@@ -470,6 +469,7 @@ public class GameSceneController implements Initializable {
 
     private void computerPlay() {
 //        try {
+//        TODO delete
 //            currentBets.add(Bet.makeBet(COMP_BET_TYPE, BigInteger.valueOf(COMP_BET_MONEY), COMP_BET_NUMBERS, game.getTable().getTableType()));
 //        } catch (BadParamsException ex) {
 //        }
@@ -548,7 +548,6 @@ public class GameSceneController implements Initializable {
                 betType = Bet.BetType.SPLIT;
             }
         }
-        messageLabel.setText(numbers.toString());
         addBetOnTable(event);
     }
 
