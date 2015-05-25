@@ -396,11 +396,12 @@ public class GameSceneController implements Initializable {
         if (currentPlayer != null && getCurrentPlayerView() != null) {
             getCurrentPlayerView().setIsBold(false);
         }
+        Boolean res = currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size() - 1));
         currentPlayer = currentPlayer == null ? game.getGameDetails().getPlayers().get(0) : game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
         if (getCurrentPlayerView() != null) {
             getCurrentPlayerView().setIsBold(true);
         }
-        return currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size() - 1));
+        return res;
     }
 
     public Stage getPrimaryStage() {
@@ -712,8 +713,8 @@ public class GameSceneController implements Initializable {
                 }
             }
         });
-        for(Node node : snakeAnchor.getChildren()){
-            if(node instanceof ChipForTable){
+        for (Node node : snakeAnchor.getChildren()) {
+            if (node instanceof ChipForTable) {
                 snakeAnchor.getChildren().remove(node);
                 break;
             }
