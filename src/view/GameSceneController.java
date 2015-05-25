@@ -386,6 +386,8 @@ public class GameSceneController implements Initializable {
         }
         buildPlayersPane();
         moveToNextHumanPlayer();
+        ballPossitionLabel.textProperty().set("");
+        messageLabel.textProperty().set("");
     }
 
     public Boolean updateCurrentPlayerReturnIfLast() {
