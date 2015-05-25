@@ -34,5 +34,16 @@
 }
 
 .boldLabel{
-    -fx-font: bold  40pt "Arial";
+    -fx-text-fill: white;
+    -fx-font: bold  20pt "Arial";
+}
+
+.themeLabel {
+    -fx-text-fill: white;
+    -fx-font: bold  15pt "Arial";
+}
+
+.button:hover {
+    -fx-background-color: white;
+    -fx-opacity: 0.3;
 }
