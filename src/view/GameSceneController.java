@@ -907,14 +907,20 @@ public class GameSceneController implements Initializable {
 
     private void spinRoulette() {
         RotateTransition rt = new RotateTransition(Duration.millis(3000), rouletteImageView);
+        game.getTable().spinRoulette();
         rt.setByAngle(360);
         rt.setCycleCount(1);
         rt.setDuration(Duration.seconds(3));
         rt.setAutoReverse(false);
 
         rt.play();
+        setBallPosLabel();
     }
 
+    private void setBallPosLabel(){
+        ballPossitionLabel.textProperty().set("Ball on: " + game.getTable().getCurrentBallPosition().getValue());
+    }
+    
     @FXML
     private void onRetire(ActionEvent event) {
         retirePlayer(currentPlayer.getPlayerDetails());
