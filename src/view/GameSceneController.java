@@ -925,7 +925,7 @@ public class GameSceneController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setContentText(content);
-//        TODO return notes
+        alert.showAndWait(); //        TODO return notes
     }
 
     private boolean playerHasMoneyForBet() {
