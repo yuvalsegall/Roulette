@@ -24,6 +24,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 //import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 //import javafx.scene.control.ButtonType;
@@ -393,15 +394,16 @@ public class GameSceneController implements Initializable {
     }
 
     public Boolean updateCurrentPlayerReturnIfLast() {
+        Boolean isLastPlayer = false;
         if (currentPlayer != null && getCurrentPlayerView() != null) {
             getCurrentPlayerView().setIsBold(false);
+            isLastPlayer = currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size() - 1));
         }
-        Boolean res = currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size() - 1));
         currentPlayer = currentPlayer == null ? game.getGameDetails().getPlayers().get(0) : game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
         if (getCurrentPlayerView() != null) {
             getCurrentPlayerView().setIsBold(true);
         }
-        return res;
+        return isLastPlayer;
     }
 
     public Stage getPrimaryStage() {
@@ -920,9 +922,9 @@ public class GameSceneController implements Initializable {
     }
 
     private void popupGoodbyeDialog(String title, String content) {
-//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//        alert.setTitle(title);
-//        alert.setContentText(content);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
 //        TODO return notes
     }
 
