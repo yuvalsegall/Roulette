@@ -391,12 +391,14 @@ public class GameSceneController implements Initializable {
     }
 
     public Boolean updateCurrentPlayerReturnIfLast() {
-        if (currentPlayer != null) {
+        if (currentPlayer != null && getCurrentPlayerView() != null) {
             getCurrentPlayerView().setIsBold(false);
         }
         currentPlayer = currentPlayer == null ? game.getGameDetails().getPlayers().get(0) : game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
-        getCurrentPlayerView().setIsBold(true);
-        return currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size()-1));
+        if (getCurrentPlayerView() != null) {
+            getCurrentPlayerView().setIsBold(true);
+        }
+        return currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size() - 1));
     }
 
     public Stage getPrimaryStage() {
@@ -676,11 +678,14 @@ public class GameSceneController implements Initializable {
     }
 
     public void buildPlayersPane() {
+        playersPane.getChildren().remove(0, playersPane.getChildren().size());
         game.getGameDetails().getPlayers().stream().forEach((player) -> {
-            PlayerViewWithAmount playerView = new PlayerViewWithAmount(player);
-            playersPane.getChildren().add(playerView);
-            playerView.getPlayerAmountLabel().textProperty().bind(
-                    Bindings.concat(player.getPlayerDetails().getAmount(), "$"));
+            if (player.getPlayerDetails().getIsActive()) {
+                PlayerViewWithAmount playerView = new PlayerViewWithAmount(player);
+                playersPane.getChildren().add(playerView);
+                playerView.getPlayerAmountLabel().textProperty().bind(
+                        Bindings.concat(player.getPlayerDetails().getAmount(), "$"));
+            }
         });
     }
 
@@ -917,14 +922,14 @@ public class GameSceneController implements Initializable {
         setBallPosLabel();
     }
 
-    private void setBallPosLabel(){
+    private void setBallPosLabel() {
         ballPossitionLabel.textProperty().set("Ball on: " + game.getTable().getCurrentBallPosition().getValue());
     }
-    
+
     @FXML
     private void onRetire(ActionEvent event) {
         retirePlayer(currentPlayer.getPlayerDetails());
+        buildPlayersPane();
         moveToNextHumanPlayer();
-
     }
 }
