@@ -376,8 +376,6 @@ public class GameSceneController implements Initializable {
         AmountLabel.textProperty().bind(
                 Bindings.concat(amount, "$"));
         setRowsHashMap(rowsReverse);
-        //betNameLabel.textProperty().bind(betType);
-        //TODO: create player's list + amounts + connect amount with listeners
         newGame = new SimpleBooleanProperty(false);
         exitGame = new SimpleBooleanProperty(false);
     }
@@ -425,9 +423,7 @@ public class GameSceneController implements Initializable {
         this.filePath = filePath;
     }
 
-    //TODO:player needs button to retire
     //TODO: message player is broke... changing to next player:if (player.getMoney().compareTo(BigInteger.ZERO) <= 0) 
-    //TODO: spin roulette
     @FXML
     private void saveGame() {
         FileChooser fileChooser = new FileChooser();
@@ -468,7 +464,6 @@ public class GameSceneController implements Initializable {
     }
 
     private void computerPlay() {
-//TODO computer animation
 //        try {
 //            currentBets.add(Bet.makeBet(COMP_BET_TYPE, BigInteger.valueOf(COMP_BET_MONEY), COMP_BET_NUMBERS, game.getTable().getTableType()));
 //        } catch (BadParamsException ex) {
