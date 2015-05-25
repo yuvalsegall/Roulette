@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
@@ -27,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 //import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 //import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -338,9 +340,6 @@ public class GameSceneController implements Initializable {
     private final HashMap<Integer, Integer> rowsReverse = new HashMap();
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
-//    private static final Bet.BetType COMP_BET_TYPE = Bet.BetType.NOIR;
-//    private static final int COMP_BET_MONEY = 1;//        TODO delete
-//    private static final int[] COMP_BET_NUMBERS = null;
     private final String AMERICAN_TABLE_IMAGE_PATH = "/resources/table00.png";
     private final String AMERICAN_WHEEL_IMAGE_PATH = "/resources/roulette00_300.png";
 
@@ -465,6 +464,7 @@ public class GameSceneController implements Initializable {
         });
         if (!isAnybodyLeft()) {
             popupGoodbyeDialog("Game Over", "No active human players, goodbye!");
+            game = null;
         }
     }
 
@@ -473,15 +473,9 @@ public class GameSceneController implements Initializable {
     }
 
     private void computerPlay() {
-//        try {
-//        TODO delete
-//            currentBets.add(Bet.makeBet(COMP_BET_TYPE, BigInteger.valueOf(COMP_BET_MONEY), COMP_BET_NUMBERS, game.getTable().getTableType()));
-//        } catch (BadParamsException ex) {
-//        }
-//        currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
         plus1Button.fire();
         button_black.fire();
-        FinishBettingButton.fire();
+        currentPlayer.getPlayerDetails().setBets(currentBets);
     }
 
     private void showError(String message) {
@@ -912,20 +906,23 @@ public class GameSceneController implements Initializable {
     }
 
     private Boolean popupDialog(String title, String content) {
-//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//        alert.setTitle(title);
-//        alert.setContentText(content);
-//        Optional<ButtonType> result = alert.showAndWait();
-//        return result.get() == ButtonType.OK;
-        //TODO return notes
-        return false;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == ButtonType.OK;
     }
 
     private void popupGoodbyeDialog(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setContentText(content);
-        alert.showAndWait(); //        TODO return notes
+        alert.showAndWait();
+        if (popupDialog("New Game", "Do you want to start a new game?")) {
+            newGame.set(true);
+        } else {
+            exitGame.set(true);
+        }
     }
 
     private boolean playerHasMoneyForBet() {
@@ -939,7 +936,6 @@ public class GameSceneController implements Initializable {
         rt.setCycleCount(1);
         rt.setDuration(Duration.seconds(3));
         rt.setAutoReverse(false);
-
         rt.play();
         setBallPosLabel();
     }
