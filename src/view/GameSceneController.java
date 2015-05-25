@@ -459,6 +459,9 @@ public class GameSceneController implements Initializable {
         }).forEach((player) -> {
             player.getPlayerDetails().setBets(null);
         });
+        if (!isAnybodyLeft()) {
+            popupGoodbyeDialog("Game Over", "No active human players, goodbye!");
+        }
     }
 
     private void retirePlayer(Player.PlayerDetails player) {
@@ -585,6 +588,10 @@ public class GameSceneController implements Initializable {
             currentBets = new ArrayList<>();
             if (!currentPlayer.getPlayerDetails().getIsHuman()) {
                 computerPlay();
+            }
+            if (currentPlayer.getPlayerDetails().getIsActive() && currentPlayer.getPlayerDetails().getMoney().compareTo(BigInteger.ZERO) <= 0) {
+                popupGoodbyeDialog("Retire", currentPlayer.getPlayerDetails().getName() + " you are broke, Goodbye!");
+                retireButton.fire();
             }
         } while (!currentPlayer.getPlayerDetails().getIsHuman() || !currentPlayer.getPlayerDetails().getIsActive());
         FinishBettingButton.setDisable(game.getGameDetails().getMinWages() == 1);
@@ -719,6 +726,7 @@ public class GameSceneController implements Initializable {
             showError("You cannot place money you do not have");
             amount.set(0);
             numbers.clear();
+            clearChips();
         } else {
             int[] nums = null;
             if (!numbers.isEmpty()) {
@@ -903,6 +911,13 @@ public class GameSceneController implements Initializable {
         return false;
     }
 
+    private void popupGoodbyeDialog(String title, String content) {
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle(title);
+//        alert.setContentText(content);
+//        TODO return notes
+    }
+
     private boolean playerHasMoneyForBet() {
         return currentPlayer.getPlayerDetails().getMoney().intValue() >= amount.intValue();
     }
@@ -928,5 +943,9 @@ public class GameSceneController implements Initializable {
         retirePlayer(currentPlayer.getPlayerDetails());
         buildPlayersPane();
         moveToNextHumanPlayer();
+    }
+
+    private boolean isAnybodyLeft() {
+        return game.getGameDetails().getPlayers().stream().anyMatch((player) -> (player.getPlayerDetails().getIsActive() && player.getPlayerDetails().getIsHuman()));
     }
 }
