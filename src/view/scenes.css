@@ -40,9 +40,16 @@
 
 .themeLabel {
     -fx-text-fill: white;
-    -fx-font: bold  15pt "Arial";
+    -fx-font: 15pt "Arial";
 }
 
+.paddedBox{
+    -fx-padding: 10;
+}
+.boxing {
+    -fx-border-color:white;
+    -fx-border-width:1px;
+}
 .button:hover {
     -fx-background-color: white;
     -fx-opacity: 0.3;

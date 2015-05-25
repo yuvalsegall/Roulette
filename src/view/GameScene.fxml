@@ -884,7 +884,7 @@
                                         </GridPane>
                                     </children>
                                 </GridPane>
-                                <FlowPane fx:id="playersPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" />
+                                <FlowPane fx:id="playersPane" prefHeight="200.0" prefWidth="200.0" styleClass="boxing" GridPane.columnIndex="2" />
                             </children>
                         </GridPane>
                     </children>

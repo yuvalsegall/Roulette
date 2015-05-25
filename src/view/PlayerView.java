@@ -12,6 +12,7 @@ public class PlayerView extends VBox {
         setAlignment(Pos.CENTER);
         name = createLabel(title);
         getChildren().addAll(name);
+        this.getStyleClass().add("paddedBox");
     }
 
     private Label createLabel(String title) {

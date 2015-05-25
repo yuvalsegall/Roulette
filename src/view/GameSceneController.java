@@ -387,7 +387,7 @@ public class GameSceneController implements Initializable {
         buildPlayersPane();
         moveToNextHumanPlayer();
         ballPossitionLabel.textProperty().set("");
-        messageLabel.textProperty().set("");
+        messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
     }
 
     public Boolean updateCurrentPlayerReturnIfLast() {
