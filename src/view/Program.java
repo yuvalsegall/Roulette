@@ -1,6 +1,5 @@
 package view;
 
-import engine.Game;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -10,6 +9,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import web.client.RouletteWebService;
+import web.client.RouletteWebServiceService;
 
 /**
  *
@@ -19,15 +20,15 @@ public class Program extends Application {
 
     private static final String PROPERTIES_SCENE_FXML_PATH = "PropertiesScene.fxml";
     private static final String GAME_SCENE_FXML_PATH = "GameScene.fxml";
-    private Game game;
-    private String filePath;
+    private RouletteWebServiceService service = null;
+    private RouletteWebService gameWebService = null;
     private Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        this.game = new Game();
         this.primaryStage = primaryStage;
-        this.filePath = new String();
+        this.service = new RouletteWebServiceService();
+        this.gameWebService = service.getRouletteWebServicePort();
 
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
         Parent gameRoot = getRoot(gameFxmlLoader);
@@ -42,6 +43,7 @@ public class Program extends Application {
         primaryStage.setTitle("Roulette!");
         primaryStage.setScene(propertiesScene);
         primaryStage.show();
+
     }
 
     private FXMLLoader getFXMLLoader(String fxmlPath) {
@@ -53,8 +55,7 @@ public class Program extends Application {
 
     private PropertiesSceneController getPropertiesController(FXMLLoader fxmlLoader, final Stage primaryStage, Scene nextScene, GameSceneController gameController) {
         PropertiesSceneController propertiesSceneController = (PropertiesSceneController) fxmlLoader.getController();
-        propertiesSceneController.setGame(game);
-        propertiesSceneController.setFilePath(filePath);
+        propertiesSceneController.setService(gameWebService);
         propertiesSceneController.setPrimaryStage(primaryStage);
         propertiesSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
             if (newValue) {
@@ -77,8 +78,6 @@ public class Program extends Application {
 
     private GameSceneController getGameController(FXMLLoader fxmlLoader, final Stage primaryStage) {
         GameSceneController gameSceneController = (GameSceneController) fxmlLoader.getController();
-        gameSceneController.setGame(game);
-        gameSceneController.setFilePath(filePath);
         gameSceneController.setPrimaryStage(primaryStage);
         gameSceneController.getNewGame().addListener((source, oldValue, newValue) -> {
             if (newValue) {

@@ -7,16 +7,17 @@ import controller.exceptions.NumOfPlayersException;
 import controller.exceptions.OutOfRangeException;
 import controller.exceptions.XmlException;
 import engine.BadParamsException;
-import engine.Game;
 import engine.Player;
 import engine.Table;
-import engine.XMLGame;
 import java.io.File;
-import java.math.BigInteger;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.application.Platform;
@@ -40,6 +41,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.xml.bind.JAXBException;
+import web.client.DuplicateGameName_Exception;
+import web.client.GameDoesNotExists_Exception;
+import web.client.InvalidParameters_Exception;
+import web.client.InvalidXML_Exception;
+import web.client.RouletteType;
+import web.client.RouletteWebService;
 
 /**
  * FXML Controller class
@@ -59,13 +66,14 @@ public class PropertiesSceneController implements Initializable {
     private static final int MIN_INITIAL_SUM_OF_MONEY = 10;
     private static final int MAX_INITIAL_SUM_OF_MONEY = 100;
 
-    private Game game;
+    private RouletteWebService service;
+    private String gameName;
+    private int id;
     private boolean isErrorMessageShown;
     private SimpleBooleanProperty isPlayersCountCheckBad;
     private SimpleBooleanProperty finishedInit;
     private SimpleBooleanProperty newGame;
     private SimpleBooleanProperty exitGame;
-    private String filePath;
 
     private Stage primaryStage;
     @FXML
@@ -94,6 +102,10 @@ public class PropertiesSceneController implements Initializable {
     private FlowPane playersPane;
     @FXML
     private AnchorPane anchorPane;
+    @FXML
+    private Slider numOfComputerPlayers;
+    @FXML
+    private Slider numOfHumanPlayers;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -103,9 +115,6 @@ public class PropertiesSceneController implements Initializable {
         newGame = new SimpleBooleanProperty(false);
         exitGame = new SimpleBooleanProperty(false);
         tableTypeComboBox.getItems().addAll(Arrays.asList(Table.TableType.AMERICAN.name(), Table.TableType.FRENCH.name()));
-        playerNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-            onPlayerNameChange();
-        });
         gameNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });
@@ -115,28 +124,19 @@ public class PropertiesSceneController implements Initializable {
         isPlayersCountCheckBad.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-        onPlayerNameChange();
         onGameNameOrTableTypeOrPlayersChange();
+    }
+
+    public void setService(RouletteWebService service) {
+        this.service = service;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
     }
 
     private void paramsCheck(int computerPlayers, int humanPlayers, int minWages, int maxWages, int initalSumOfMoney) throws NumOfPlayersException, OutOfRangeException, NumOfHumanPlayersException {
@@ -159,18 +159,23 @@ public class PropertiesSceneController implements Initializable {
         }
     }
 
-    private Player joinGame(String playerName, Boolean isHuman) throws DuplicateNameException, EmptyNameException, NumOfPlayersException, NumOfHumanPlayersException {
-        Player player = new Player(new Player.PlayerDetails(playerName, isHuman, BigInteger.valueOf(game.getGameDetails().getInitialSumOfMoney())));
-        game.getGameDetails().addPlayer(player);
-        return player;
+    private void joinGame(String playerName) throws DuplicateNameException, EmptyNameException, NumOfPlayersException, NumOfHumanPlayersException {
+        try {
+            id = service.joinGame(gameName, playerName);
+        } catch (GameDoesNotExists_Exception | InvalidParameters_Exception ex) {
+            Logger.getLogger(PropertiesSceneController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void initiateXMLGame(File XMLFile) throws XmlException, NumOfPlayersException, OutOfRangeException, BadParamsException, JAXBException, NumOfHumanPlayersException {
-        if (XMLFile == null) {
-            throw new XmlException();
+        try {
+            if (XMLFile == null) {
+                throw new XmlException();
+            }
+            setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
+        } catch (FileNotFoundException | DuplicateGameName_Exception | InvalidParameters_Exception | InvalidXML_Exception ex) {
+            Logger.getLogger(PropertiesSceneController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        XMLGame.getXMLGame(XMLFile).copyGame(game);
-        paramsCheck(game.getGameDetails().getComputerPlayers(), game.getGameDetails().getHumanPlayers(), game.getGameDetails().getMinWages(), game.getGameDetails().getMaxWages(), game.getGameDetails().getInitialSumOfMoney());
     }
 
     @FXML
@@ -183,7 +188,6 @@ public class PropertiesSceneController implements Initializable {
             Platform.runLater(() -> {
                 try {
                     initiateXMLGame(XMLFile);
-                    filePath = XMLFile.getPath();
                     finishedInit.set(true);
                 } catch (XmlException | NumOfPlayersException | OutOfRangeException | BadParamsException | JAXBException | NumOfHumanPlayersException ex) {
                     showError(ex.getMessage());
@@ -192,48 +196,19 @@ public class PropertiesSceneController implements Initializable {
         }).start();
     }
 
-    @FXML
-    protected void addPlayer(ActionEvent event) {
-        String name = getPlayerName();
-        boolean isHuman = isPlayerHuman();
-        try {
-            Player player = joinGame(name, isHuman);
-            addPlayerToList(player);
-            if (isHuman) {
-                game.getGameDetails().setHumanPlayers(game.getGameDetails().getHumanPlayers() + 1);
-            } else {
-                game.getGameDetails().setComputerPlayers(game.getGameDetails().getComputerPlayers() + 1);
-            }
-            clearPlayerNameField();
-            hideError();
-            updateStartGameButtonState();
-        } catch (DuplicateNameException | EmptyNameException | NumOfPlayersException | NumOfHumanPlayersException ex) {
-            showError(ex.getMessage());
-        }
-    }
-
-    protected void onPlayerNameChange() {
-        updateAddPlayerButtonState();
-        hideError();
-    }
-
-    protected void onGameNameOrTableTypeOrPlayersChange() {
+    private void onGameNameOrTableTypeOrPlayersChange() {
         updateStartGameButtonState();
         hideError();
     }
 
     @FXML
-    protected void onStartGame(ActionEvent event) {
-        Game.GameDetails details = game.getGameDetails();
-        details.setMinWages((int) minWagesSlider.getValue());
-        details.setMaxWages((int) maxWagesSlider.getValue());
-        details.setInitialSumOfMoney((int) initialSumOfMoneySlider.getValue());
-        details.setGameName(gameNameTextField.getText());
-        details.setTableType(Table.TableType.valueOf(tableTypeComboBox.getValue().toString()));
-        for (Player.PlayerDetails playerDetails : details.getPlayersDetails()) {
-            playerDetails.setMoney(BigInteger.valueOf((long) initialSumOfMoneySlider.getValue()));
+    private void onStartGame(ActionEvent event) {
+        try {
+            paramsCheck((int) numOfComputerPlayers.getValue(), (int) numOfHumanPlayers.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
+            service.createGame((int) numOfComputerPlayers.getValue(), (int) numOfHumanPlayers.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), Table.TableType.valueOf(tableTypeComboBox.getValue().toString()).equals(Table.TableType.AMERICAN) ? RouletteType.AMERICAN : RouletteType.FRENCH);
+        } catch (NumOfPlayersException | OutOfRangeException | NumOfHumanPlayersException | DuplicateGameName_Exception | InvalidParameters_Exception ex) {
+            Logger.getLogger(PropertiesSceneController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        finishedInit.set(true);
     }
 
     public SimpleBooleanProperty getFinishedInit() {
@@ -246,32 +221,6 @@ public class PropertiesSceneController implements Initializable {
 
     public SimpleBooleanProperty getExitGame() {
         return exitGame;
-    }
-
-    private void updateAddPlayerButtonState() {
-        int computerPlayers = game.getGameDetails().getComputerPlayers();
-        int humanPlayers = game.getGameDetails().getHumanPlayers();
-        boolean isEmptyName = getPlayerName().trim().isEmpty();
-        boolean isNameExist = false;
-        for (Player player : game.getGameDetails().getPlayers()) {
-            if (player.getPlayerDetails().getName().equals(getPlayerName().trim())) {
-                isNameExist = true;
-                break;
-            }
-        }
-        if (isPlayerHuman()) {
-            humanPlayers++;
-        } else {
-            computerPlayers++;
-        }
-        try {
-            playersCountCheck(computerPlayers, humanPlayers);
-            isPlayersCountCheckBad = new SimpleBooleanProperty(false);
-        } catch (NumOfHumanPlayersException | NumOfPlayersException ex) {
-            isPlayersCountCheckBad = new SimpleBooleanProperty(true);
-        }
-        boolean disable = isEmptyName || isNameExist || (isPlayersCountCheckBad.getValue() && humanPlayers + computerPlayers == 0) || isErrorMessageShown;
-        addPlayerButton.setDisable(disable);
     }
 
     private void updateStartGameButtonState() {
@@ -319,7 +268,6 @@ public class PropertiesSceneController implements Initializable {
             animation.setToValue(1.0);
             animation.play();
         }
-        updateAddPlayerButtonState();
         updateStartGameButtonState();
     }
 
@@ -335,7 +283,6 @@ public class PropertiesSceneController implements Initializable {
 
             isErrorMessageShown = false;
             errorMessageLabel.textProperty().setValue("");
-            updateAddPlayerButtonState();
             updateStartGameButtonState();
         }
     }
