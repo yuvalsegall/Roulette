@@ -1,14 +1,5 @@
 package view;
 
-import controller.exceptions.DuplicateNameException;
-import controller.exceptions.EmptyNameException;
-import controller.exceptions.NumOfHumanPlayersException;
-import controller.exceptions.NumOfPlayersException;
-import controller.exceptions.OutOfRangeException;
-import controller.exceptions.XmlException;
-import engine.BadParamsException;
-import engine.Player;
-import engine.Table;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -16,8 +7,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.application.Platform;
@@ -40,7 +29,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javax.xml.bind.JAXBException;
 import web.client.DuplicateGameName_Exception;
 import web.client.GameDoesNotExists_Exception;
 import web.client.InvalidParameters_Exception;
@@ -68,7 +56,7 @@ public class PropertiesSceneController implements Initializable {
 
     private RouletteWebService service;
     private String gameName;
-    private int id;
+    private Integer playerId;
     private boolean isErrorMessageShown;
     private SimpleBooleanProperty isPlayersCountCheckBad;
     private SimpleBooleanProperty finishedInit;
@@ -114,7 +102,7 @@ public class PropertiesSceneController implements Initializable {
         finishedInit = new SimpleBooleanProperty(false);
         newGame = new SimpleBooleanProperty(false);
         exitGame = new SimpleBooleanProperty(false);
-        tableTypeComboBox.getItems().addAll(Arrays.asList(Table.TableType.AMERICAN.name(), Table.TableType.FRENCH.name()));
+        tableTypeComboBox.getItems().addAll(Arrays.asList(RouletteType.AMERICAN.name(), RouletteType.FRENCH.name()));
         gameNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });
@@ -139,43 +127,39 @@ public class PropertiesSceneController implements Initializable {
         this.primaryStage = primaryStage;
     }
 
-    private void paramsCheck(int computerPlayers, int humanPlayers, int minWages, int maxWages, int initalSumOfMoney) throws NumOfPlayersException, OutOfRangeException, NumOfHumanPlayersException {
+    public void setPlayerId(Integer playerId) {
+        this.playerId = playerId;
+    }
+
+    private void paramsCheck(int computerPlayers, int humanPlayers, int minWages, int maxWages, int initalSumOfMoney) throws Exception {
         playersCountCheck(computerPlayers, humanPlayers);
         propertiesCheck(minWages, maxWages, initalSumOfMoney);
     }
 
-    private void propertiesCheck(int minWages, int maxWages, int initalSumOfMoney) throws OutOfRangeException {
+    private void propertiesCheck(int minWages, int maxWages, int initalSumOfMoney) throws Exception {
         if (minWages < FROM_MIN_WAGES || minWages > TO_MIN_WAGES || maxWages < FROM_MAX_WAGES || maxWages > TO_MAX_WAGES || initalSumOfMoney < MIN_INITIAL_SUM_OF_MONEY || initalSumOfMoney > MAX_INITIAL_SUM_OF_MONEY) {
-            throw new OutOfRangeException();
+            throw new Exception();
         }
     }
 
-    private void playersCountCheck(int computerPlayers, int humanPlayers) throws NumOfHumanPlayersException, NumOfPlayersException {
+    private void playersCountCheck(int computerPlayers, int humanPlayers) throws Exception {
         if (computerPlayers < MIN_NUM || computerPlayers > MAX_COMP_PLAYERS || humanPlayers < MIN_NUM || humanPlayers > MAX_HUMAN_PLAYERS || computerPlayers + humanPlayers > MAX_PLAYERS || computerPlayers + humanPlayers < MIN_NUM + 1) {
-            throw new NumOfPlayersException(MIN_NUM + 1, MAX_PLAYERS);
+            throw new Exception();
         }
         if (humanPlayers == MIN_NUM) {
-            throw new NumOfHumanPlayersException(MIN_NUM + 1, MAX_PLAYERS);
+            throw new Exception();
         }
     }
 
-    private void joinGame(String playerName) throws DuplicateNameException, EmptyNameException, NumOfPlayersException, NumOfHumanPlayersException {
-        try {
-            id = service.joinGame(gameName, playerName);
-        } catch (GameDoesNotExists_Exception | InvalidParameters_Exception ex) {
-            Logger.getLogger(PropertiesSceneController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void joinGame(String playerName) throws GameDoesNotExists_Exception, InvalidParameters_Exception {
+        playerId = service.joinGame(gameName, playerName);
     }
 
-    private void initiateXMLGame(File XMLFile) throws XmlException, NumOfPlayersException, OutOfRangeException, BadParamsException, JAXBException, NumOfHumanPlayersException {
-        try {
-            if (XMLFile == null) {
-                throw new XmlException();
-            }
-            setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
-        } catch (FileNotFoundException | DuplicateGameName_Exception | InvalidParameters_Exception | InvalidXML_Exception ex) {
-            Logger.getLogger(PropertiesSceneController.class.getName()).log(Level.SEVERE, null, ex);
+    private void initiateXMLGame(File XMLFile) throws DuplicateGameName_Exception, InvalidParameters_Exception, InvalidXML_Exception, FileNotFoundException {
+        if (XMLFile == null) {
+            throw new InvalidXML_Exception(null, null);
         }
+        setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
     }
 
     @FXML
@@ -189,7 +173,7 @@ public class PropertiesSceneController implements Initializable {
                 try {
                     initiateXMLGame(XMLFile);
                     finishedInit.set(true);
-                } catch (XmlException | NumOfPlayersException | OutOfRangeException | BadParamsException | JAXBException | NumOfHumanPlayersException ex) {
+                } catch (DuplicateGameName_Exception | InvalidParameters_Exception | InvalidXML_Exception | FileNotFoundException ex) {
                     showError(ex.getMessage());
                 }
             });
@@ -202,13 +186,9 @@ public class PropertiesSceneController implements Initializable {
     }
 
     @FXML
-    private void onStartGame(ActionEvent event) {
-        try {
-            paramsCheck((int) numOfComputerPlayers.getValue(), (int) numOfHumanPlayers.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
-            service.createGame((int) numOfComputerPlayers.getValue(), (int) numOfHumanPlayers.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), Table.TableType.valueOf(tableTypeComboBox.getValue().toString()).equals(Table.TableType.AMERICAN) ? RouletteType.AMERICAN : RouletteType.FRENCH);
-        } catch (NumOfPlayersException | OutOfRangeException | NumOfHumanPlayersException | DuplicateGameName_Exception | InvalidParameters_Exception ex) {
-            Logger.getLogger(PropertiesSceneController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void onStartGame(ActionEvent event) throws InvalidParameters_Exception, DuplicateGameName_Exception, Exception {
+        paramsCheck((int) numOfComputerPlayers.getValue(), (int) numOfHumanPlayers.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
+        service.createGame((int) numOfComputerPlayers.getValue(), (int) numOfHumanPlayers.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
     }
 
     public SimpleBooleanProperty getFinishedInit() {
@@ -243,12 +223,6 @@ public class PropertiesSceneController implements Initializable {
 
     public Object getTableType() {
         return tableTypeComboBox.getValue();
-    }
-
-    private void addPlayerToList(Player player) {
-        PlayerViewWithImage playerViewWithImage = new PlayerViewWithImage(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman()
-        );
-        playersPane.getChildren().add(playerViewWithImage);
     }
 
     private void clearPlayerNameField() {

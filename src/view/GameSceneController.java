@@ -1,16 +1,8 @@
 package view;
 
-import engine.BadParamsException;
-import engine.Game;
-import engine.Player;
-import engine.Table;
-import engine.XMLGame;
-import engine.bets.Bet;
-import java.io.File;
-import java.math.BigInteger;
+import generated.Bet;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -26,20 +18,24 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
-//import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-//import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javax.xml.bind.JAXBException;
+import web.client.BetType;
+import web.client.GameDetails;
+import web.client.GameDoesNotExists_Exception;
+import web.client.InvalidParameters_Exception;
+import web.client.PlayerStatus;
+import web.client.PlayerType;
+import web.client.RouletteType;
+import web.client.RouletteWebService;
 
 /**
  * FXML Controller class
@@ -329,20 +325,22 @@ public class GameSceneController implements Initializable {
     private Label AmountLabel;
     @FXML
     private FlowPane playersPane;
-
-    private Game game;
-    private Player currentPlayer;
-    private String filePath;
+    private String gameName;
+    private Integer playerId;
+    private RouletteWebService service;
     private ArrayList<Integer> numbers;
     private ArrayList<Bet> currentBets;
-    private Bet.BetType betType;
+    private BetType betType;
     private IntegerProperty amount;
     private final HashMap<Integer, Integer> rowsReverse = new HashMap();
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
     private final String AMERICAN_TABLE_IMAGE_PATH = "/resources/table00.png";
     private final String AMERICAN_WHEEL_IMAGE_PATH = "/resources/roulette00_300.png";
-
+    public static final int[] BASKET_FR = {0, 1, 2, 3};
+    public static final int[] BASKET_AM_V1 = {0, 1, 2};
+    public static final int[] BASKET_AM_V2 = {0, 2, 37};
+    public static final int[] BASKET_AM_V3 = {2, 3, 37};
     private boolean isErrorMessageShown;
     private SimpleBooleanProperty newGame;
     private SimpleBooleanProperty exitGame;
@@ -383,26 +381,25 @@ public class GameSceneController implements Initializable {
     }
 
     public void init() {
-        if (game.getGameDetails().getTableType() == Table.TableType.AMERICAN) {
-            setTableToAmerican();
+        try {
+            GameDetails details = service.getGameDetails(gameName);
+            if (details.getRouletteType().equals(RouletteType.AMERICAN)) {
+                setTableToAmerican();
+            }
+            buildPlayersPane();
+            ballPossitionLabel.textProperty().set("");
+            messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
+        } catch (GameDoesNotExists_Exception ex) {
+            showError(ex.getMessage());
         }
-        buildPlayersPane();
-        moveToNextHumanPlayer();
-        ballPossitionLabel.textProperty().set("");
-        messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
     }
 
-    public Boolean updateCurrentPlayerReturnIfLast() {
-        Boolean isLastPlayer = false;
-        if (currentPlayer != null && getCurrentPlayerView() != null) {
-            getCurrentPlayerView().setIsBold(false);
-            isLastPlayer = currentPlayer.equals(game.getGameDetails().getPlayers().get(game.getGameDetails().getPlayers().size() - 1));
-        }
-        currentPlayer = currentPlayer == null ? game.getGameDetails().getPlayers().get(0) : game.getGameDetails().getPlayers().get((game.getGameDetails().getPlayers().indexOf(currentPlayer) + 1) % game.getGameDetails().getPlayers().size());
-        if (getCurrentPlayerView() != null) {
-            getCurrentPlayerView().setIsBold(true);
-        }
-        return isLastPlayer;
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    public void setService(RouletteWebService service) {
+        this.service = service;
     }
 
     public Stage getPrimaryStage() {
@@ -413,69 +410,8 @@ public class GameSceneController implements Initializable {
         this.primaryStage = primaryStage;
     }
 
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    @FXML
-    private void saveGame() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML", Arrays.asList("xml")));
-        fileChooser.setTitle("Save Roulette Game");
-        if (filePath != null && !filePath.trim().isEmpty()) {
-            fileChooser.setInitialDirectory(new File(filePath));
-        }
-        File XMLFile = fileChooser.showSaveDialog(primaryStage);
-        if (XMLFile != null) {
-            new Thread(() -> {
-                try {
-                    filePath = XMLFile.getPath();
-                    XMLGame.setXMLGame(filePath, game);
-                } catch (JAXBException ex) {
-                    showError("cannot save XML, try again");
-                }
-            }).start();
-        }
-    }
-
-    private void endRound() {
-        spinRoulette();
-        game.getGameDetails().getPlayers().stream().map((player) -> {
-            if (player.getPlayerDetails().getBets() != null) {
-                player.getPlayerDetails().getBets().stream().forEach((bet) -> {
-                    player.getPlayerDetails().setMoney(player.getPlayerDetails().getMoney().add(bet.winningSum(game.getTable().getCurrentBallPosition(), game.getTable().getCells().length)));
-                });
-            }
-            return player;
-        }).forEach((player) -> {
-            player.getPlayerDetails().setBets(null);
-        });
-        if (!isAnybodyLeft()) {
-            popupGoodbyeDialog("Game Over", "No active human players, goodbye!");
-            game = null;
-        }
-    }
-
-    private void retirePlayer(Player.PlayerDetails player) {
-        player.setIsActive(Boolean.FALSE);
-    }
-
-    private void computerPlay() {
-        plus1Button.fire();
-        button_black.fire();
-        currentPlayer.getPlayerDetails().setBets(currentBets);
+    public void setPlayerId(Integer playerId) {
+        this.playerId = playerId;
     }
 
     private void showError(String message) {
@@ -526,11 +462,11 @@ public class GameSceneController implements Initializable {
                 } else {
                     numbers.add(myCol * NOM_OF_ACTUAL_ROWS - 2);
                 }
-                betType = Bet.BetType.SPLIT;
+                betType = BetType.SPLIT;
             } else {
                 //single number
                 numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
-                betType = Bet.BetType.STRAIGHT;
+                betType = BetType.STRAIGHT;
             }
         } else {
             if (row % 2 == 0) {
@@ -539,12 +475,12 @@ public class GameSceneController implements Initializable {
                 numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow));
                 numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow - 1));
                 numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow - 1));
-                betType = Bet.BetType.CORNER;
+                betType = BetType.CORNER;
             } else {
                 //horizontal split
                 numbers.add(NOM_OF_ACTUAL_ROWS * myCol - (NOM_OF_ACTUAL_ROWS - myRow));
                 numbers.add(NOM_OF_ACTUAL_ROWS * (myCol + 1) - (NOM_OF_ACTUAL_ROWS - myRow));
-                betType = Bet.BetType.SPLIT;
+                betType = BetType.SPLIT;
             }
         }
         addBetOnTable(event);
@@ -571,28 +507,9 @@ public class GameSceneController implements Initializable {
     }
 
     @FXML
-    private void finishedBettingClicked(ActionEvent event) {
+    private void finishedBettingClicked(ActionEvent event) throws InvalidParameters_Exception {
         FinishBettingButton.setDisable(true);
-        currentPlayer.getPlayerDetails().setBets(currentBets);
-        moveToNextHumanPlayer();
-    }
-
-    private void moveToNextHumanPlayer() {
-        do {
-            clearChips();
-            if (updateCurrentPlayerReturnIfLast()) {
-                endRound();
-            }
-            currentBets = new ArrayList<>();
-            if (!currentPlayer.getPlayerDetails().getIsHuman()) {
-                computerPlay();
-            }
-            if (currentPlayer.getPlayerDetails().getIsActive() && currentPlayer.getPlayerDetails().getMoney().compareTo(BigInteger.ZERO) <= 0) {
-                popupGoodbyeDialog("Retire", currentPlayer.getPlayerDetails().getName() + " you are broke, Goodbye!");
-                retireButton.fire();
-            }
-        } while (!currentPlayer.getPlayerDetails().getIsHuman() || !currentPlayer.getPlayerDetails().getIsActive());
-        FinishBettingButton.setDisable(game.getGameDetails().getMinWages() == 1);
+        service.finishBetting(playerId);
     }
 
     private void clearAmountClicked(ActionEvent event) {
@@ -601,73 +518,73 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void thirdRowClicked(ActionEvent event) {
-        betType = Bet.BetType.COLUMN_3;
+        betType = BetType.COLUMN_3;
         addBetOnTable(event);
     }
 
     @FXML
     private void secondRowClicked(ActionEvent event) {
-        betType = Bet.BetType.COLUMN_2;
+        betType = BetType.COLUMN_2;
         addBetOnTable(event);
     }
 
     @FXML
     private void firstRowClicked(ActionEvent event) {
-        betType = Bet.BetType.COLUMN_1;
+        betType = BetType.COLUMN_1;
         addBetOnTable(event);
     }
 
     @FXML
     private void first12Clicked(ActionEvent event) {
-        betType = Bet.BetType.PREMIERE_DOUZAINE;
+        betType = BetType.PREMIERE_DOUZAINE;
         addBetOnTable(event);
     }
 
     @FXML
     private void second12Clicked(ActionEvent event) {
-        betType = Bet.BetType.MOYENNE_DOUZAINE;
+        betType = BetType.MOYENNE_DOUZAINE;
         addBetOnTable(event);
     }
 
     @FXML
     private void third12Clicked(ActionEvent event) {
-        betType = Bet.BetType.DERNIERE_DOUZAINE;
+        betType = BetType.DERNIERE_DOUZAINE;
         addBetOnTable(event);
     }
 
     @FXML
     private void firstHalfClicked(ActionEvent event) {
-        betType = Bet.BetType.MANQUE;
+        betType = BetType.MANQUE;
         addBetOnTable(event);
     }
 
     @FXML
     private void evenClicked(ActionEvent event) {
-        betType = Bet.BetType.PAIR;
+        betType = BetType.PAIR;
         addBetOnTable(event);
     }
 
     @FXML
     private void redClicked(ActionEvent event) {
-        betType = Bet.BetType.ROUGE;
+        betType = BetType.ROUGE;
         addBetOnTable(event);
     }
 
     @FXML
     private void blackClicked(ActionEvent event) {
-        betType = Bet.BetType.NOIR;
+        betType = BetType.NOIR;
         addBetOnTable(event);
     }
 
     @FXML
     private void oddClicked(ActionEvent event) {
-        betType = Bet.BetType.IMPAIR;
+        betType = BetType.IMPAIR;
         addBetOnTable(event);
     }
 
     @FXML
     private void secondHalfClicked(ActionEvent event) {
-        betType = Bet.BetType.PASSE;
+        betType = BetType.PASSE;
         addBetOnTable(event);
     }
 
@@ -679,26 +596,16 @@ public class GameSceneController implements Initializable {
         rows.put(5, 1);
     }
 
-    public void buildPlayersPane() {
+    public void buildPlayersPane() throws GameDoesNotExists_Exception {
         playersPane.getChildren().remove(0, playersPane.getChildren().size());
-        game.getGameDetails().getPlayers().stream().forEach((player) -> {
-            if (player.getPlayerDetails().getIsActive()) {
-                PlayerViewWithAmount playerView = new PlayerViewWithAmount(player);
+        service.getPlayersDetails(gameName).stream().forEach((player) -> {
+            if (player.getStatus().equals(PlayerStatus.ACTIVE)) {
+                PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN));
                 playersPane.getChildren().add(playerView);
                 playerView.getPlayerAmountLabel().textProperty().bind(
-                        Bindings.concat(player.getPlayerDetails().getAmount(), "$"));
+                        Bindings.concat(player.getMoney(), "$"));
             }
         });
-    }
-
-    private PlayerViewWithAmount getCurrentPlayerView() {
-        for (Node playerView : playersPane.getChildren()) {
-            PlayerViewWithAmount view = (PlayerViewWithAmount) playerView;
-            if (view.getPlayer() == currentPlayer) {
-                return view;
-            }
-        }
-        return null;
     }
 
     private void clearChips() {
@@ -725,7 +632,7 @@ public class GameSceneController implements Initializable {
         placeBet();
     }
 
-    private void placeBet() {
+    private void placeBet() throws GameDoesNotExists_Exception, InvalidParameters_Exception {
         if (!playerHasMoneyForBet()) {
             showError("You cannot place money you do not have");
             amount.set(0);
@@ -741,11 +648,11 @@ public class GameSceneController implements Initializable {
                 }
             }
             try {
-                currentBets.add(Bet.makeBet(betType, BigInteger.valueOf((amount.getValue())), nums, game.getTable().getTableType()));
+                service.makeBet(amount.getValue(), betType, nums, playerId);
             } catch (BadParamsException ex) {
                 showError(ex.getMessage() + ", try again");
             }
-            currentPlayer.getPlayerDetails().setMoney(currentPlayer.getPlayerDetails().getMoney().add(BigInteger.valueOf((int) amount.getValue() * -1)));
+            buildPlayersPane();
             amount.set(0);
             numbers.clear();
             FinishBettingButton.setDisable(false);
@@ -754,11 +661,11 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void snakeClicked(ActionEvent event) {
-        betType = Bet.BetType.SNAKE;
+        betType = BetType.SNAKE;
         addBetOnTable(event);
     }
 
-    void setTableToAmerican() {
+    private void setTableToAmerican() {
         tableImageView.setImage(new Image(AMERICAN_TABLE_IMAGE_PATH));
         rouletteImageView.setImage(new Image(AMERICAN_WHEEL_IMAGE_PATH));
         removeFrenchZero();
@@ -812,13 +719,13 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void zeroClicked(ActionEvent event) {
-        betType = Bet.BetType.STRAIGHT;
+        betType = BetType.STRAIGHT;
         numbers.add(0);
         addBetOnTable(event);
     }
 
     private void doubleZeroClicked(ActionEvent event) {
-        betType = Bet.BetType.STRAIGHT;
+        betType = BetType.STRAIGHT;
         numbers.add(37);
         addBetOnTable(event);
     }
@@ -855,32 +762,32 @@ public class GameSceneController implements Initializable {
     }
 
     private void basketAM_V1Clicked(ActionEvent event) {
-        betType = Bet.BetType.BASKET;
-        for (int num : Game.ConstValuesForBets.BASKET_AM_V1) {
+        betType = BetType.BASKET;
+        for (int num : BASKET_AM_V1) {
             numbers.add(num);
         }
         addBetOnTable(event);
     }
 
     private void basketAM_V2Clicked(ActionEvent event) {
-        betType = Bet.BetType.BASKET;
-        for (int num : Game.ConstValuesForBets.BASKET_AM_V2) {
+        betType = BetType.BASKET;
+        for (int num : BASKET_AM_V2) {
             numbers.add(num);
         }
         addBetOnTable(event);
     }
 
     private void basketAM_V3Clicked(ActionEvent event) {
-        betType = Bet.BetType.BASKET;
-        for (int num : Game.ConstValuesForBets.BASKET_AM_V3) {
+        betType = BetType.BASKET;
+        for (int num : BASKET_AM_V3) {
             numbers.add(num);
         }
         addBetOnTable(event);
     }
 
     private void basketFRClicked(ActionEvent event) {
-        betType = Bet.BetType.BASKET;
-        for (int num : Game.ConstValuesForBets.BASKET_FR) {
+        betType = BetType.BASKET;
+        for (int num : BASKET_FR) {
             numbers.add(num);
         }
         addBetOnTable(event);
@@ -896,7 +803,6 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void onNewGame(ActionEvent event) {
-        saveGame();
         newGame.set(popupDialog("New Game", "Are you sure you want to start a new game?"));
     }
 
@@ -925,33 +831,22 @@ public class GameSceneController implements Initializable {
         }
     }
 
-    private boolean playerHasMoneyForBet() {
-        return currentPlayer.getPlayerDetails().getMoney().intValue() >= amount.intValue();
+    private boolean playerHasMoneyForBet() throws InvalidParameters_Exception, GameDoesNotExists_Exception {
+        return service.getPlayerDetails(playerId).getMoney() >= amount.intValue();
     }
 
-    private void spinRoulette() {
+    private void spinRoulette(String position) {
         RotateTransition rt = new RotateTransition(Duration.millis(3000), rouletteImageView);
-        game.getTable().spinRoulette();
         rt.setByAngle(360);
         rt.setCycleCount(1);
         rt.setDuration(Duration.seconds(3));
         rt.setAutoReverse(false);
         rt.play();
-        setBallPosLabel();
-    }
-
-    private void setBallPosLabel() {
-        ballPossitionLabel.textProperty().set("Ball on: " + game.getTable().getCurrentBallPosition().getValue());
+        ballPossitionLabel.textProperty().set("Ball on: " + position);
     }
 
     @FXML
-    private void onRetire(ActionEvent event) {
-        retirePlayer(currentPlayer.getPlayerDetails());
-        buildPlayersPane();
-        moveToNextHumanPlayer();
-    }
-
-    private boolean isAnybodyLeft() {
-        return game.getGameDetails().getPlayers().stream().anyMatch((player) -> (player.getPlayerDetails().getIsActive() && player.getPlayerDetails().getIsHuman()));
+    private void onRetire(ActionEvent event) throws InvalidParameters_Exception, GameDoesNotExists_Exception {
+        service.resign(playerId);
     }
 }

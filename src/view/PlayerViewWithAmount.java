@@ -5,20 +5,18 @@
  */
 package view;
 
-import engine.Player;
 import javafx.scene.control.Label;
 
 /**
  *
  * @author yuvalsegall
  */
-public class PlayerViewWithAmount extends PlayerView{
-    private Label playerAmountLabel;
-    private final Player player;
-    
-    public PlayerViewWithAmount(Player player) {
-        super(player.getPlayerDetails().getName(), player.getPlayerDetails().getIsHuman());
-        this.player = player;
+public class PlayerViewWithAmount extends PlayerView {
+
+    private final Label playerAmountLabel;
+
+    public PlayerViewWithAmount(String name, boolean isHuman) {
+        super(name, isHuman);
         playerAmountLabel = new Label();
         getChildren().addAll(playerAmountLabel);
         getName().getStyleClass().add("themeLabel");
@@ -28,19 +26,15 @@ public class PlayerViewWithAmount extends PlayerView{
     public Label getPlayerAmountLabel() {
         return playerAmountLabel;
     }
-    
-    public void setIsBold(Boolean isBold){
-        if(isBold){
+
+    public void setIsBold(Boolean isBold) {
+        if (isBold) {
             playerAmountLabel.getStyleClass().add("boldLabel");
             getName().getStyleClass().add("boldLabel");
-        }
-        else{
+        } else {
             playerAmountLabel.getStyleClass().remove("boldLabel");
             getName().getStyleClass().remove("boldLabel");
         }
     }
 
-    public Player getPlayer() {
-        return player;
-    }
 }

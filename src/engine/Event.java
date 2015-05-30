@@ -3,6 +3,7 @@ package engine;
 import engine.bets.Bettable;
 import engine.bets.Bet;
 import engine.bets.NumbersBet;
+import generated.Bet;
 import java.math.BigInteger;
 
 /**

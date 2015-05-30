@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,6 +24,8 @@ public class Program extends Application {
     private RouletteWebServiceService service = null;
     private RouletteWebService gameWebService = null;
     private Stage primaryStage;
+    private String gameName;
+    private Integer playerId;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -33,11 +36,17 @@ public class Program extends Application {
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
         Parent gameRoot = getRoot(gameFxmlLoader);
         GameSceneController gameController = getGameController(gameFxmlLoader, primaryStage);
+        gameController.setGameName(gameName);
+        gameController.setService(gameWebService);
+        gameController.setPlayerId(playerId);
         Scene gameScene = new Scene(gameRoot);
 
         FXMLLoader propertiesFxmlLoader = getFXMLLoader(PROPERTIES_SCENE_FXML_PATH);
         Parent propertiesRoot = getRoot(propertiesFxmlLoader);
         PropertiesSceneController propertiesController = getPropertiesController(propertiesFxmlLoader, primaryStage, gameScene, gameController);
+        propertiesController.setGameName(gameName);
+        propertiesController.setService(gameWebService);
+        propertiesController.setPlayerId(playerId);
         Scene propertiesScene = new Scene(propertiesRoot);
 
         primaryStage.setTitle("Roulette!");
@@ -57,7 +66,7 @@ public class Program extends Application {
         PropertiesSceneController propertiesSceneController = (PropertiesSceneController) fxmlLoader.getController();
         propertiesSceneController.setService(gameWebService);
         propertiesSceneController.setPrimaryStage(primaryStage);
-        propertiesSceneController.getFinishedInit().addListener((source, oldValue, newValue) -> {
+        propertiesSceneController.getFinishedInit().addListener((ObservableValue<? extends Boolean> source, Boolean oldValue, Boolean newValue) -> {
             if (newValue) {
                 gameController.init();
                 primaryStage.setScene(nextScene);
