@@ -2,6 +2,6 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="file:/Users/yuvalsegall/Documents/Roulette/../../Dropbox/Projects/Java/XML%20and%20XSD%20v1.1/roulette.xsd" uri="xml-resources/jaxb/JAXB/roulette.xsd"/>
     <system systemId="file:/Users/yuvalsegall/Documents/Roulette/src/resources/roulette.xsd" uri="xml-resources/jaxb/JAXB/roulette.xsd"/>
-    <system systemId="http://localhost:8080/RouletteAPI/RouletteWebServiceService?wsdl" uri="xml-resources/web-service-references/RouletteWebServiceService/wsdl/localhost_8080/RouletteAPI/RouletteWebServiceService.wsdl"/>
-    <system systemId="http://localhost:8080/RouletteAPI/RouletteWebServiceService?xsd=1" uri="xml-resources/web-service-references/RouletteWebServiceService/wsdl/localhost_8080/RouletteAPI/RouletteWebServiceService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/RouletteAPI/RouletteWebServiceService?wsdl" uri="wsdl/localhost_8080/RouletteAPI/RouletteWebServiceService.wsdl"/>
+    <system systemId="http://localhost:8080/RouletteAPI/RouletteWebServiceService?xsd=1" uri="wsdl/localhost_8080/RouletteAPI/RouletteWebServiceService.xsd_1.xsd"/>
 </catalog>
