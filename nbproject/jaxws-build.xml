@@ -33,5 +33,22 @@
         <delete dir="${build.generated.dir}/jax-wsCache/RouletteWebServiceService"/>
         <delete dir="${build.generated.sources.dir}/jax-ws/web/client"/>
     </target>
-    <target name="wsimport-client-generate" depends="wsimport-client-RouletteWebServiceService"/>
+    <target name="wsimport-client-RouletteWebServiceService_1" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/RouletteWebServiceService_1"/>
+        <property name="wsdl-RouletteWebServiceService_1" location="xml-resources/web-service-references/RouletteWebServiceService_1/wsdl/RouletteWebServiceService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/RouletteWebServiceService_1" destdir="${build.generated.dir}/jax-wsCache/RouletteWebServiceService_1" wsdl="${wsdl-RouletteWebServiceService_1}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="file:/C:/Users/Yuval%20Segall/Dropbox/Projects/Java/WSDL%201/RouletteWebServiceService.wsdl" xnocompile="true" xendorsed="true">
+            <depends file="${wsdl-RouletteWebServiceService_1}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/RouletteWebServiceService_1"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/RouletteWebServiceService_1">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-RouletteWebServiceService_1" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/RouletteWebServiceService_1"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/ws/roulette"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-RouletteWebServiceService, wsimport-client-RouletteWebServiceService_1"/>
 </project>

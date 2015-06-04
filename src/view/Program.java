@@ -10,8 +10,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import web.client.RouletteWebService;
-import web.client.RouletteWebServiceService;
+import ws.roulette.RouletteWebService;
+import ws.roulette.RouletteWebServiceService;
 
 /**
  *
@@ -26,6 +26,7 @@ public class Program extends Application {
     private Stage primaryStage;
     private String gameName;
     private Integer playerId;
+    private static String[] args;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -68,8 +69,12 @@ public class Program extends Application {
         propertiesSceneController.setPrimaryStage(primaryStage);
         propertiesSceneController.getFinishedInit().addListener((ObservableValue<? extends Boolean> source, Boolean oldValue, Boolean newValue) -> {
             if (newValue) {
-                gameController.init();
-                primaryStage.setScene(nextScene);
+                try {
+                    gameController.popupWaittingDialog();
+                    primaryStage.setScene(nextScene);
+                } catch (Exception ex) {
+                    popupErrorDialog();
+                }
             }
         });
         propertiesSceneController.getNewGame().addListener((source, oldValue, newValue) -> {
@@ -98,6 +103,11 @@ public class Program extends Application {
                 onExit();
             }
         });
+        gameSceneController.getOnException().addListener((source, oldValue, newValue) -> {
+            if (newValue) {
+                popupErrorDialog();
+            }
+        });
         return gameSceneController;
     }
 
@@ -114,7 +124,7 @@ public class Program extends Application {
         try {
             start(primaryStage);
         } catch (IOException ex) {
-            popupErrorDialog(null);
+            popupErrorDialog();
         }
     }
 
@@ -123,13 +133,14 @@ public class Program extends Application {
      */
     public static void main(String[] args) {
         try {
+            Program.args = args;
             launch(args);
         } catch (Exception ex) {
-            popupErrorDialog(args);
+            popupErrorDialog();
         }
     }
 
-    private static void popupErrorDialog(String[] args) {
+    private static void popupErrorDialog() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setContentText("Something went wrong... lets start over...");

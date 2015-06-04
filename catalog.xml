@@ -4,4 +4,6 @@
     <system systemId="file:/Users/yuvalsegall/Documents/Roulette/src/resources/roulette.xsd" uri="xml-resources/jaxb/JAXB/roulette.xsd"/>
     <system systemId="http://localhost:8080/RouletteAPI/RouletteWebServiceService?wsdl" uri="xml-resources/web-service-references/RouletteWebServiceService/wsdl/localhost_8080/RouletteAPI/RouletteWebServiceService.wsdl"/>
     <system systemId="http://localhost:8080/RouletteAPI/RouletteWebServiceService?xsd=1" uri="xml-resources/web-service-references/RouletteWebServiceService/wsdl/localhost_8080/RouletteAPI/RouletteWebServiceService.xsd_1.xsd"/>
+    <system systemId="file:/C:/Users/Yuval%20Segall/Dropbox/Projects/Java/WSDL%201/RouletteWebServiceService.wsdl" uri="xml-resources/web-service-references/RouletteWebServiceService_1/wsdl/RouletteWebServiceService.wsdl"/>
+    <system systemId="file:/C:/Users/Yuval%20Segall/Dropbox/Projects/Java/WSDL%201/RouletteWebServiceService_schema1.xsd" uri="xml-resources/web-service-references/RouletteWebServiceService_1/wsdl/RouletteWebServiceService_schema1.xsd"/>
 </catalog>

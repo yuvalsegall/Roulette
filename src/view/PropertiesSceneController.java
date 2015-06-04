@@ -29,12 +29,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import web.client.DuplicateGameName_Exception;
-import web.client.GameDoesNotExists_Exception;
-import web.client.InvalidParameters_Exception;
-import web.client.InvalidXML_Exception;
-import web.client.RouletteType;
-import web.client.RouletteWebService;
+import ws.roulette.DuplicateGameName_Exception;
+import ws.roulette.GameDoesNotExists_Exception;
+import ws.roulette.InvalidParameters_Exception;
+import ws.roulette.InvalidXML_Exception;
+import ws.roulette.RouletteType;
+import ws.roulette.RouletteWebService;
 
 /**
  * FXML Controller class
