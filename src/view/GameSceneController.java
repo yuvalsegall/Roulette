@@ -611,7 +611,7 @@ public class GameSceneController implements Initializable {
 
     public void buildPlayersPane(List<PlayerDetails> playersList) {
         playersPane.getChildren().remove(0, playersPane.getChildren().size());
-        playersList.stream().forEach((player) -> {
+        playersList.stream().forEach((PlayerDetails player) -> {
             if (player.getStatus().equals(PlayerStatus.ACTIVE)) {
                 PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN));
                 playersPane.getChildren().add(playerView);
@@ -884,7 +884,6 @@ public class GameSceneController implements Initializable {
                         popupGoodbyeDialog("Game Over", "The game has ended.");
                         break;
                     case GAME_START:
-                        //TODO
                         init();
                         break;
                     case WINNING_NUMBER:
