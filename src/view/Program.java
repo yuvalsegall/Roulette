@@ -3,13 +3,24 @@ package view;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import ws.roulette.RouletteWebService;
 import ws.roulette.RouletteWebServiceService;
 
@@ -31,9 +42,12 @@ public class Program extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         this.primaryStage = primaryStage;
-        this.service = new RouletteWebServiceService();
+        if (args[0].trim().isEmpty() || args[1].trim().isEmpty()) {
+            popupStartupDialog();
+        }
+        URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/");
+        this.service = new RouletteWebServiceService(url);
         this.gameWebService = service.getRouletteWebServicePort();
-
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
         Parent gameRoot = getRoot(gameFxmlLoader);
         GameSceneController gameController = getGameController(gameFxmlLoader, primaryStage);
@@ -128,16 +142,66 @@ public class Program extends Application {
         }
     }
 
+    private void popupStartupDialog() {
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Connect to server");
+        dialog.setHeaderText("Let's connect to the Roulette Server!");
+        // TODO delete Set the icon (must be included in the project).
+//        dialog.setGraphic(new ImageView(this.getClass().getResource("login.png").toString()));
+
+        ButtonType connectButtonType = new ButtonType("Connect", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(connectButtonType, ButtonType.CANCEL);
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField ip = new TextField();
+        ip.setPromptText("IP");
+        TextField port = new TextField();
+        port.setPromptText("Port");
+
+        grid.add(new Label("IP:"), 0, 0);
+        grid.add(ip, 1, 0);
+        grid.add(new Label("Port:"), 0, 1);
+        grid.add(port, 1, 1);
+
+        Node connectButton = dialog.getDialogPane().lookupButton(connectButtonType);
+        connectButton.setDisable(true);
+
+        ip.textProperty().addListener((observable, oldValue, newValue) -> {
+            connectButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        dialog.getDialogPane().setContent(grid);
+        Platform.runLater(() -> ip.requestFocus());
+
+// Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == connectButtonType) {
+                args = new String[]{ip.getText(), port.getText()};
+                return new Pair<>(ip.getText(), port.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(IPPort -> {
+            System.out.println("IP=" + IPPort.getKey() + ", Port=" + IPPort.getValue());
+        });
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try {
-            Program.args = args;
-            launch(args);
-        } catch (Exception ex) {
-            popupErrorDialog();
-        }
+//        try {
+        Program.args = args;
+        launch(args);
+//        } catch (Exception ex) {
+//            popupErrorDialog();
+//        }
     }
 
     private static void popupErrorDialog() {

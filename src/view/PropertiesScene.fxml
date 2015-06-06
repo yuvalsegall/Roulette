@@ -47,6 +47,7 @@
                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -85,22 +86,8 @@
                   <Slider fx:id="maxWagesSlider" blockIncrement="0.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                   <Slider fx:id="minWagesSlider" blockIncrement="0.0" majorTickUnit="1.0" max="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <ComboBox fx:id="tableTypeComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label stylesheets="@scenes.css" text="Add Players:" GridPane.rowIndex="12">
-                     <styleClass>
-                        <String fx:value="mainFxmlClass" />
-                        <String fx:value="labels" />
-                     </styleClass></Label>
-                  <TextField fx:id="playerNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                  <CheckBox fx:id="isHumanCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="mainFxmlClass" stylesheets="@scenes.css" text="Human?" GridPane.columnIndex="2" GridPane.rowIndex="12">
-                     <GridPane.margin>
-                        <Insets left="20.0" />
-                     </GridPane.margin></CheckBox>
-                  <Button fx:id="addPlayerButton" mnemonicParsing="false" onAction="#addPlayer" text="Add" GridPane.columnIndex="3" GridPane.rowIndex="12">
-                     <GridPane.margin>
-                        <Insets left="50.0" />
-                     </GridPane.margin></Button>
                   <VBox fx:id="playersVBox" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.rowSpan="4" />
-                  <Label fx:id="errorMessageLabel" alignment="CENTER" stylesheets="@scenes.css" text="" textAlignment="CENTER" textFill="RED" GridPane.columnSpan="2147483647" GridPane.rowIndex="14" GridPane.rowSpan="2147483647">
+                  <Label fx:id="errorMessageLabel" alignment="CENTER" stylesheets="@scenes.css" text="" textAlignment="CENTER" textFill="RED" GridPane.columnSpan="2147483647" GridPane.rowIndex="15" GridPane.rowSpan="2147483647">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
@@ -109,16 +96,42 @@
                         <String fx:value="error" />
                      </styleClass>
                   </Label>
-                  <FlowPane fx:id="playersPane" alignment="CENTER" columnHalignment="CENTER" hgap="5.0" vgap="5.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="13" GridPane.rowSpan="2147483647">
+                  <FlowPane fx:id="gamesPane" alignment="CENTER" columnHalignment="CENTER" hgap="5.0" vgap="5.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="14" GridPane.rowSpan="2147483647">
                      <effect>
                         <Glow />
                      </effect></FlowPane>
-                  <Button fx:id="startGameButton" mnemonicParsing="false" onAction="#onStartGame" text="Start Game" GridPane.columnIndex="3" GridPane.rowIndex="14">
+                  <Button fx:id="createGameButton" mnemonicParsing="false" onAction="#createGame" text="Create Game" GridPane.columnIndex="3" GridPane.rowIndex="13">
                      <GridPane.margin>
-                        <Insets left="30.0" />
+                        <Insets right="30.0" />
                      </GridPane.margin>
                   </Button>
                   <Label styleClass="mainTitle" stylesheets="@scenes.css" text="Roulette" GridPane.columnIndex="1" />
+                  <Label stylesheets="@scenes.css" text="Num of computer players:" GridPane.rowIndex="11">
+                     <styleClass>
+                        <String fx:value="mainFxmlClass" />
+                        <String fx:value="labels" />
+                     </styleClass>
+                  </Label>
+                  <Label stylesheets="@scenes.css" text="Num of human players:" GridPane.rowIndex="13">
+                     <styleClass>
+                        <String fx:value="mainFxmlClass" />
+                        <String fx:value="labels" />
+                     </styleClass>
+                  </Label>
+                  <Slider fx:id="numOfComputerPlayersSlider" blockIncrement="0.0" majorTickUnit="1.0" max="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                  <Button fx:id="joinGameButton" mnemonicParsing="false" onAction="#joinGame" text="Join Game" GridPane.columnIndex="3" GridPane.rowIndex="15">
+                     <GridPane.margin>
+                        <Insets right="30.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Slider fx:id="numOfHumanPlayersSlider" blockIncrement="0.0" majorTickUnit="1.0" max="6.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                  <Label stylesheets="@scenes.css" text="Your name:" GridPane.rowIndex="15">
+                     <styleClass>
+                        <String fx:value="mainFxmlClass" />
+                        <String fx:value="labels" />
+                     </styleClass>
+                  </Label>
+                  <TextField fx:id="playerNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                </children>
                <BorderPane.margin>
                   <Insets />

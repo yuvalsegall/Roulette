@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -18,7 +19,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -58,7 +58,6 @@ public class PropertiesSceneController implements Initializable {
     private String gameName;
     private Integer playerId;
     private boolean isErrorMessageShown;
-    private SimpleBooleanProperty isPlayersCountCheckBad;
     private SimpleBooleanProperty finishedInit;
     private SimpleBooleanProperty newGame;
     private SimpleBooleanProperty exitGame;
@@ -75,44 +74,44 @@ public class PropertiesSceneController implements Initializable {
     @FXML
     private Slider initialSumOfMoneySlider;
     @FXML
-    private TextField playerNameTextField;
-    @FXML
-    private CheckBox isHumanCheckBox;
-    @FXML
-    private Button addPlayerButton;
-    @FXML
-    private Button startGameButton;
-    @FXML
     private VBox playersVBox;
     @FXML
     private Label errorMessageLabel;
     @FXML
-    private FlowPane playersPane;
+    private FlowPane gamesPane;
     @FXML
     private AnchorPane anchorPane;
     @FXML
-    private Slider numOfComputerPlayers;
+    private Button createGameButton;
     @FXML
-    private Slider numOfHumanPlayers;
+    private Slider numOfComputerPlayersSlider;
+    @FXML
+    private Button joinGameButton;
+    @FXML
+    private Slider numOfHumanPlayersSlider;
+    @FXML
+    private TextField playerNameTextField;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         isErrorMessageShown = false;
-        isPlayersCountCheckBad = new SimpleBooleanProperty(false);
         finishedInit = new SimpleBooleanProperty(false);
         newGame = new SimpleBooleanProperty(false);
         exitGame = new SimpleBooleanProperty(false);
         tableTypeComboBox.getItems().addAll(Arrays.asList(RouletteType.AMERICAN.name(), RouletteType.FRENCH.name()));
         gameNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onGameNameOrTableTypeOrPlayersChange();
+            updateJoinButtonState();//TODO delete
         });
         tableTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             onGameNameOrTableTypeOrPlayersChange();
         });
-        isPlayersCountCheckBad.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            onGameNameOrTableTypeOrPlayersChange();
+        playerNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            updateJoinButtonState();
         });
         onGameNameOrTableTypeOrPlayersChange();
+        updateJoinButtonState();
+        updateServerGamesView();
     }
 
     public void setService(RouletteWebService service) {
@@ -151,8 +150,9 @@ public class PropertiesSceneController implements Initializable {
         }
     }
 
-    private void joinGame(String playerName) throws GameDoesNotExists_Exception, InvalidParameters_Exception {
-        playerId = service.joinGame(gameName, playerName);
+    @FXML
+    private void joinGame() throws GameDoesNotExists_Exception, InvalidParameters_Exception {
+        playerId = service.joinGame(gameNameTextField.getText(), playerNameTextField.getText());
     }
 
     private void initiateXMLGame(File XMLFile) throws DuplicateGameName_Exception, InvalidParameters_Exception, InvalidXML_Exception, FileNotFoundException {
@@ -160,6 +160,7 @@ public class PropertiesSceneController implements Initializable {
             throw new InvalidXML_Exception(null, null);
         }
         setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
+        updateServerGamesView();
     }
 
     @FXML
@@ -181,14 +182,21 @@ public class PropertiesSceneController implements Initializable {
     }
 
     private void onGameNameOrTableTypeOrPlayersChange() {
-        updateStartGameButtonState();
+        updateCreateGameButtonState();
+        updateJoinButtonState();//TODO delete
+        hideError();
+    }
+
+    private void onPlayerNameChange() {
+        updateJoinButtonState();
         hideError();
     }
 
     @FXML
-    private void onStartGame(ActionEvent event) throws InvalidParameters_Exception, DuplicateGameName_Exception, Exception {
-        paramsCheck((int) numOfComputerPlayers.getValue(), (int) numOfHumanPlayers.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
-        service.createGame((int) numOfComputerPlayers.getValue(), (int) numOfHumanPlayers.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
+    private void createGame(ActionEvent event) throws InvalidParameters_Exception, DuplicateGameName_Exception, Exception {
+        paramsCheck((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
+        service.createGame((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
+        updateServerGamesView();
     }
 
     public SimpleBooleanProperty getFinishedInit() {
@@ -203,18 +211,16 @@ public class PropertiesSceneController implements Initializable {
         return exitGame;
     }
 
-    private void updateStartGameButtonState() {
+    private void updateCreateGameButtonState() {
         boolean isEmptyFields = getGameName().trim().isEmpty() || getTableType() == null || getTableType().toString().trim().isEmpty();
-        boolean disable = isEmptyFields || isPlayersCountCheckBad.getValue() || isErrorMessageShown;
-        startGameButton.setDisable(disable);
+        boolean disable = isEmptyFields || isErrorMessageShown;
+        createGameButton.setDisable(disable);
     }
 
-    private String getPlayerName() {
-        return playerNameTextField.getText();
-    }
-
-    private boolean isPlayerHuman() {
-        return isHumanCheckBox.isSelected();
+    private void updateJoinButtonState() {
+        boolean isEmptyFields = getPlayerName().trim().isEmpty() || getGameName().trim().isEmpty();
+        boolean disable = isEmptyFields || isErrorMessageShown;
+        joinGameButton.setDisable(disable);
     }
 
     public String getGameName() {
@@ -225,10 +231,8 @@ public class PropertiesSceneController implements Initializable {
         return tableTypeComboBox.getValue();
     }
 
-    private void clearPlayerNameField() {
-        playerNameTextField.clear();
-        isHumanCheckBox.setSelected(false);
-        playerNameTextField.requestFocus();
+    public String getPlayerName() {
+        return playerNameTextField.getText();
     }
 
     private void showError(String message) {
@@ -242,7 +246,7 @@ public class PropertiesSceneController implements Initializable {
             animation.setToValue(1.0);
             animation.play();
         }
-        updateStartGameButtonState();
+        updateCreateGameButtonState();
     }
 
     private void hideError() {
@@ -257,7 +261,7 @@ public class PropertiesSceneController implements Initializable {
 
             isErrorMessageShown = false;
             errorMessageLabel.textProperty().setValue("");
-            updateStartGameButtonState();
+            updateCreateGameButtonState();
         }
     }
 
@@ -278,4 +282,13 @@ public class PropertiesSceneController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         return result.get() == ButtonType.OK;
     }
+
+    private void updateServerGamesView() {
+        List<String> games = service.getWaitingGames();
+        gamesPane.getChildren().clear();
+        games.stream().forEach((name) -> {
+            gamesPane.getChildren().add(new GameNameView(name));
+        });
+    }
+
 }
