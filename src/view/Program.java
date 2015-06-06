@@ -42,7 +42,7 @@ public class Program extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         this.primaryStage = primaryStage;
-        if (args[0].trim().isEmpty() || args[1].trim().isEmpty()) {
+        if (args.length != 2 || args[0].trim().isEmpty() || args[1].trim().isEmpty()) {
             popupStartupDialog();
         }
         URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/");
@@ -146,8 +146,6 @@ public class Program extends Application {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Connect to server");
         dialog.setHeaderText("Let's connect to the Roulette Server!");
-        // TODO delete Set the icon (must be included in the project).
-//        dialog.setGraphic(new ImageView(this.getClass().getResource("login.png").toString()));
 
         ButtonType connectButtonType = new ButtonType("Connect", ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(connectButtonType, ButtonType.CANCEL);
@@ -176,7 +174,6 @@ public class Program extends Application {
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(() -> ip.requestFocus());
 
-// Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == connectButtonType) {
                 args = new String[]{ip.getText(), port.getText()};
@@ -196,12 +193,12 @@ public class Program extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        try {
-        Program.args = args;
-        launch(args);
-//        } catch (Exception ex) {
-//            popupErrorDialog();
-//        }
+        try {
+            Program.args = args;
+            launch(args);
+        } catch (Exception ex) {
+            popupErrorDialog();
+        }
     }
 
     private static void popupErrorDialog() {
