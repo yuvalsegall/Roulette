@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.application.Platform;
@@ -56,7 +57,7 @@ public class PropertiesSceneController implements Initializable {
 
     private RouletteWebService service;
     private String gameName;
-    private Integer playerId;
+    private AtomicInteger playerId;
     private boolean isErrorMessageShown;
     private SimpleBooleanProperty finishedInit;
     private SimpleBooleanProperty newGame;
@@ -113,10 +114,10 @@ public class PropertiesSceneController implements Initializable {
         updateJoinButtonState();
     }
 
-    public void init(){
+    public void init() {
         updateServerGamesView();
     }
-    
+
     public void setService(RouletteWebService service) {
         this.service = service;
     }
@@ -129,8 +130,12 @@ public class PropertiesSceneController implements Initializable {
         this.primaryStage = primaryStage;
     }
 
-    public void setPlayerId(Integer playerId) {
+    public void setPlayerId(AtomicInteger playerId) {
         this.playerId = playerId;
+    }
+
+    public int getPlayerId() {
+        return this.playerId.intValue();
     }
 
     private void paramsCheck(int computerPlayers, int humanPlayers, int minWages, int maxWages, int initalSumOfMoney) throws Exception {
@@ -155,8 +160,9 @@ public class PropertiesSceneController implements Initializable {
 
     @FXML
     private void joinGame() throws GameDoesNotExists_Exception, InvalidParameters_Exception {
-        playerId = service.joinGame(gameNameTextField.getText(), playerNameTextField.getText());
-        finishedInit.set(true);
+        playerId.set(service.joinGame(gameNameTextField.getText(), playerNameTextField.getText()));
+        // TODO game name
+        finishedInit.set(Boolean.TRUE);
     }
 
     private void initiateXMLGame(File XMLFile) throws DuplicateGameName_Exception, InvalidParameters_Exception, InvalidXML_Exception, FileNotFoundException {

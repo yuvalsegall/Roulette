@@ -48,7 +48,7 @@ import ws.roulette.RouletteWebService;
  * @author yuvalsegall
  */
 public class GameSceneController implements Initializable {
-    
+
     private Stage primaryStage;
     @FXML
     private Button button0;
@@ -331,7 +331,7 @@ public class GameSceneController implements Initializable {
     @FXML
     private FlowPane playersPane;
     private String gameName;
-    private Integer playerId;
+    private Number playerId;
     private RouletteWebService service;
     private ArrayList<Integer> numbers;
     private ArrayList<Bet> currentBets;
@@ -353,7 +353,7 @@ public class GameSceneController implements Initializable {
     private SimpleBooleanProperty exitGame;
     private SimpleBooleanProperty onException;
     private SimpleBooleanProperty isGameStarted;
-    
+
     @FXML
     private AnchorPane frenchZeroAnchor;
     @FXML
@@ -390,7 +390,7 @@ public class GameSceneController implements Initializable {
         onException = new SimpleBooleanProperty(false);
         isGameStarted = new SimpleBooleanProperty(false);
     }
-    
+
     public void init() {
         try {
             GameDetails details = service.getGameDetails(gameName);
@@ -398,7 +398,7 @@ public class GameSceneController implements Initializable {
                 setTableToAmerican();
             }
             players = buildPlayersMap();
-            
+
             ballPossitionLabel.textProperty().set("");
             messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
             lastEventId = 0;
@@ -406,27 +406,31 @@ public class GameSceneController implements Initializable {
             showError(ex.getMessage());
         }
     }
-    
+
     public void setGameName(String gameName) {
         this.gameName = gameName;
     }
-    
+
     public void setService(RouletteWebService service) {
         this.service = service;
     }
-    
+
     public Stage getPrimaryStage() {
         return primaryStage;
     }
-    
+
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
-    
-    public void setPlayerId(Integer playerId) {
+
+    public void setPlayerId(Number playerId) {
         this.playerId = playerId;
     }
-    
+
+    public int getPlayerId() {
+        return this.playerId.intValue();
+    }
+
     private void showError(String message) {
         if (!isErrorMessageShown) {
             isErrorMessageShown = true;
@@ -437,10 +441,10 @@ public class GameSceneController implements Initializable {
             animation.setFromValue(1.0);
             animation.setToValue(0.0);
             animation.play();
-            
+
         }
     }
-    
+
     private void hideError() {
         if (isErrorMessageShown) {
             FadeTransition animation = FadeTransitionBuilder.create()
@@ -450,12 +454,12 @@ public class GameSceneController implements Initializable {
                     .toValue(0.0)
                     .build();
             animation.play();
-            
+
             isErrorMessageShown = false;
             messageLabel.textProperty().setValue("");
         }
     }
-    
+
     @FXML
     private void numberButtonClicked(ActionEvent event) {
         Node node = ((Button) event.getSource()).getParent();
@@ -465,7 +469,7 @@ public class GameSceneController implements Initializable {
         int myRow = rowsReverse.get(row);
         myCol -= myCol / 2;
         myRow -= myRow / 2;
-        
+
         if (col % 2 == 0) {
             if (row % 2 == 0) {
                 //vertical split
@@ -498,113 +502,113 @@ public class GameSceneController implements Initializable {
         }
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void AddOneClicked(ActionEvent event) {
         amount.set(amount.get() + 1);
     }
-    
+
     @FXML
     private void AddTwoClicked(ActionEvent event) {
         amount.set(amount.get() + 2);
     }
-    
+
     @FXML
     private void AddFiveClicked(ActionEvent event) {
         amount.set(amount.get() + 5);
     }
-    
+
     @FXML
     private void AddTenClicked(ActionEvent event) {
         amount.set(amount.get() + 10);
     }
-    
+
     @FXML
     private void finishedBettingClicked(ActionEvent event) {
         try {
             FinishBettingButton.setDisable(true);
-            service.finishBetting(playerId);
+            service.finishBetting(getPlayerId());
         } catch (InvalidParameters_Exception ex) {
             onException.set(true);
         }
     }
-    
+
     private void clearAmountClicked(ActionEvent event) {
         amount.set(0);
     }
-    
+
     @FXML
     private void thirdRowClicked(ActionEvent event) {
         betType = BetType.COLUMN_3;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void secondRowClicked(ActionEvent event) {
         betType = BetType.COLUMN_2;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void firstRowClicked(ActionEvent event) {
         betType = BetType.COLUMN_1;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void first12Clicked(ActionEvent event) {
         betType = BetType.PREMIERE_DOUZAINE;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void second12Clicked(ActionEvent event) {
         betType = BetType.MOYENNE_DOUZAINE;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void third12Clicked(ActionEvent event) {
         betType = BetType.DERNIERE_DOUZAINE;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void firstHalfClicked(ActionEvent event) {
         betType = BetType.MANQUE;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void evenClicked(ActionEvent event) {
         betType = BetType.PAIR;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void redClicked(ActionEvent event) {
         betType = BetType.ROUGE;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void blackClicked(ActionEvent event) {
         betType = BetType.NOIR;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void oddClicked(ActionEvent event) {
         betType = BetType.IMPAIR;
         addBetOnTable(event);
     }
-    
+
     @FXML
     private void secondHalfClicked(ActionEvent event) {
         betType = BetType.PASSE;
         addBetOnTable(event);
     }
-    
+
     private void setRowsHashMap(HashMap<Integer, Integer> rows) {
         rows.put(1, 5);
         rows.put(2, 4);
@@ -612,7 +616,7 @@ public class GameSceneController implements Initializable {
         rows.put(4, 2);
         rows.put(5, 1);
     }
-    
+
     public void buildPlayersPane(List<PlayerDetails> playersList) {
         playersPane.getChildren().remove(0, playersPane.getChildren().size());
         playersList.stream().forEach((PlayerDetails player) -> {
@@ -624,7 +628,7 @@ public class GameSceneController implements Initializable {
             }
         });
     }
-    
+
     private void clearChips() {
         tableGridPane.getChildren().stream().filter((node) -> (node instanceof AnchorPane)).map((node) -> (AnchorPane) node).forEach((parent) -> {
             for (int i = 0; i < parent.getChildren().size(); i++) {
@@ -640,7 +644,7 @@ public class GameSceneController implements Initializable {
             }
         }
     }
-    
+
     private void addBetOnTable(ActionEvent event) {
         ChipForTable newChip = new ChipForTable(amount.getValue().toString() + '$');
         Button initiatingButton = (Button) event.getSource();
@@ -648,7 +652,7 @@ public class GameSceneController implements Initializable {
         parent.getChildren().add(newChip);
         placeBet();
     }
-    
+
     private void placeBet() {
         try {
             if (!playerHasMoneyForBet()) {
@@ -657,7 +661,7 @@ public class GameSceneController implements Initializable {
                 numbers.clear();
                 clearChips();
             } else {
-                service.makeBet(amount.getValue(), betType, numbers, playerId);
+                service.makeBet(amount.getValue(), betType, numbers, getPlayerId());
                 amount.set(0);
                 numbers.clear();
                 FinishBettingButton.setDisable(false);
@@ -666,13 +670,13 @@ public class GameSceneController implements Initializable {
             onException.set(true);
         }
     }
-    
+
     @FXML
     private void snakeClicked(ActionEvent event) {
         betType = BetType.SNAKE;
         addBetOnTable(event);
     }
-    
+
     private void setTableToAmerican() {
         tableImageView.setImage(new Image(AMERICAN_TABLE_IMAGE_PATH));
         rouletteImageView.setImage(new Image(AMERICAN_WHEEL_IMAGE_PATH));
@@ -681,21 +685,21 @@ public class GameSceneController implements Initializable {
         addAmericanZeros();
         addAmericanBaskets();
     }
-    
+
     private void removeFrenchBaskets() {
         tableGridPane.getChildren().remove(basketAnchor);
     }
-    
+
     private void removeFrenchZero() {
         tableGridPane.getChildren().remove(frenchZeroAnchor);
     }
-    
+
     private void addAmericanZeros() {
         AnchorPane anchor0 = new AnchorPane();
         AnchorPane anchor00 = new AnchorPane();
         Button newbutton0 = new Button();
         Button newbutton00 = new Button();
-        
+
         newbutton0.setOnAction((e) -> zeroClicked(e));
         newbutton00.setOnAction((e) -> doubleZeroClicked(e));
         setButtonProperties(newbutton0);
@@ -709,35 +713,35 @@ public class GameSceneController implements Initializable {
         tableGridPane.add(anchor0, 1, 4, 1, 2);
         tableGridPane.add(anchor00, 1, 1, 1, 2);
     }
-    
+
     private void setButtonProperties(Button button) {
         button.setOpacity(0);
     }
-    
+
     private void setAnchorProperties(AnchorPane anchor) {
         anchor.prefWidthProperty().set(46.0);
     }
-    
+
     private void setButtonToAnchor(Button button) {
         AnchorPane.setTopAnchor(button, 0.0);
         AnchorPane.setLeftAnchor(button, 0.0);
         AnchorPane.setRightAnchor(button, 0.0);
         AnchorPane.setBottomAnchor(button, 0.0);
     }
-    
+
     @FXML
     private void zeroClicked(ActionEvent event) {
         betType = BetType.STRAIGHT;
         numbers.add(0);
         addBetOnTable(event);
     }
-    
+
     private void doubleZeroClicked(ActionEvent event) {
         betType = BetType.STRAIGHT;
         numbers.add(37);
         addBetOnTable(event);
     }
-    
+
     private void addAmericanBaskets() {
         AnchorPane basket1 = createNewBasketAnchor("V1");
         AnchorPane basket2 = createNewBasketAnchor("V2");
@@ -746,7 +750,7 @@ public class GameSceneController implements Initializable {
         tableGridPane.add(basket2, 2, 3, 2, 1);
         tableGridPane.add(basket3, 2, 2, 2, 1);
     }
-    
+
     private AnchorPane createNewBasketAnchor(String version) {
         AnchorPane anchorBasket = new AnchorPane();
         Button newbutton = new Button();
@@ -754,7 +758,7 @@ public class GameSceneController implements Initializable {
         setButtonToAnchor(newbutton);
         anchorBasket.getChildren().add(newbutton);
         anchorBasket.prefWidthProperty().set(35.0);
-        
+
         switch (version) {
             case "V1":
                 newbutton.setOnAction((e) -> basketAM_V1Clicked(e));
@@ -768,7 +772,7 @@ public class GameSceneController implements Initializable {
         }
         return anchorBasket;
     }
-    
+
     private void basketAM_V1Clicked(ActionEvent event) {
         betType = BetType.BASKET;
         for (int num : BASKET_AM_V1) {
@@ -776,7 +780,7 @@ public class GameSceneController implements Initializable {
         }
         addBetOnTable(event);
     }
-    
+
     private void basketAM_V2Clicked(ActionEvent event) {
         betType = BetType.BASKET;
         for (int num : BASKET_AM_V2) {
@@ -784,7 +788,7 @@ public class GameSceneController implements Initializable {
         }
         addBetOnTable(event);
     }
-    
+
     private void basketAM_V3Clicked(ActionEvent event) {
         betType = BetType.BASKET;
         for (int num : BASKET_AM_V3) {
@@ -792,7 +796,7 @@ public class GameSceneController implements Initializable {
         }
         addBetOnTable(event);
     }
-    
+
     private void basketFRClicked(ActionEvent event) {
         betType = BetType.BASKET;
         for (int num : BASKET_FR) {
@@ -800,29 +804,29 @@ public class GameSceneController implements Initializable {
         }
         addBetOnTable(event);
     }
-    
+
     public SimpleBooleanProperty getNewGame() {
         return newGame;
     }
-    
+
     public SimpleBooleanProperty getExitGame() {
         return exitGame;
     }
-    
+
     public SimpleBooleanProperty getOnException() {
         return onException;
     }
-    
+
     @FXML
     private void onNewGame(ActionEvent event) {
         newGame.set(popupDialog("New Game", "Are you sure you want to start a new game?"));
     }
-    
+
     @FXML
     private void onExitGame(ActionEvent event) {
         exitGame.set(popupDialog("Exit Game", "Are you sure you want to leave?"));
     }
-    
+
     private Boolean popupDialog(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
@@ -830,7 +834,7 @@ public class GameSceneController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         return result.get() == ButtonType.OK;
     }
-    
+
     private void popupGoodbyeDialog(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -842,7 +846,7 @@ public class GameSceneController implements Initializable {
             exitGame.set(true);
         }
     }
-    
+
     public void popupWaittingDialog() throws InterruptedException {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("One moment an the game begin!");
@@ -854,16 +858,16 @@ public class GameSceneController implements Initializable {
             Thread.sleep(TimeUnit.SECONDS.toMillis(1000));
         }
     }
-    
+
     private boolean playerHasMoneyForBet() {
         try {
-            return service.getPlayerDetails(playerId).getMoney() >= amount.intValue();
+            return service.getPlayerDetails(getPlayerId()).getMoney() >= amount.intValue();
         } catch (GameDoesNotExists_Exception | InvalidParameters_Exception ex) {
             onException.set(true);
         }
         return false;
     }
-    
+
     private void spinRoulette(int position) {
         RotateTransition rt = new RotateTransition(Duration.millis(3000), rouletteImageView);
         rt.setByAngle(360);
@@ -873,19 +877,19 @@ public class GameSceneController implements Initializable {
         rt.play();
         ballPossitionLabel.textProperty().set("Ball on: " + position);
     }
-    
+
     @FXML
     private void onRetire(ActionEvent event) {
         try {
-            service.resign(playerId);
+            service.resign(getPlayerId());
         } catch (InvalidParameters_Exception ex) {
             onException.set(true);
         }
     }
-    
+
     private void doServerEvents() {
         try {
-            List<Event> events = service.getEvents(lastEventId, playerId);
+            List<Event> events = service.getEvents(lastEventId, getPlayerId());
             events.stream().forEach((Event event) -> {
                 switch (event.getType()) {
                     case GAME_OVER:
@@ -919,7 +923,7 @@ public class GameSceneController implements Initializable {
             onException.set(true);
         }
     }
-    
+
     private Map<String, PlayerDetails> buildPlayersMap() {
         try {
             List<PlayerDetails> list = service.getPlayersDetails(gameName);

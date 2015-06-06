@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -36,7 +37,7 @@ public class Program extends Application {
     private RouletteWebService gameWebService = null;
     private Stage primaryStage;
     private String gameName;
-    private Integer playerId;
+    private AtomicInteger playerId;
     private static String[] args;
 
     @Override
@@ -185,10 +186,6 @@ public class Program extends Application {
         });
 
         Optional<Pair<String, String>> result = dialog.showAndWait();
-
-        result.ifPresent(IPPort -> {
-            System.out.println("IP=" + IPPort.getKey() + ", Port=" + IPPort.getValue());
-        });
     }
 
     /**
@@ -209,7 +206,7 @@ public class Program extends Application {
         alert.setContentText("Something went wrong... lets start over...");
         alert.showAndWait();
         if (args != null) {
-            launch(args);
+//            launch(args);
         }
 //TODO exception doesnt work
     }
