@@ -47,7 +47,7 @@ public class Program extends Application {
             popupStartupDialog();
         }
         URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/RouletteServer/RouletteWebServiceService");
-
+        playerId = new AtomicInteger();
         this.service = new RouletteWebServiceService(url);
         this.gameWebService = service.getRouletteWebServicePort();
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
