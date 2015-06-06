@@ -62,6 +62,7 @@ public class Program extends Application {
         propertiesController.setGameName(gameName);
         propertiesController.setService(gameWebService);
         propertiesController.setPlayerId(playerId);
+        propertiesController.init();
         Scene propertiesScene = new Scene(propertiesRoot);
 
         primaryStage.setTitle("Roulette!");
@@ -193,12 +194,8 @@ public class Program extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try {
-            Program.args = args;
-            launch(args);
-        } catch (Exception ex) {
-            popupErrorDialog();
-        }
+        Program.args = args;
+        launch(args);
     }
 
     private static void popupErrorDialog() {

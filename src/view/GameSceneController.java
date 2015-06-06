@@ -843,6 +843,7 @@ public class GameSceneController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("One moment an the game begin!");
         alert.setContentText("Waitting to the other players...");
+        alert.getButtonTypes().clear();
         alert.showAndWait();
         doServerEvents();
     }

@@ -111,9 +111,12 @@ public class PropertiesSceneController implements Initializable {
         });
         onGameNameOrTableTypeOrPlayersChange();
         updateJoinButtonState();
-        updateServerGamesView();
     }
 
+    public void init(){
+        updateServerGamesView();
+    }
+    
     public void setService(RouletteWebService service) {
         this.service = service;
     }
@@ -153,6 +156,7 @@ public class PropertiesSceneController implements Initializable {
     @FXML
     private void joinGame() throws GameDoesNotExists_Exception, InvalidParameters_Exception {
         playerId = service.joinGame(gameNameTextField.getText(), playerNameTextField.getText());
+        finishedInit.set(true);
     }
 
     private void initiateXMLGame(File XMLFile) throws DuplicateGameName_Exception, InvalidParameters_Exception, InvalidXML_Exception, FileNotFoundException {
