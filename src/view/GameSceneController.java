@@ -401,6 +401,7 @@ public class GameSceneController implements Initializable {
             
             ballPossitionLabel.textProperty().set("");
             messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
+            lastEventId = 0;
         } catch (GameDoesNotExists_Exception ex) {
             showError(ex.getMessage());
         }

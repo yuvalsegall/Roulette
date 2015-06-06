@@ -41,38 +41,35 @@ public class Program extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        try {
-            this.primaryStage = primaryStage;
-            if (args.length != 2 || args[0].trim().isEmpty() || args[1].trim().isEmpty()) {
-                popupStartupDialog();
-            }
-            URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/RouletteServer/RouletteWebServiceService");
-
-            this.service = new RouletteWebServiceService(url);
-            this.gameWebService = service.getRouletteWebServicePort();
-            FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
-            Parent gameRoot = getRoot(gameFxmlLoader);
-            GameSceneController gameController = getGameController(gameFxmlLoader, primaryStage);
-            gameController.setGameName(gameName);
-            gameController.setService(gameWebService);
-            gameController.setPlayerId(playerId);
-            Scene gameScene = new Scene(gameRoot);
-
-            FXMLLoader propertiesFxmlLoader = getFXMLLoader(PROPERTIES_SCENE_FXML_PATH);
-            Parent propertiesRoot = getRoot(propertiesFxmlLoader);
-            PropertiesSceneController propertiesController = getPropertiesController(propertiesFxmlLoader, primaryStage, gameScene, gameController);
-            propertiesController.setGameName(gameName);
-            propertiesController.setService(gameWebService);
-            propertiesController.setPlayerId(playerId);
-            propertiesController.init();
-            Scene propertiesScene = new Scene(propertiesRoot);
-
-            primaryStage.setTitle("Roulette!");
-            primaryStage.setScene(propertiesScene);
-            primaryStage.show();
-        } catch (Exception ex) {
-            popupErrorDialog();
+        this.primaryStage = primaryStage;
+        if (args.length != 2 || args[0].trim().isEmpty() || args[1].trim().isEmpty()) {
+            popupStartupDialog();
         }
+        URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/RouletteServer/RouletteWebServiceService");
+
+        this.service = new RouletteWebServiceService(url);
+        this.gameWebService = service.getRouletteWebServicePort();
+        FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
+        Parent gameRoot = getRoot(gameFxmlLoader);
+        GameSceneController gameController = getGameController(gameFxmlLoader, primaryStage);
+        gameController.setGameName(gameName);
+        gameController.setService(gameWebService);
+        gameController.setPlayerId(playerId);
+        Scene gameScene = new Scene(gameRoot);
+
+        FXMLLoader propertiesFxmlLoader = getFXMLLoader(PROPERTIES_SCENE_FXML_PATH);
+        Parent propertiesRoot = getRoot(propertiesFxmlLoader);
+        PropertiesSceneController propertiesController = getPropertiesController(propertiesFxmlLoader, primaryStage, gameScene, gameController);
+        propertiesController.setGameName(gameName);
+        propertiesController.setService(gameWebService);
+        propertiesController.setPlayerId(playerId);
+        propertiesController.init();
+        Scene propertiesScene = new Scene(propertiesRoot);
+
+        primaryStage.setTitle("Roulette!");
+        primaryStage.setScene(propertiesScene);
+        primaryStage.show();
+
     }
 
     private FXMLLoader getFXMLLoader(String fxmlPath) {
@@ -198,8 +195,12 @@ public class Program extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Program.args = args;
-        launch(args);
+        try {
+            Program.args = args;
+            launch(args);
+        } catch (Exception ex) {
+            popupErrorDialog();
+        }
     }
 
     private static void popupErrorDialog() {
