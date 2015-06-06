@@ -210,5 +210,6 @@ public class Program extends Application {
         if (args != null) {
             launch(args);
         }
+//TODO exception doesnt work
     }
 }

@@ -198,7 +198,7 @@ public class PropertiesSceneController implements Initializable {
 
     @FXML
     private void createGame(ActionEvent event) throws InvalidParameters_Exception, DuplicateGameName_Exception, Exception {
-        paramsCheck((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
+        paramsCheck((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) minWagesSlider.getValue(), (int) maxWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
         service.createGame((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
         updateServerGamesView();
     }

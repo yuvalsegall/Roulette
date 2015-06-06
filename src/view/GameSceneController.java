@@ -847,10 +847,10 @@ public class GameSceneController implements Initializable {
         alert.setTitle("One moment an the game begin!");
         alert.setContentText("Waitting to the other players...");
         alert.getButtonTypes().clear();
-        alert.showAndWait();
+        alert.show();
         while (!isGameStarted.getValue()) {
             doServerEvents();
-            Thread.sleep(TimeUnit.SECONDS.toMillis(5000));
+            Thread.sleep(TimeUnit.SECONDS.toMillis(1000));
         }
     }
     
