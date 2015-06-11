@@ -33,9 +33,9 @@ public class Program extends Application {
 
     private static final String PROPERTIES_SCENE_FXML_PATH = "PropertiesScene.fxml";
     private static final String GAME_SCENE_FXML_PATH = "GameScene.fxml";
-    private RouletteWebServiceService service = null;
-    private RouletteWebService gameWebService = null;
-    private Stage primaryStage;
+    private static RouletteWebServiceService service = null;
+    private static RouletteWebService gameWebService = null;
+    private static Stage thisPrimaryStage;
     private String gameName;
     private String playerName;
     private AtomicInteger playerId;
@@ -43,14 +43,14 @@ public class Program extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        this.primaryStage = primaryStage;
+        thisPrimaryStage = primaryStage;
         if (args.length != 2 || args[0].trim().isEmpty() || args[1].trim().isEmpty()) {
             popupStartupDialog();
         }
         URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/RouletteServer/RouletteWebServiceService");
         playerId = new AtomicInteger();
-        this.service = new RouletteWebServiceService(url);
-        this.gameWebService = service.getRouletteWebServicePort();
+        service = new RouletteWebServiceService(url);
+        gameWebService = service.getRouletteWebServicePort();
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
         Parent gameRoot = getRoot(gameFxmlLoader);
         GameSceneController gameController = getGameController(gameFxmlLoader, primaryStage);
@@ -146,7 +146,7 @@ public class Program extends Application {
 
     private void onNew() {
         try {
-            start(primaryStage);
+            start(thisPrimaryStage);
         } catch (IOException ex) {
             popupErrorDialog();
         }
@@ -212,9 +212,13 @@ public class Program extends Application {
         alert.setTitle("Error");
         alert.setContentText("Something went wrong... lets start over...");
         alert.showAndWait();
-        if (args != null) {
-            launch(args);
-        }
+//        if (args != null) {
+//            try {
+//                start(thisPrimaryStage);
+//            } catch (IOException ex) {
+//                Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
 //TODO exception doesnt work
     }
 }

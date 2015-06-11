@@ -871,7 +871,7 @@ public class GameSceneController implements Initializable {
         alert.show();
         while (!isGameStarted.getValue()) {
             doServerEvents();
-            Thread.sleep(TimeUnit.SECONDS.toMillis(1000));
+            Thread.sleep(TimeUnit.SECONDS.toMillis(5));
         }
     }
 
