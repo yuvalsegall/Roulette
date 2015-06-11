@@ -30,6 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import view.GameNameView;
 import ws.roulette.DuplicateGameName_Exception;
 import ws.roulette.GameDoesNotExists_Exception;
 import ws.roulette.InvalidParameters_Exception;
@@ -57,11 +58,13 @@ public class PropertiesSceneController implements Initializable {
 
     private RouletteWebService service;
     private String gameName;
+    private String playerName;
     private AtomicInteger playerId;
     private boolean isErrorMessageShown;
     private SimpleBooleanProperty finishedInit;
     private SimpleBooleanProperty newGame;
     private SimpleBooleanProperty exitGame;
+    private SimpleBooleanProperty onException;
 
     private Stage primaryStage;
     @FXML
@@ -99,6 +102,7 @@ public class PropertiesSceneController implements Initializable {
         finishedInit = new SimpleBooleanProperty(false);
         newGame = new SimpleBooleanProperty(false);
         exitGame = new SimpleBooleanProperty(false);
+        onException = new SimpleBooleanProperty(false);
         tableTypeComboBox.getItems().addAll(Arrays.asList(RouletteType.AMERICAN.name(), RouletteType.FRENCH.name()));
         gameNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onGameNameOrTableTypeOrPlayersChange();
@@ -138,6 +142,10 @@ public class PropertiesSceneController implements Initializable {
         return this.playerId.intValue();
     }
 
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
     private void paramsCheck(int computerPlayers, int humanPlayers, int minWages, int maxWages, int initalSumOfMoney) throws Exception {
         playersCountCheck(computerPlayers, humanPlayers);
         propertiesCheck(minWages, maxWages, initalSumOfMoney);
@@ -159,18 +167,35 @@ public class PropertiesSceneController implements Initializable {
     }
 
     @FXML
-    private void joinGame() throws GameDoesNotExists_Exception, InvalidParameters_Exception {
-        playerId.set(service.joinGame(gameNameTextField.getText(), playerNameTextField.getText()));
-        // TODO game name
-        finishedInit.set(Boolean.TRUE);
+    private void joinGame() {
+        new Thread(() -> {
+            Platform.runLater(() -> {
+                try {
+                    playerId.set(service.joinGame(gameNameTextField.getText(), playerNameTextField.getText()));
+                    // TODO game name
+                    setPlayerName(playerNameTextField.getText());
+                    finishedInit.set(Boolean.TRUE);
+                } catch (GameDoesNotExists_Exception | InvalidParameters_Exception ex) {
+                    onException.set(true);
+                }
+            });
+        }).start();
     }
 
     private void initiateXMLGame(File XMLFile) throws DuplicateGameName_Exception, InvalidParameters_Exception, InvalidXML_Exception, FileNotFoundException {
         if (XMLFile == null) {
             throw new InvalidXML_Exception(null, null);
         }
-        setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
-        updateServerGamesView();
+        new Thread(() -> {
+            Platform.runLater(() -> {
+                try {
+                    setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
+                    updateServerGamesView();
+                } catch (InvalidParameters_Exception | FileNotFoundException | DuplicateGameName_Exception | InvalidXML_Exception ex) {
+                    onException.set(true);
+                }
+            });
+        }).start();
     }
 
     @FXML
@@ -203,10 +228,18 @@ public class PropertiesSceneController implements Initializable {
     }
 
     @FXML
-    private void createGame(ActionEvent event) throws InvalidParameters_Exception, DuplicateGameName_Exception, Exception {
+    private void createGame(ActionEvent event) throws Exception {
         paramsCheck((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) minWagesSlider.getValue(), (int) maxWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
-        service.createGame((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
-        updateServerGamesView();
+        new Thread(() -> {
+            Platform.runLater(() -> {
+                try {
+                    service.createGame((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
+                    updateServerGamesView();
+                } catch (InvalidParameters_Exception | DuplicateGameName_Exception ex) {
+                    onException.set(true);
+                }
+            });
+        }).start();
     }
 
     public SimpleBooleanProperty getFinishedInit() {
@@ -219,6 +252,10 @@ public class PropertiesSceneController implements Initializable {
 
     public SimpleBooleanProperty getExitGame() {
         return exitGame;
+    }
+
+    public SimpleBooleanProperty getOnException() {
+        return onException;
     }
 
     private void updateCreateGameButtonState() {
@@ -294,11 +331,15 @@ public class PropertiesSceneController implements Initializable {
     }
 
     private void updateServerGamesView() {
-        List<String> games = service.getWaitingGames();
-        gamesPane.getChildren().clear();
-        games.stream().forEach((name) -> {
-            gamesPane.getChildren().add(new GameNameView(name));
-        });
+        new Thread(() -> {
+            Platform.runLater(() -> {
+                List<String> games = service.getWaitingGames();
+                gamesPane.getChildren().clear();
+                games.stream().forEach((name) -> {
+                    gamesPane.getChildren().add(new GameNameView(name));
+                });
+            });
+        }).start();
     }
 
 }

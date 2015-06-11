@@ -37,6 +37,7 @@ public class Program extends Application {
     private RouletteWebService gameWebService = null;
     private Stage primaryStage;
     private String gameName;
+    private String playerName;
     private AtomicInteger playerId;
     private static String[] args;
 
@@ -53,18 +54,11 @@ public class Program extends Application {
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
         Parent gameRoot = getRoot(gameFxmlLoader);
         GameSceneController gameController = getGameController(gameFxmlLoader, primaryStage);
-        gameController.setGameName(gameName);
-        gameController.setService(gameWebService);
-        gameController.setPlayerId(playerId);
         Scene gameScene = new Scene(gameRoot);
 
         FXMLLoader propertiesFxmlLoader = getFXMLLoader(PROPERTIES_SCENE_FXML_PATH);
         Parent propertiesRoot = getRoot(propertiesFxmlLoader);
         PropertiesSceneController propertiesController = getPropertiesController(propertiesFxmlLoader, primaryStage, gameScene, gameController);
-        propertiesController.setGameName(gameName);
-        propertiesController.setService(gameWebService);
-        propertiesController.setPlayerId(playerId);
-        propertiesController.init();
         Scene propertiesScene = new Scene(propertiesRoot);
 
         primaryStage.setTitle("Roulette!");
@@ -84,6 +78,10 @@ public class Program extends Application {
         PropertiesSceneController propertiesSceneController = (PropertiesSceneController) fxmlLoader.getController();
         propertiesSceneController.setService(gameWebService);
         propertiesSceneController.setPrimaryStage(primaryStage);
+        propertiesSceneController.setGameName(gameName);
+        propertiesSceneController.setPlayerName(playerName);
+        propertiesSceneController.setPlayerId(playerId);
+        propertiesSceneController.init();
         propertiesSceneController.getFinishedInit().addListener((ObservableValue<? extends Boolean> source, Boolean oldValue, Boolean newValue) -> {
             if (newValue) {
                 try {
@@ -104,12 +102,21 @@ public class Program extends Application {
                 onExit();
             }
         });
+        propertiesSceneController.getOnException().addListener((source, oldValue, newValue) -> {
+            if (newValue) {
+                popupErrorDialog();
+            }
+        });
         return propertiesSceneController;
     }
 
     private GameSceneController getGameController(FXMLLoader fxmlLoader, final Stage primaryStage) {
         GameSceneController gameSceneController = (GameSceneController) fxmlLoader.getController();
         gameSceneController.setPrimaryStage(primaryStage);
+        gameSceneController.setGameName(gameName);
+        gameSceneController.setPlayerName(playerName);
+        gameSceneController.setService(gameWebService);
+        gameSceneController.setPlayerId(playerId);
         gameSceneController.getNewGame().addListener((source, oldValue, newValue) -> {
             if (newValue) {
                 onNew();
@@ -206,7 +213,7 @@ public class Program extends Application {
         alert.setContentText("Something went wrong... lets start over...");
         alert.showAndWait();
         if (args != null) {
-//            launch(args);
+            launch(args);
         }
 //TODO exception doesnt work
     }
