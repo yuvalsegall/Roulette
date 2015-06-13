@@ -15,6 +15,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,7 +25,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -376,7 +378,7 @@ public class GameSceneController implements Initializable {
     @FXML
     private AnchorPane snakeAnchor;
     @FXML
-    private ScrollPane eventsScrollPane;
+    private ListView eventsListView;
 
     /**
      * Initializes the controller class.
@@ -398,6 +400,10 @@ public class GameSceneController implements Initializable {
         onException = new SimpleBooleanProperty(false);
         isGameActive = new SimpleBooleanProperty(false);
         lastEventId = 0;
+        eventsListView = new ListView<>();
+        ObservableList<String> items =FXCollections.observableArrayList (
+    "Single", "Double", "Suite", "Family App");
+eventsListView.setItems(items);
     }
 
     public void init() {
@@ -958,10 +964,12 @@ public class GameSceneController implements Initializable {
                             break;
                         case GAME_START:
                             init();
+                            eventsListView.getItems().add("The Game has Started");
                             isGameActive.set(true);
                             new Thread(() -> {
                                 try {
                                     startCheckingForServerEvents();
+
                                 } catch (InterruptedException ex) {
                                     onException.set(true);
                                 }
@@ -980,6 +988,7 @@ public class GameSceneController implements Initializable {
                         case PLAYER_BET:
                             setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) - event.getAmount());
 //                            });
+                            eventsListView.getItems().add(event.getPlayerName() + " bet " + event.getAmount() + "$ on " + event.getBetType());
                             //TODO print in the feed
                             break;
                         case PLAYER_FINISHED_BETTING:
