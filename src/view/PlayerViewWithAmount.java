@@ -15,12 +15,13 @@ public class PlayerViewWithAmount extends PlayerView {
 
     private final Label playerAmountLabel;
 
-    public PlayerViewWithAmount(String name, boolean isHuman) {
+    public PlayerViewWithAmount(String name, boolean isHuman, int amount) {
         super(name, isHuman);
         playerAmountLabel = new Label();
         getChildren().addAll(playerAmountLabel);
         getName().getStyleClass().add("themeLabel");
         playerAmountLabel.getStyleClass().add("themeLabel");
+        playerAmountLabel.textProperty().set(amount + "$");
     }
 
     public Label getPlayerAmountLabel() {

@@ -353,7 +353,7 @@ public class GameSceneController implements Initializable {
     private SimpleBooleanProperty exitGame;
     private SimpleBooleanProperty onException;
     private SimpleBooleanProperty isGameActive;
-    private static final int SEC_BETWEEN_SERVER_CALLS = 3;
+    private static final int SEC_BETWEEN_SERVER_CALLS = 1;
 
     @FXML
     private AnchorPane frenchZeroAnchor;
@@ -649,14 +649,8 @@ public class GameSceneController implements Initializable {
             }
             playersList.stream().forEach((PlayerDetails player) -> {
                 if (player.getStatus().equals(PlayerStatus.ACTIVE)) {
-                    PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN));
+                    PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN), player.getMoney());
                     playersPane.getChildren().add(playerView);
-//                    playerView.getPlayerAmountLabel().textProperty()
-//                            .addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-//                                playerView.getPlayerAmountLabel().textProperty().set(player.getMoney() + "$");
-//                            });
-                    playerView.getPlayerAmountLabel().textProperty().bind(
-                            Bindings.concat(player.getMoney(), "$"));
                 }
 
             }
@@ -664,9 +658,19 @@ public class GameSceneController implements Initializable {
         });
     }
 
+    private void setPlayerMoneyLabel(String name, int amount) {
+        playersPane.getChildren().stream().forEach((Node player) -> {
+            if (((PlayerViewWithAmount) player).getName().getText().equals(name)) {
+                Platform.runLater(() -> {
+                    ((PlayerViewWithAmount) player).getPlayerAmountLabel().setText(amount + "$");
+                });
+                return;
+            }
+        });
+    }
+
     private void clearChips() {
         Platform.runLater(() -> {
-
             tableGridPane.getChildren().stream().filter((node) -> (node instanceof AnchorPane)).map((node) -> (AnchorPane) node).forEach((parent) -> {
                 for (int i = 0; i < parent.getChildren().size(); i++) {
                     if (parent.getChildren().get(i) instanceof ChipForTable) {
@@ -961,17 +965,16 @@ public class GameSceneController implements Initializable {
                             spinRoulette(event.getWinningNumber());
                             break;
                         case RESULTS_SCORES:
-                            buildPlayersMap();
-//                            players.get(event.getPlayerName()).setMoney(event.getAmount());
+                            setPlayerMoneyLabel(event.getPlayerName(), players.get(event.getPlayerName()).getMoney() + event.getAmount());
+                            players.get(event.getPlayerName()).setMoney(players.get(event.getPlayerName()).getMoney() + event.getAmount());
                             break;
                         case PLAYER_RESIGNED:
-                            buildPlayersMap();
-//                            players.get(event.getPlayerName()).setStatus(PlayerStatus.RETIRED);
+                            players.get(event.getPlayerName()).setStatus(PlayerStatus.RETIRED);
+                            //TODO if server retierd me??
                             break;
                         case PLAYER_BET:
-                            buildPlayersMap();
-//                            Platform.runLater(() -> {
-//                            players.get(event.getPlayerName()).setMoney(players.get(event.getPlayerName()).getMoney() - event.getAmount());
+                            setPlayerMoneyLabel(event.getPlayerName(), players.get(event.getPlayerName()).getMoney() - event.getAmount());
+                            players.get(event.getPlayerName()).setMoney(players.get(event.getPlayerName()).getMoney() - event.getAmount());
 //                            });
                             //TODO print in the feed
                             break;
