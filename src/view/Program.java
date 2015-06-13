@@ -91,14 +91,15 @@ public class Program extends Application {
         propertiesSceneController.init();
         propertiesSceneController.getFinishedInit().addListener((ObservableValue<? extends Boolean> source, Boolean oldValue, Boolean newValue) -> {
             if (newValue) {
-                try {
-                    gameController.popupWaittingDialog();
-                    Platform.runLater(() -> {
+                Platform.runLater(() -> {
+                    try {
+                        gameController.popupWaittingDialog();
                         primaryStage.setScene(nextScene);
-                    });
-                } catch (Exception ex) {
-                    popupErrorDialog();
-                }
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                        popupErrorDialog();
+                    }
+                });
             }
         });
         propertiesSceneController.getNewGame().addListener((source, oldValue, newValue) -> {

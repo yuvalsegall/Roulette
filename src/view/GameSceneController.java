@@ -353,7 +353,7 @@ public class GameSceneController implements Initializable {
     private SimpleBooleanProperty exitGame;
     private SimpleBooleanProperty onException;
     private SimpleBooleanProperty isGameActive;
-    private static final int SEC_BETWEEN_SERVER_CALLS = 15;
+    private static final int SEC_BETWEEN_SERVER_CALLS = 3;
 
     @FXML
     private AnchorPane frenchZeroAnchor;
@@ -643,33 +643,44 @@ public class GameSceneController implements Initializable {
     }
 
     public void buildPlayersPane(List<PlayerDetails> playersList) {
-        if (!playersPane.getChildren().isEmpty()) {
-            playersPane.getChildren().remove(0, playersPane.getChildren().size() - 1);
-        }
-        playersList.stream().forEach((PlayerDetails player) -> {
-            if (player.getStatus().equals(PlayerStatus.ACTIVE)) {
-                PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN));
-                playersPane.getChildren().add(playerView);
-                playerView.getPlayerAmountLabel().textProperty().bind(
-                        Bindings.concat(player.getMoney(), "$"));
+        Platform.runLater(() -> {
+            if (!playersPane.getChildren().isEmpty()) {
+                playersPane.getChildren().remove(0, playersPane.getChildren().size());
             }
+            playersList.stream().forEach((PlayerDetails player) -> {
+                if (player.getStatus().equals(PlayerStatus.ACTIVE)) {
+                    PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN));
+                    playersPane.getChildren().add(playerView);
+//                    playerView.getPlayerAmountLabel().textProperty()
+//                            .addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+//                                playerView.getPlayerAmountLabel().textProperty().set(player.getMoney() + "$");
+//                            });
+                    playerView.getPlayerAmountLabel().textProperty().bind(
+                            Bindings.concat(player.getMoney(), "$"));
+                }
+
+            }
+            );
         });
     }
 
     private void clearChips() {
-        tableGridPane.getChildren().stream().filter((node) -> (node instanceof AnchorPane)).map((node) -> (AnchorPane) node).forEach((parent) -> {
-            for (int i = 0; i < parent.getChildren().size(); i++) {
-                if (parent.getChildren().get(i) instanceof ChipForTable) {
-                    parent.getChildren().remove(i);
+        Platform.runLater(() -> {
+
+            tableGridPane.getChildren().stream().filter((node) -> (node instanceof AnchorPane)).map((node) -> (AnchorPane) node).forEach((parent) -> {
+                for (int i = 0; i < parent.getChildren().size(); i++) {
+                    if (parent.getChildren().get(i) instanceof ChipForTable) {
+                        parent.getChildren().remove(i);
+                    }
+                }
+            });
+            for (Node node : snakeAnchor.getChildren()) {
+                if (node instanceof ChipForTable) {
+                    snakeAnchor.getChildren().remove(node);
+                    break;
                 }
             }
         });
-        for (Node node : snakeAnchor.getChildren()) {
-            if (node instanceof ChipForTable) {
-                snakeAnchor.getChildren().remove(node);
-                break;
-            }
-        }
     }
 
     private void addBetOnTable(ActionEvent event) {
@@ -683,21 +694,24 @@ public class GameSceneController implements Initializable {
     private void placeBet() {
         if (!playerHasMoneyForBet()) {
             showError("You cannot place money you do not have");
-            setAmount(0);
-            numbers.clear();
-            clearChips();
+            clearBet();
         } else {
             new Thread(() -> {
                 try {
                     service.makeBet(amount.getValue(), betType, numbers, getPlayerId());
-                    setAmount(0);
-                    numbers.clear();
-                    FinishBettingButton.setDisable(false);
+                    clearBet();
                 } catch (InvalidParameters_Exception ex) {
                     onException.set(true);
                 }
             }).start();
         }
+    }
+
+    private void clearBet() {
+        FinishBettingButton.setDisable(false);
+        setAmount(0);
+        numbers.clear();
+        clearChips();
     }
 
     @FXML
@@ -877,17 +891,19 @@ public class GameSceneController implements Initializable {
     }
 
     public void popupWaittingDialog() throws InterruptedException {
-//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//        alert.setTitle("One moment and the game begin!");
-//        alert.setContentText("Waitting for the game to start...");
-//        alert.getButtonTypes().clear();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("One moment and the game begin!");
+        alert.setContentText("Waitting for the game to start...");
+        alert.getButtonTypes().clear();
 //        alert.show();
         //TODO show and hide
         while (!isGameActive.getValue()) {
             checkForServerEvents();
             Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
         }
-//        alert = null;
+        Platform.runLater(() -> {
+            alert.close();
+        });
     }
 
     private boolean playerHasMoneyForBet() {
@@ -902,7 +918,9 @@ public class GameSceneController implements Initializable {
             rt.setDuration(Duration.seconds(3));
             rt.setAutoReverse(false);
             rt.play();
-            ballPossitionLabel.textProperty().set("Ball on: " + position);
+            String rouletteResultString = "Ball on: ";
+            rouletteResultString += position == 37 ? "00" : position;
+            ballPossitionLabel.textProperty().set(rouletteResultString);
         });
     }
 
@@ -943,13 +961,18 @@ public class GameSceneController implements Initializable {
                             spinRoulette(event.getWinningNumber());
                             break;
                         case RESULTS_SCORES:
-                            players.get(event.getPlayerName()).setMoney(event.getAmount());
+                            buildPlayersMap();
+//                            players.get(event.getPlayerName()).setMoney(event.getAmount());
                             break;
                         case PLAYER_RESIGNED:
-                            players.get(event.getPlayerName()).setStatus(PlayerStatus.RETIRED);
+                            buildPlayersMap();
+//                            players.get(event.getPlayerName()).setStatus(PlayerStatus.RETIRED);
                             break;
                         case PLAYER_BET:
-                            players.get(event.getPlayerName()).setMoney(players.get(event.getPlayerName()).getMoney() - event.getAmount());
+                            buildPlayersMap();
+//                            Platform.runLater(() -> {
+//                            players.get(event.getPlayerName()).setMoney(players.get(event.getPlayerName()).getMoney() - event.getAmount());
+//                            });
                             //TODO print in the feed
                             break;
                         case PLAYER_FINISHED_BETTING:
@@ -973,9 +996,7 @@ public class GameSceneController implements Initializable {
                 list.stream().forEach((player) -> {
                     players.put(player.getName(), player);
                 });
-                Platform.runLater(() -> {
-                    buildPlayersPane(list);
-                });
+                buildPlayersPane(list);
             } catch (GameDoesNotExists_Exception ex) {
                 onException.set(true);
             }
