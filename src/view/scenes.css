@@ -1,3 +1,11 @@
+.gameButton{
+    -fx-margin:20px;
+}
+
+.clickedGameButton{
+    -fx-margin:20px;
+}
+
 .mainFxmlClass {
     -fx-font-family: "Tahoma";
     -fx-font-size: 20px;

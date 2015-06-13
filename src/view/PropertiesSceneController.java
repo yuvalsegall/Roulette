@@ -3,6 +3,7 @@ package view;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -64,6 +66,8 @@ public class PropertiesSceneController implements Initializable {
     private SimpleBooleanProperty newGame;
     private SimpleBooleanProperty exitGame;
     private SimpleBooleanProperty onException;
+    private String targetGame;
+    List<String> games;
 
     private Stage primaryStage;
     @FXML
@@ -178,7 +182,7 @@ public class PropertiesSceneController implements Initializable {
         new Thread(() -> {
             try {
                 playerId.set(service.joinGame(gameNameTextField.getText(), playerNameTextField.getText()));
-                setGameName(gameNameTextField.getText());
+                setGameName(targetGame);
                 setPlayerName(playerNameTextField.getText());
                 finishedInit.set(Boolean.TRUE);
             } catch (GameDoesNotExists_Exception | InvalidParameters_Exception ex) {
@@ -197,6 +201,7 @@ public class PropertiesSceneController implements Initializable {
                 setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
                 updateServerGamesView();
             } catch (InvalidParameters_Exception | FileNotFoundException | DuplicateGameName_Exception | InvalidXML_Exception ex) {
+                System.out.println(ex.getMessage());
                 onException.set(true);
             }
         }).start();
@@ -265,7 +270,7 @@ public class PropertiesSceneController implements Initializable {
     }
 
     private void updateJoinButtonState() {
-        boolean isEmptyFields = getPlayerNameTextField().trim().isEmpty() || getGameName().trim().isEmpty();
+        boolean isEmptyFields = getPlayerNameTextField().trim().isEmpty() || targetGame == null;
         boolean disable = isEmptyFields || isErrorMessageShown;
         joinGameButton.setDisable(disable);
     }
@@ -332,14 +337,44 @@ public class PropertiesSceneController implements Initializable {
 
     private void updateServerGamesView() {
         new Thread(() -> {
-            List<String> games = service.getWaitingGames();
+            games = service.getWaitingGames();
             Platform.runLater(() -> {
                 gamesPane.getChildren().clear();
                 games.stream().forEach((name) -> {
-                    gamesPane.getChildren().add(new GameNameView(name));
-                });
+                    Button newButton = new Button(name);
+                    newButton.getStyleClass().add("gameButton");
+                    newButton.setOnAction((e) -> gameButtonClicked(e));
+                    gamesPane.getChildren().add(newButton);
+                }); 
             });
         }).start();
     }
+    
+    private void updateButtons (){
+        gamesPane.getChildren().clear();
+        games.stream().forEach((name) -> {
+            Button newButton = new Button(name);
+            newButton.getStyleClass().add("gameButton");
+            newButton.setOnAction((e) -> gameButtonClicked(e));
+            gamesPane.getChildren().add(newButton);
+        });        
+    }
+    
+    private void gameButtonClicked(ActionEvent event){
+        for (Object object : gamesPane.getChildren()){
+            Button button = (Button)object;
+            button.getStyleClass().remove("clickedGameButton");
+        }
+        Button selected = (Button)event.getSource();
+        selected.getStyleClass().remove("gameButton");
+        selected.getStyleClass().add("clickedGameButton");
+        targetGame = selected.getText();
+        updateJoinButtonState();
+    }
 
+    @FXML
+    private void refreshTablesClicked(ActionEvent event) {
+        targetGame = null;
+        updateServerGamesView();
+    }
 }

@@ -119,11 +119,12 @@
                      </styleClass>
                   </Label>
                   <Slider fx:id="numOfComputerPlayersSlider" blockIncrement="0.0" majorTickUnit="1.0" max="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                  <Button fx:id="joinGameButton" mnemonicParsing="false" onAction="#joinGame" text="Join Game" GridPane.columnIndex="3" GridPane.rowIndex="15">
+                  <Button fx:id="joinGameButton" mnemonicParsing="false" onAction="#joinGame" text="Join Game" GridPane.columnIndex="2" GridPane.rowIndex="15">
                      <GridPane.margin>
                         <Insets right="30.0" />
                      </GridPane.margin>
                   </Button>
+                  <Button mnemonicParsing="false" onAction="#refreshTablesClicked" text="Refresh Tables" GridPane.columnIndex="3" GridPane.rowIndex="14" />
                   <Slider fx:id="numOfHumanPlayersSlider" blockIncrement="0.0" majorTickUnit="1.0" max="6.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                   <Label stylesheets="@scenes.css" text="Your name:" GridPane.rowIndex="15">
                      <styleClass>
