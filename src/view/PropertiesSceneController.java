@@ -181,7 +181,7 @@ public class PropertiesSceneController implements Initializable {
     private void joinGame() {
         new Thread(() -> {
             try {
-                playerId.set(service.joinGame(gameNameTextField.getText(), playerNameTextField.getText()));
+                playerId.set(service.joinGame(targetGame, playerNameTextField.getText()));
                 setGameName(targetGame);
                 setPlayerName(playerNameTextField.getText());
                 finishedInit.set(Boolean.TRUE);

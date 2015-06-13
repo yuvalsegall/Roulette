@@ -1,9 +1,10 @@
 .gameButton{
-    -fx-margin:20px;
+
 }
 
 .clickedGameButton{
-    -fx-margin:20px;
+    -fx-background-color: red;
+    -fx-text-fill: white;
 }
 
 .mainFxmlClass {
