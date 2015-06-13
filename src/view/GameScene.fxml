@@ -774,7 +774,7 @@
                                         <Insets left="10.0" />
                                     </GridPane.margin>
                                 </Label>
-                        <ListView fx:id="eventsListView" opacity="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
+                        <ListView fx:id="eventsListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
                             </children>
                         </GridPane>
                     </children>
