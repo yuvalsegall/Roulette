@@ -5,6 +5,7 @@
  */
 package view;
 
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 
 /**
@@ -14,6 +15,7 @@ import javafx.scene.control.Label;
 public class PlayerViewWithAmount extends PlayerView {
 
     private final Label playerAmountLabel;
+    private int amount;
 
     public PlayerViewWithAmount(String name, boolean isHuman, int amount) {
         super(name, isHuman);
@@ -22,6 +24,7 @@ public class PlayerViewWithAmount extends PlayerView {
         getName().getStyleClass().add("themeLabel");
         playerAmountLabel.getStyleClass().add("themeLabel");
         playerAmountLabel.textProperty().set(amount + "$");
+        this.amount = amount;
     }
 
     public Label getPlayerAmountLabel() {
@@ -38,4 +41,14 @@ public class PlayerViewWithAmount extends PlayerView {
         }
     }
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+        Platform.runLater(() -> {
+            this.playerAmountLabel.setText(amount + "$");
+        });
+    }
 }

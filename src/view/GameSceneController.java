@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -346,7 +345,6 @@ public class GameSceneController implements Initializable {
     private BetType betType;
     private IntegerProperty amount;
     private int lastEventId;
-    private Map<String, PlayerDetails> players;
     private final HashMap<Integer, Integer> rowsReverse = new HashMap();
     private final int NOM_OF_ACTUAL_ROWS = 3;
     private final int COLS_TO_FIRST_NUMBER = 3;
@@ -470,11 +468,10 @@ public class GameSceneController implements Initializable {
             messageLabel.setText(message);
             FadeTransition animation = new FadeTransition();
             animation.setNode(messageLabel);
-            animation.setDuration(Duration.seconds(3));
+            animation.setDuration(Duration.seconds(5));
             animation.setFromValue(1.0);
             animation.setToValue(0.0);
             animation.play();
-
         }
     }
 
@@ -653,22 +650,6 @@ public class GameSceneController implements Initializable {
         rows.put(5, 1);
     }
 
-    public void buildPlayersPane(List<PlayerDetails> playersList) {
-        Platform.runLater(() -> {
-            if (!playersPane.getChildren().isEmpty()) {
-                playersPane.getChildren().remove(0, playersPane.getChildren().size());
-            }
-            playersList.stream().forEach((PlayerDetails player) -> {
-                if (player.getStatus().equals(PlayerStatus.ACTIVE)) {
-                    PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN), player.getMoney());
-                    playersPane.getChildren().add(playerView);
-                }
-
-            }
-            );
-        });
-    }
-
     private PlayerViewWithAmount findPlayerInPane(String name) {
         for (Node player : playersPane.getChildren()) {
             if (((PlayerViewWithAmount) player).getName().getText().equals(name)) {
@@ -678,9 +659,14 @@ public class GameSceneController implements Initializable {
         return null;
     }
 
-    private void setPlayerMoneyLabel(String name, int amount) {
+    private void setPlayerMoney(String name, int amount) {
         PlayerViewWithAmount player = findPlayerInPane(name);
-        player.getPlayerAmountLabel().setText(amount + "$");
+        player.setAmount(amount);
+    }
+
+    private int getPlayerMoney(String name) {
+        PlayerViewWithAmount player = findPlayerInPane(name);
+        return player.getAmount();
     }
 
     private void setPlayerResigned(String name) {
@@ -712,12 +698,13 @@ public class GameSceneController implements Initializable {
         Button initiatingButton = (Button) event.getSource();
         AnchorPane parent = (AnchorPane) initiatingButton.getParent();
         parent.getChildren().add(newChip);
-        placeBet();
+        placeBet(parent);
     }
 
-    private void placeBet() {
-        if (!playerHasMoneyForBet()) {
+    private void placeBet(AnchorPane parent) {
+        if (!isPlayerHasMoneyForBet()) {
             showError("You cannot place money you do not have");
+            parent.getChildren().remove(parent.getChildren().size() - 1);
             clearBet();
         } else {
             new Thread(() -> {
@@ -929,8 +916,8 @@ public class GameSceneController implements Initializable {
         });
     }
 
-    private boolean playerHasMoneyForBet() {
-        return players.get(getPlayerName()).getMoney() >= amount.intValue();
+    private boolean isPlayerHasMoneyForBet() {
+        return findPlayerInPane(getPlayerName()).getAmount() >= amount.getValue();
     }
 
     private void spinRoulette(int position) {
@@ -984,17 +971,14 @@ public class GameSceneController implements Initializable {
                             spinRoulette(event.getWinningNumber());
                             break;
                         case RESULTS_SCORES:
-                            setPlayerMoneyLabel(event.getPlayerName(), players.get(event.getPlayerName()).getMoney() + event.getAmount());
-                            players.get(event.getPlayerName()).setMoney(players.get(event.getPlayerName()).getMoney() + event.getAmount());
+                            setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) + event.getAmount());
                             break;
                         case PLAYER_RESIGNED:
-                            players.get(event.getPlayerName()).setStatus(PlayerStatus.RETIRED);
                             setPlayerResigned(event.getPlayerName());
                             //TODO if server retierd me??
                             break;
                         case PLAYER_BET:
-                            setPlayerMoneyLabel(event.getPlayerName(), players.get(event.getPlayerName()).getMoney() - event.getAmount());
-                            players.get(event.getPlayerName()).setMoney(players.get(event.getPlayerName()).getMoney() - event.getAmount());
+                            setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) - event.getAmount());
 //                            });
                             //TODO print in the feed
                             break;
@@ -1014,12 +998,20 @@ public class GameSceneController implements Initializable {
     private void buildPlayersMap() {
         new Thread(() -> {
             try {
-                List<PlayerDetails> list = service.getPlayersDetails(getGameName());
-                players = new HashMap<>();
-                list.stream().forEach((player) -> {
-                    players.put(player.getName(), player);
+                List<PlayerDetails> playersList = service.getPlayersDetails(getGameName());
+                Platform.runLater(() -> {
+                    if (!playersPane.getChildren().isEmpty()) {
+                        playersPane.getChildren().remove(0, playersPane.getChildren().size());
+                    }
+                    playersList.stream().forEach((PlayerDetails player) -> {
+                        if (player.getStatus().equals(PlayerStatus.ACTIVE)) {
+                            PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN), player.getMoney());
+                            playersPane.getChildren().add(playerView);
+                        }
+
+                    }
+                    );
                 });
-                buildPlayersPane(list);
             } catch (GameDoesNotExists_Exception ex) {
                 onException.set(true);
             }
