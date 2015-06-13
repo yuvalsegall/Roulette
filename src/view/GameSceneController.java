@@ -1,6 +1,5 @@
 package view;
 
-import generated.PlayerType;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +31,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import view.ChipForTable;
-import view.PlayerViewWithAmount;
 import ws.roulette.BetType;
 import ws.roulette.Event;
 import ws.roulette.GameDetails;
@@ -41,6 +38,7 @@ import ws.roulette.GameDoesNotExists_Exception;
 import ws.roulette.InvalidParameters_Exception;
 import ws.roulette.PlayerDetails;
 import ws.roulette.PlayerStatus;
+import ws.roulette.PlayerType;
 import ws.roulette.RouletteType;
 import ws.roulette.RouletteWebService;
 
@@ -332,8 +330,8 @@ public class GameSceneController implements Initializable {
     private Label AmountLabel;
     @FXML
     private FlowPane playersPane;
-    private String gameName;
-    private String playerName;
+    private StringBuilder gameName;
+    private StringBuilder playerName;
     private Number playerId;
     private RouletteWebService service;
     private ArrayList<Integer> numbers;
@@ -354,7 +352,8 @@ public class GameSceneController implements Initializable {
     private SimpleBooleanProperty newGame;
     private SimpleBooleanProperty exitGame;
     private SimpleBooleanProperty onException;
-    private SimpleBooleanProperty isGameStarted;
+    private SimpleBooleanProperty isGameActive;
+    private static final int SEC_BETWEEN_SERVER_CALLS = 15;
 
     @FXML
     private AnchorPane frenchZeroAnchor;
@@ -382,37 +381,41 @@ public class GameSceneController implements Initializable {
         numbers = new ArrayList<>();
         isErrorMessageShown = false;
         amount = new SimpleIntegerProperty();
-        amount.set(0);
+        setAmount(0);
         AmountLabel.textProperty().bind(
                 Bindings.concat(amount, "$"));
         setRowsHashMap(rowsReverse);
         newGame = new SimpleBooleanProperty(false);
         exitGame = new SimpleBooleanProperty(false);
         onException = new SimpleBooleanProperty(false);
-        isGameStarted = new SimpleBooleanProperty(false);
+        isGameActive = new SimpleBooleanProperty(false);
+        lastEventId = 0;
     }
 
     public void init() {
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    GameDetails details = service.getGameDetails(gameName);
-                    if (details.getRouletteType().equals(RouletteType.AMERICAN)) {
+            try {
+                GameDetails details = service.getGameDetails(getGameName());
+                if (details.getRouletteType().equals(RouletteType.AMERICAN)) {
+                    Platform.runLater(() -> {
                         setTableToAmerican();
-                    }
-                    buildPlayersMap();
-                    ballPossitionLabel.textProperty().set("");
-                    messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
-                    lastEventId = 0;
-                } catch (GameDoesNotExists_Exception ex) {
-                    showError(ex.getMessage());
+                    });
                 }
-            });
+                buildPlayersMap();
+                ballPossitionLabel.textProperty().set("");
+                messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
+            } catch (GameDoesNotExists_Exception ex) {
+                showError(ex.getMessage());
+            }
         }).start();
     }
 
-    public void setGameName(String gameName) {
+    public void setGameName(StringBuilder gameName) {
         this.gameName = gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName.append(gameName);
     }
 
     public void setService(RouletteWebService service) {
@@ -435,8 +438,20 @@ public class GameSceneController implements Initializable {
         return this.playerId.intValue();
     }
 
-    public void setPlayerName(String playerName) {
+    public String getGameName() {
+        return gameName.toString();
+    }
+
+    public void setPlayerName(StringBuilder playerName) {
         this.playerName = playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName.append(playerName);
+    }
+
+    public String getPlayerName() {
+        return this.playerName.toString();
     }
 
     private void showError(String message) {
@@ -513,40 +528,38 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void AddOneClicked(ActionEvent event) {
-        amount.set(amount.get() + 1);
+        setAmount(amount.get() + 1);
     }
 
     @FXML
     private void AddTwoClicked(ActionEvent event) {
-        amount.set(amount.get() + 2);
+        setAmount(amount.get() + 2);
     }
 
     @FXML
     private void AddFiveClicked(ActionEvent event) {
-        amount.set(amount.get() + 5);
+        setAmount(amount.get() + 5);
     }
 
     @FXML
     private void AddTenClicked(ActionEvent event) {
-        amount.set(amount.get() + 10);
+        setAmount(amount.get() + 10);
     }
 
     @FXML
     private void finishedBettingClicked(ActionEvent event) {
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    FinishBettingButton.setDisable(true);
-                    service.finishBetting(getPlayerId());
-                } catch (InvalidParameters_Exception ex) {
-                    onException.set(true);
-                }
-            });
+            try {
+                FinishBettingButton.setDisable(true);
+                service.finishBetting(getPlayerId());
+            } catch (InvalidParameters_Exception ex) {
+                onException.set(true);
+            }
         }).start();
     }
 
     private void clearAmountClicked(ActionEvent event) {
-        amount.set(0);
+        setAmount(0);
     }
 
     @FXML
@@ -630,7 +643,9 @@ public class GameSceneController implements Initializable {
     }
 
     public void buildPlayersPane(List<PlayerDetails> playersList) {
-        playersPane.getChildren().remove(0, playersPane.getChildren().size());
+        if (!playersPane.getChildren().isEmpty()) {
+            playersPane.getChildren().remove(0, playersPane.getChildren().size() - 1);
+        }
         playersList.stream().forEach((PlayerDetails player) -> {
             if (player.getStatus().equals(PlayerStatus.ACTIVE)) {
                 PlayerViewWithAmount playerView = new PlayerViewWithAmount(player.getName(), player.getType().equals(PlayerType.HUMAN));
@@ -668,21 +683,19 @@ public class GameSceneController implements Initializable {
     private void placeBet() {
         if (!playerHasMoneyForBet()) {
             showError("You cannot place money you do not have");
-            amount.set(0);
+            setAmount(0);
             numbers.clear();
             clearChips();
         } else {
             new Thread(() -> {
-                Platform.runLater(() -> {
-                    try {
-                        service.makeBet(amount.getValue(), betType, numbers, getPlayerId());
-                        amount.set(0);
-                        numbers.clear();
-                        FinishBettingButton.setDisable(false);
-                    } catch (InvalidParameters_Exception ex) {
-                        onException.set(true);
-                    }
-                });
+                try {
+                    service.makeBet(amount.getValue(), betType, numbers, getPlayerId());
+                    setAmount(0);
+                    numbers.clear();
+                    FinishBettingButton.setDisable(false);
+                } catch (InvalidParameters_Exception ex) {
+                    onException.set(true);
+                }
             }).start();
         }
     }
@@ -864,99 +877,121 @@ public class GameSceneController implements Initializable {
     }
 
     public void popupWaittingDialog() throws InterruptedException {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("One moment and the game begin!");
-        alert.setContentText("Waitting for the game to start...");
-        alert.getButtonTypes().clear();
-        alert.show();
-        while (!isGameStarted.getValue()) {
-            doServerEvents();
-            Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle("One moment and the game begin!");
+//        alert.setContentText("Waitting for the game to start...");
+//        alert.getButtonTypes().clear();
+//        alert.show();
+        //TODO show and hide
+        while (!isGameActive.getValue()) {
+            checkForServerEvents();
+            Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
         }
+//        alert = null;
     }
 
     private boolean playerHasMoneyForBet() {
-        return players.get(playerName).getMoney() >= amount.intValue();
+        return players.get(getPlayerName()).getMoney() >= amount.intValue();
     }
 
     private void spinRoulette(int position) {
-        RotateTransition rt = new RotateTransition(Duration.millis(3000), rouletteImageView);
-        rt.setByAngle(360);
-        rt.setCycleCount(1);
-        rt.setDuration(Duration.seconds(3));
-        rt.setAutoReverse(false);
-        rt.play();
-        ballPossitionLabel.textProperty().set("Ball on: " + position);
+        Platform.runLater(() -> {
+            RotateTransition rt = new RotateTransition(Duration.millis(3000), rouletteImageView);
+            rt.setByAngle(360);
+            rt.setCycleCount(1);
+            rt.setDuration(Duration.seconds(3));
+            rt.setAutoReverse(false);
+            rt.play();
+            ballPossitionLabel.textProperty().set("Ball on: " + position);
+        });
     }
 
     @FXML
     private void onRetire(ActionEvent event) {
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    service.resign(getPlayerId());
-                } catch (InvalidParameters_Exception ex) {
-                    onException.set(true);
-                }
-            });
+            try {
+                service.resign(getPlayerId());
+            } catch (InvalidParameters_Exception ex) {
+                onException.set(true);
+            }
         }).start();
     }
 
-    private void doServerEvents() {
+    private void checkForServerEvents() {
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    List<Event> events = service.getEvents(lastEventId, getPlayerId());
-                    events.stream().forEach((Event event) -> {
-                        switch (event.getType()) {
-                            case GAME_OVER:
-                                popupGoodbyeDialog("Game Over", "The game has ended.");
-                                break;
-                            case GAME_START:
-                                init();
-                                isGameStarted.set(true);
-                                break;
-                            case WINNING_NUMBER:
-                                spinRoulette(event.getWinningNumber());
-                                break;
-                            case RESULTS_SCORES:
-                                players.get(event.getPlayerName()).setMoney(event.getAmount());
-                                break;
-                            case PLAYER_RESIGNED:
-                                players.get(event.getPlayerName()).setStatus(PlayerStatus.RETIRED);
-                                break;
-                            case PLAYER_BET:
-                                //TODO print in the feed
-                                break;
-                            case PLAYER_FINISHED_BETTING:
-                                //TODO print in the feed
-                                break;
-                            default:
-                                onException.set(true);
-                        }
-                    });
-                    lastEventId = events.get(events.size() - 1).getId();
-                } catch (InvalidParameters_Exception ex) {
-                    onException.set(true);
-                }
-            });
+            try {
+                List<Event> events = service.getEvents(lastEventId, getPlayerId());
+                lastEventId = events.isEmpty() ? lastEventId : events.get(events.size() - 1).getId();
+                events.stream().forEach((Event event) -> {
+                    switch (event.getType()) {
+                        case GAME_OVER:
+                            isGameActive.set(false);
+                            popupGoodbyeDialog("Game Over", "The game has ended.");
+                            break;
+                        case GAME_START:
+                            init();
+                            isGameActive.set(true);
+                            new Thread(() -> {
+                                try {
+                                    startCheckingForServerEvents();
+                                } catch (InterruptedException ex) {
+                                    onException.set(true);
+                                }
+                            }).start();
+                            break;
+                        case WINNING_NUMBER:
+                            spinRoulette(event.getWinningNumber());
+                            break;
+                        case RESULTS_SCORES:
+                            players.get(event.getPlayerName()).setMoney(event.getAmount());
+                            break;
+                        case PLAYER_RESIGNED:
+                            players.get(event.getPlayerName()).setStatus(PlayerStatus.RETIRED);
+                            break;
+                        case PLAYER_BET:
+                            players.get(event.getPlayerName()).setMoney(players.get(event.getPlayerName()).getMoney() - event.getAmount());
+                            //TODO print in the feed
+                            break;
+                        case PLAYER_FINISHED_BETTING:
+                            //TODO print in the feed
+                            break;
+                        default:
+                            onException.set(true);
+                    }
+                });
+            } catch (InvalidParameters_Exception ex) {
+                onException.set(true);
+            }
         }).start();
     }
 
     private void buildPlayersMap() {
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    List<PlayerDetails> list = service.getPlayersDetails(gameName);
-                    players = new HashMap<>();
-                    list.stream().forEach((player) -> {
-                        players.put(player.getName(), player);
-                    });
+            try {
+                List<PlayerDetails> list = service.getPlayersDetails(getGameName());
+                players = new HashMap<>();
+                list.stream().forEach((player) -> {
+                    players.put(player.getName(), player);
+                });
+                Platform.runLater(() -> {
                     buildPlayersPane(list);
-                } catch (GameDoesNotExists_Exception ex) {
-                    onException.set(true);
-                }
-            });
+                });
+            } catch (GameDoesNotExists_Exception ex) {
+                onException.set(true);
+            }
         }).start();
+    }
+
+    private void startCheckingForServerEvents() throws InterruptedException {
+        while (isGameActive.getValue()) {
+            checkForServerEvents();
+            Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
+        }
+    }
+
+    public void setAmount(int amount) {
+        Platform.runLater(() -> {
+            this.amount.set(amount);
+        });
     }
 }

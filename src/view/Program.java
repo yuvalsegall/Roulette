@@ -2,6 +2,7 @@ package view;
 
 import java.io.IOException;
 import java.io.InputStream;
+import static java.lang.System.exit;
 import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,11 +36,15 @@ public class Program extends Application {
     private static final String GAME_SCENE_FXML_PATH = "GameScene.fxml";
     private static RouletteWebServiceService service = null;
     private static RouletteWebService gameWebService = null;
-    private static Stage thisPrimaryStage;
-    private String gameName;
-    private String playerName;
-    private AtomicInteger playerId;
-    private static String[] args;
+    private static Stage thisPrimaryStage = null;
+    ;
+    private StringBuilder gameName = null;
+    private StringBuilder playerName = null;
+    private AtomicInteger playerId = null;
+    ;
+    private static String[] args = null;
+
+    ;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -49,6 +54,8 @@ public class Program extends Application {
         }
         URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/RouletteServer/RouletteWebServiceService");
         playerId = new AtomicInteger();
+        playerName = new StringBuilder();
+        gameName = new StringBuilder();
         service = new RouletteWebServiceService(url);
         gameWebService = service.getRouletteWebServicePort();
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
@@ -86,7 +93,9 @@ public class Program extends Application {
             if (newValue) {
                 try {
                     gameController.popupWaittingDialog();
-                    primaryStage.setScene(nextScene);
+                    Platform.runLater(() -> {
+                        primaryStage.setScene(nextScene);
+                    });
                 } catch (Exception ex) {
                     popupErrorDialog();
                 }
@@ -208,17 +217,17 @@ public class Program extends Application {
     }
 
     private static void popupErrorDialog() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setContentText("Something went wrong... lets start over...");
-        alert.showAndWait();
-//        if (args != null) {
-//            try {
-//                start(thisPrimaryStage);
-//            } catch (IOException ex) {
-//                Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+        new Thread(() -> {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setContentText("Something went wrong... lets start over...");
+                alert.showAndWait();
+                if (args != null) {
+                    exit(1);
+                }
+            });
+        }).start();
 //TODO exception doesnt work
     }
 }

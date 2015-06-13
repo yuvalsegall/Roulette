@@ -30,7 +30,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import view.GameNameView;
 import ws.roulette.DuplicateGameName_Exception;
 import ws.roulette.GameDoesNotExists_Exception;
 import ws.roulette.InvalidParameters_Exception;
@@ -57,8 +56,8 @@ public class PropertiesSceneController implements Initializable {
     private static final int MAX_INITIAL_SUM_OF_MONEY = 100;
 
     private RouletteWebService service;
-    private String gameName;
-    private String playerName;
+    private StringBuilder gameName;
+    private StringBuilder playerName;
     private AtomicInteger playerId;
     private boolean isErrorMessageShown;
     private SimpleBooleanProperty finishedInit;
@@ -127,6 +126,10 @@ public class PropertiesSceneController implements Initializable {
     }
 
     public void setGameName(String gameName) {
+        this.gameName.append(gameName);
+    }
+
+    public void setGameName(StringBuilder gameName) {
         this.gameName = gameName;
     }
 
@@ -143,6 +146,10 @@ public class PropertiesSceneController implements Initializable {
     }
 
     public void setPlayerName(String playerName) {
+        this.playerName.append(playerName);
+    }
+
+    public void setPlayerName(StringBuilder playerName) {
         this.playerName = playerName;
     }
 
@@ -169,17 +176,16 @@ public class PropertiesSceneController implements Initializable {
     @FXML
     private void joinGame() {
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    playerId.set(service.joinGame(gameNameTextField.getText(), playerNameTextField.getText()));
-                    // TODO game name
-                    setPlayerName(playerNameTextField.getText());
-                    finishedInit.set(Boolean.TRUE);
-                } catch (GameDoesNotExists_Exception | InvalidParameters_Exception ex) {
-                    onException.set(true);
-                }
-            });
+            try {
+                playerId.set(service.joinGame(gameNameTextField.getText(), playerNameTextField.getText()));
+                setGameName(gameNameTextField.getText());
+                setPlayerName(playerNameTextField.getText());
+                finishedInit.set(Boolean.TRUE);
+            } catch (GameDoesNotExists_Exception | InvalidParameters_Exception ex) {
+                onException.set(true);
+            }
         }).start();
+        // TODO game name
     }
 
     private void initiateXMLGame(File XMLFile) throws DuplicateGameName_Exception, InvalidParameters_Exception, InvalidXML_Exception, FileNotFoundException {
@@ -187,14 +193,12 @@ public class PropertiesSceneController implements Initializable {
             throw new InvalidXML_Exception(null, null);
         }
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
-                    updateServerGamesView();
-                } catch (InvalidParameters_Exception | FileNotFoundException | DuplicateGameName_Exception | InvalidXML_Exception ex) {
-                    onException.set(true);
-                }
-            });
+            try {
+                setGameName(service.createGameFromXML(new Scanner(XMLFile).useDelimiter("\\Z").next()));
+                updateServerGamesView();
+            } catch (InvalidParameters_Exception | FileNotFoundException | DuplicateGameName_Exception | InvalidXML_Exception ex) {
+                onException.set(true);
+            }
         }).start();
     }
 
@@ -205,14 +209,12 @@ public class PropertiesSceneController implements Initializable {
         fileChooser.setTitle("Load Roulette Game");
         File XMLFile = fileChooser.showOpenDialog(primaryStage);
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    initiateXMLGame(XMLFile);
-                    finishedInit.set(true);
-                } catch (DuplicateGameName_Exception | InvalidParameters_Exception | InvalidXML_Exception | FileNotFoundException ex) {
-                    showError(ex.getMessage());
-                }
-            });
+            try {
+                initiateXMLGame(XMLFile);
+                finishedInit.set(true);
+            } catch (DuplicateGameName_Exception | InvalidParameters_Exception | InvalidXML_Exception | FileNotFoundException ex) {
+                showError(ex.getMessage());
+            }
         }).start();
     }
 
@@ -231,14 +233,12 @@ public class PropertiesSceneController implements Initializable {
     private void createGame(ActionEvent event) throws Exception {
         paramsCheck((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) minWagesSlider.getValue(), (int) maxWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
         new Thread(() -> {
-            Platform.runLater(() -> {
-                try {
-                    service.createGame((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
-                    updateServerGamesView();
-                } catch (InvalidParameters_Exception | DuplicateGameName_Exception ex) {
-                    onException.set(true);
-                }
-            });
+            try {
+                service.createGame((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
+                updateServerGamesView();
+            } catch (InvalidParameters_Exception | DuplicateGameName_Exception ex) {
+                onException.set(true);
+            }
         }).start();
     }
 
@@ -265,7 +265,7 @@ public class PropertiesSceneController implements Initializable {
     }
 
     private void updateJoinButtonState() {
-        boolean isEmptyFields = getPlayerName().trim().isEmpty() || getGameName().trim().isEmpty();
+        boolean isEmptyFields = getPlayerNameTextField().trim().isEmpty() || getGameName().trim().isEmpty();
         boolean disable = isEmptyFields || isErrorMessageShown;
         joinGameButton.setDisable(disable);
     }
@@ -278,7 +278,7 @@ public class PropertiesSceneController implements Initializable {
         return tableTypeComboBox.getValue();
     }
 
-    public String getPlayerName() {
+    public String getPlayerNameTextField() {
         return playerNameTextField.getText();
     }
 
@@ -332,8 +332,8 @@ public class PropertiesSceneController implements Initializable {
 
     private void updateServerGamesView() {
         new Thread(() -> {
+            List<String> games = service.getWaitingGames();
             Platform.runLater(() -> {
-                List<String> games = service.getWaitingGames();
                 gamesPane.getChildren().clear();
                 games.stream().forEach((name) -> {
                     gamesPane.getChildren().add(new GameNameView(name));
