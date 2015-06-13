@@ -24,6 +24,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -33,6 +34,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import ws.roulette.BetType;
 import ws.roulette.Event;
+import static ws.roulette.EventType.GAME_OVER;
+import static ws.roulette.EventType.GAME_START;
+import static ws.roulette.EventType.PLAYER_BET;
+import static ws.roulette.EventType.PLAYER_FINISHED_BETTING;
+import static ws.roulette.EventType.PLAYER_RESIGNED;
+import static ws.roulette.EventType.RESULTS_SCORES;
+import static ws.roulette.EventType.WINNING_NUMBER;
 import ws.roulette.GameDetails;
 import ws.roulette.GameDoesNotExists_Exception;
 import ws.roulette.InvalidParameters_Exception;
@@ -369,6 +377,8 @@ public class GameSceneController implements Initializable {
     private Button retireButton;
     @FXML
     private AnchorPane snakeAnchor;
+    @FXML
+    private ScrollPane eventsScrollPane;
 
     /**
      * Initializes the controller class.
@@ -551,6 +561,7 @@ public class GameSceneController implements Initializable {
         new Thread(() -> {
             try {
                 FinishBettingButton.setDisable(true);
+                clearChips();
                 service.finishBetting(getPlayerId());
             } catch (InvalidParameters_Exception ex) {
                 onException.set(true);
@@ -658,15 +669,24 @@ public class GameSceneController implements Initializable {
         });
     }
 
-    private void setPlayerMoneyLabel(String name, int amount) {
-        playersPane.getChildren().stream().forEach((Node player) -> {
+    private PlayerViewWithAmount findPlayerInPane(String name) {
+        for (Node player : playersPane.getChildren()) {
             if (((PlayerViewWithAmount) player).getName().getText().equals(name)) {
-                Platform.runLater(() -> {
-                    ((PlayerViewWithAmount) player).getPlayerAmountLabel().setText(amount + "$");
-                });
-                return;
+                return (PlayerViewWithAmount) player;
             }
-        });
+        }
+        return null;
+    }
+
+    private void setPlayerMoneyLabel(String name, int amount) {
+        PlayerViewWithAmount player = findPlayerInPane(name);
+        player.getPlayerAmountLabel().setText(amount + "$");
+    }
+
+    private void setPlayerResigned(String name) {
+        PlayerViewWithAmount player = findPlayerInPane(name);
+        player.getName().getStyleClass().remove("themeLabel");
+        player.getName().getStyleClass().remove("redThemeLabel");
     }
 
     private void clearChips() {
@@ -715,7 +735,6 @@ public class GameSceneController implements Initializable {
         FinishBettingButton.setDisable(false);
         setAmount(0);
         numbers.clear();
-        clearChips();
     }
 
     @FXML
@@ -970,6 +989,7 @@ public class GameSceneController implements Initializable {
                             break;
                         case PLAYER_RESIGNED:
                             players.get(event.getPlayerName()).setStatus(PlayerStatus.RETIRED);
+                            setPlayerResigned(event.getPlayerName());
                             //TODO if server retierd me??
                             break;
                         case PLAYER_BET:

@@ -43,6 +43,11 @@
     -fx-font: 15pt "Arial";
 }
 
+.redThemeLabel {
+    -fx-text-fill: red;
+    -fx-font: 15pt "Arial";
+}
+
 .paddedBox{
     -fx-padding: 10;
 }
