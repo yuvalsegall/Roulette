@@ -400,10 +400,12 @@ public class GameSceneController implements Initializable {
         onException = new SimpleBooleanProperty(false);
         isGameActive = new SimpleBooleanProperty(false);
         lastEventId = 0;
-        eventsListView = new ListView<>();
-        ObservableList<String> items =FXCollections.observableArrayList (
-    "Single", "Double", "Suite", "Family App");
-eventsListView.setItems(items);
+        ObservableList<String> items = FXCollections.observableArrayList(
+                "Single", "Double", "Suite", "Family App");
+        eventsListView = new ListView(items);
+        eventsListView.setPrefSize(200, 250);
+        eventsListView.setEditable(true);
+
     }
 
     public void init() {
