@@ -3,7 +3,6 @@ package view;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -109,7 +107,6 @@ public class PropertiesSceneController implements Initializable {
         tableTypeComboBox.getItems().addAll(Arrays.asList(RouletteType.AMERICAN.name(), RouletteType.FRENCH.name()));
         gameNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             onGameNameOrTableTypeOrPlayersChange();
-            updateJoinButtonState();//TODO delete
         });
         tableTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             onGameNameOrTableTypeOrPlayersChange();
@@ -225,7 +222,6 @@ public class PropertiesSceneController implements Initializable {
 
     private void onGameNameOrTableTypeOrPlayersChange() {
         updateCreateGameButtonState();
-        updateJoinButtonState();//TODO delete
         hideError();
     }
 
@@ -345,27 +341,27 @@ public class PropertiesSceneController implements Initializable {
                     newButton.getStyleClass().add("gameButton");
                     newButton.setOnAction((e) -> gameButtonClicked(e));
                     gamesPane.getChildren().add(newButton);
-                }); 
+                });
             });
         }).start();
     }
-    
-    private void updateButtons (){
+
+    private void updateButtons() {
         gamesPane.getChildren().clear();
         games.stream().forEach((name) -> {
             Button newButton = new Button(name);
             newButton.getStyleClass().add("gameButton");
             newButton.setOnAction((e) -> gameButtonClicked(e));
             gamesPane.getChildren().add(newButton);
-        });        
+        });
     }
-    
-    private void gameButtonClicked(ActionEvent event){
-        for (Object object : gamesPane.getChildren()){
-            Button button = (Button)object;
+
+    private void gameButtonClicked(ActionEvent event) {
+        for (Object object : gamesPane.getChildren()) {
+            Button button = (Button) object;
             button.getStyleClass().remove("clickedGameButton");
         }
-        Button selected = (Button)event.getSource();
+        Button selected = (Button) event.getSource();
         selected.getStyleClass().remove("gameButton");
         selected.getStyleClass().add("clickedGameButton");
         targetGame = selected.getText();
