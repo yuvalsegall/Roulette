@@ -362,6 +362,7 @@ public class GameSceneController implements Initializable {
     private SimpleBooleanProperty onException;
     private SimpleBooleanProperty isGameActive;
     private static final int SEC_BETWEEN_SERVER_CALLS = 1;
+    ObservableList<String> eventsForView;
 
     @FXML
     private AnchorPane frenchZeroAnchor;
@@ -400,12 +401,11 @@ public class GameSceneController implements Initializable {
         onException = new SimpleBooleanProperty(false);
         isGameActive = new SimpleBooleanProperty(false);
         lastEventId = 0;
-        ObservableList<String> items = FXCollections.observableArrayList(
-                "Single", "Double", "Suite", "Family App");
-        eventsListView = new ListView(items);
-        eventsListView.setPrefSize(200, 250);
-        eventsListView.setEditable(true);
-
+//        eventsListView = new ListView<String>();
+        
+        eventsForView = FXCollections.observableArrayList ();
+        eventsListView.setItems(eventsForView);
+        eventsListView.setDisable(true);
     }
 
     public void init() {
@@ -957,6 +957,11 @@ public class GameSceneController implements Initializable {
         new Thread(() -> {
             try {
                 List<Event> events = service.getEvents(lastEventId, getPlayerId());
+                eventsForView.clear();
+                for(Event event : events){
+                    eventsForView.add(eventToString(event));
+                    eventsListView.scrollTo(eventsForView.size()-1);
+                }
                 lastEventId = events.isEmpty() ? lastEventId : events.get(events.size() - 1).getId();
                 events.stream().forEach((Event event) -> {
                     switch (event.getType()) {
@@ -1040,5 +1045,24 @@ public class GameSceneController implements Initializable {
         Platform.runLater(() -> {
             this.amount.set(amount);
         });
+    }
+    
+    private String eventToString (Event event){
+        StringBuilder result = new StringBuilder();
+        
+//        if(!event.getPlayerName().isEmpty()){
+//            result.append(event.getPlayerName());
+//            result.append(" ");
+//        }
+        result.append(event.getType());
+//        
+//        if(event.getBetType() != null){
+//            result.append(" ");
+//            result.append(event.getBetType());
+//            result.append(" ");
+//            result.append(event.getAmount());
+//        }
+//        
+        return result.toString();
     }
 }
