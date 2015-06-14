@@ -680,7 +680,7 @@ public class GameSceneController implements Initializable {
     private void setPlayerResigned(String name) {
         PlayerViewWithAmount player = findPlayerInPane(name);
         player.getName().getStyleClass().remove("themeLabel");
-        player.getName().getStyleClass().remove("redThemeLabel");
+        player.getName().getStyleClass().add("redThemeLabel");
     }
 
     private void clearChips() {
@@ -952,7 +952,7 @@ public class GameSceneController implements Initializable {
             }
         }).start();
     }
-
+//TODO: check XML
     private void checkForServerEvents() {
         new Thread(() -> {
             try {
