@@ -428,8 +428,10 @@ public class GameSceneController implements Initializable {
                 numOfBets.set(0);
                 FinishBettingButton.setDisable(numOfBets.intValue() < minNumOfBets || numOfBets.intValue() > maxNumOfBets);
                 buildPlayersMap();
-                ballPossitionLabel.textProperty().set("");
-                messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
+                Platform.runLater(() -> {
+                    ballPossitionLabel.textProperty().set("");
+                    messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
+                });
             } catch (GameDoesNotExists_Exception ex) {
                 showError(ex.getMessage());
             }
@@ -924,15 +926,21 @@ public class GameSceneController implements Initializable {
         alert.setTitle("One moment and the game begin!");
         alert.setContentText("Waitting for the game to start...");
         alert.getButtonTypes().clear();
-//        alert.show();
-        //TODO show and hide
-        while (!isGameActive.getValue()) {
-            checkForServerEvents();
-            Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
-        }
-        Platform.runLater(() -> {
-            alert.close();
-        });
+        alert.show();
+//        TODO show and hide
+        new Thread(() -> {
+            while (!isGameActive.getValue()) {
+                try {
+                    checkForServerEvents();
+                    Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
+                } catch (InterruptedException ex) {
+                    onException.set(true);
+                }
+            }
+            Platform.runLater(() -> {
+                alert.hide();
+            });
+        }).start();
     }
 
     private boolean isPlayerHasMoneyForBet() {
@@ -994,9 +1002,7 @@ public class GameSceneController implements Initializable {
                             break;
                         case RESULTS_SCORES:
                             setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) + event.getAmount());
-                            if (!isMyEvent(event.getPlayerName())) {
-                                addStringToFeed(event.getPlayerName() + " won " + event.getAmount() + "$");
-                            }
+                            addStringToFeed(event.getPlayerName() + " won " + event.getAmount() + "$");
                             break;
                         case PLAYER_RESIGNED:
                             setPlayerResigned(event.getPlayerName());
