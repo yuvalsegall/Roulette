@@ -2,7 +2,6 @@ package view;
 
 import java.io.IOException;
 import java.io.InputStream;
-import static java.lang.System.exit;
 import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,7 +13,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -215,22 +213,27 @@ public class Program extends Application {
             Program.args = args;
             launch(args);
         } catch (Exception ex) {
-            popupErrorDialog();
+            launch(args);
         }
     }
-
-    private static void popupErrorDialog() {
-        new Thread(() -> {
-            Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setContentText("Something went wrong... lets start over...");
-                alert.showAndWait();
-                if (args != null) {
-                    exit(1);
-                }
-            });
-        }).start();
+//TODO deal onEXception
+    private void popupErrorDialog() {
+        try {
+            start(thisPrimaryStage);
+        } catch (IOException ex) {
+            popupErrorDialog();
+        }
+//        new Thread(() -> {
+//            Platform.runLater(() -> {
+//                Alert alert = new Alert(Alert.AlertType.ERROR);
+//                alert.setTitle("Error");
+//                alert.setContentText("Something went wrong... lets start over...");
+//                alert.showAndWait();
+//                if (args != null) {
+//                    exit(1);
+//                }
+//            });
+//        }).start();
 //TODO exception doesnt work
     }
 }

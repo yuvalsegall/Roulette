@@ -186,7 +186,6 @@ public class PropertiesSceneController implements Initializable {
                 onException.set(true);
             }
         }).start();
-        // TODO game name
     }
 
     private void initiateXMLGame(File XMLFile) throws DuplicateGameName_Exception, InvalidParameters_Exception, InvalidXML_Exception, FileNotFoundException {
