@@ -45,14 +45,20 @@ public class Program extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         thisPrimaryStage = primaryStage;
-        if (args.length != 2 || args[0].trim().isEmpty() || args[1].trim().isEmpty()) {
-            popupStartupDialog();
+        while (service == null) {
+            if (args.length != 2 || args[0].trim().isEmpty() || args[1].trim().isEmpty()) {
+                popupStartupDialog();
+            }
+            URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/RouletteServer/RouletteWebServiceService");
+            playerId = new AtomicInteger();
+            playerName = new StringBuilder();
+            gameName = new StringBuilder();
+            try {
+                service = new RouletteWebServiceService(url);
+            } catch (Exception ex) {
+                args[0] = new String();
+            }
         }
-        URL url = new URL("http://" + args[0].trim() + ":" + args[1].trim() + "/RouletteServer/RouletteWebServiceService");
-        playerId = new AtomicInteger();
-        playerName = new StringBuilder();
-        gameName = new StringBuilder();
-        service = new RouletteWebServiceService(url);
         gameWebService = service.getRouletteWebServicePort();
         FXMLLoader gameFxmlLoader = getFXMLLoader(GAME_SCENE_FXML_PATH);
         Parent gameRoot = getRoot(gameFxmlLoader);

@@ -688,7 +688,6 @@ public class GameSceneController implements Initializable {
         PlayerViewWithAmount player = findPlayerInPane(name);
         return player.getAmount();
     }
-//TODO what if connect to server is wrong
 
     private void setPlayerResigned(String name) {
         PlayerViewWithAmount player = findPlayerInPane(name);
@@ -910,15 +909,17 @@ public class GameSceneController implements Initializable {
     }
 
     private void popupGoodbyeDialog(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-        if (popupDialog("New Game", "Do you want to start a new game?")) {
-            newGame.set(true);
-        } else {
-            exitGame.set(true);
-        }
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setContentText(content);
+            alert.showAndWait();
+            if (popupDialog("New Game", "Do you want to start a new game?")) {
+                newGame.set(true);
+            } else {
+                exitGame.set(true);
+            }
+        });
     }
 
     public void popupWaittingDialog() throws InterruptedException {
