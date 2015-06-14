@@ -483,31 +483,35 @@ public class GameSceneController implements Initializable {
     }
 
     private void showError(String message) {
-        if (!isErrorMessageShown) {
-            isErrorMessageShown = true;
-            messageLabel.setText(message);
-            FadeTransition animation = new FadeTransition();
-            animation.setNode(messageLabel);
-            animation.setDuration(Duration.seconds(5));
-            animation.setFromValue(1.0);
-            animation.setToValue(0.0);
-            animation.play();
-        }
+        Platform.runLater(() -> {
+            if (!isErrorMessageShown) {
+                isErrorMessageShown = true;
+                messageLabel.setText(message);
+                FadeTransition animation = new FadeTransition();
+                animation.setNode(messageLabel);
+                animation.setDuration(Duration.seconds(5));
+                animation.setFromValue(1.0);
+                animation.setToValue(0.0);
+                animation.play();
+            }
+        });
     }
 
     private void hideError() {
-        if (isErrorMessageShown) {
-            FadeTransition animation = FadeTransitionBuilder.create()
-                    .node(messageLabel)
-                    .duration(Duration.seconds(0.3))
-                    .fromValue(1.0)
-                    .toValue(0.0)
-                    .build();
-            animation.play();
+        Platform.runLater(() -> {
+            if (isErrorMessageShown) {
+                FadeTransition animation = FadeTransitionBuilder.create()
+                        .node(messageLabel)
+                        .duration(Duration.seconds(0.3))
+                        .fromValue(1.0)
+                        .toValue(0.0)
+                        .build();
+                animation.play();
 
-            isErrorMessageShown = false;
-            messageLabel.textProperty().setValue("");
-        }
+                isErrorMessageShown = false;
+                messageLabel.textProperty().setValue("");
+            }
+        });
     }
 
     @FXML
