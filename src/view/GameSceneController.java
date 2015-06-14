@@ -925,7 +925,6 @@ public class GameSceneController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("One moment and the game begin!");
         alert.setContentText("Waitting for the game to start...");
-        alert.getButtonTypes().clear();
         alert.show();
 //        TODO show and hide
         new Thread(() -> {
