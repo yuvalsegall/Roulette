@@ -15,6 +15,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -346,6 +347,9 @@ public class GameSceneController implements Initializable {
     private ArrayList<Integer> numbers;
     private BetType betType;
     private IntegerProperty amount;
+    private IntegerProperty numOfBets;
+    private int minNumOfBets;
+    private int maxNumOfBets;
     private int lastEventId;
     private final HashMap<Integer, Integer> rowsReverse = new HashMap();
     private final int NOM_OF_ACTUAL_ROWS = 3;
@@ -400,12 +404,14 @@ public class GameSceneController implements Initializable {
         exitGame = new SimpleBooleanProperty(false);
         onException = new SimpleBooleanProperty(false);
         isGameActive = new SimpleBooleanProperty(false);
+        numOfBets = new SimpleIntegerProperty();
         lastEventId = 0;
-//        eventsListView = new ListView<String>();
-        
-        eventsForView = FXCollections.observableArrayList ();
+        eventsForView = FXCollections.observableArrayList();
         eventsListView.setItems(eventsForView);
         eventsListView.setDisable(true);
+        numOfBets.addListener((ObservableValue<? extends Number> ov, Number t, Number t1) -> {
+            FinishBettingButton.setDisable(numOfBets.intValue() < minNumOfBets || numOfBets.intValue() > maxNumOfBets);
+        });
     }
 
     public void init() {
@@ -417,6 +423,10 @@ public class GameSceneController implements Initializable {
                         setTableToAmerican();
                     });
                 }
+                minNumOfBets = details.getMinWages();
+                maxNumOfBets = details.getIntMaxWages();
+                numOfBets.set(0);
+                FinishBettingButton.setDisable(numOfBets.intValue() < minNumOfBets || numOfBets.intValue() > maxNumOfBets);
                 buildPlayersMap();
                 ballPossitionLabel.textProperty().set("");
                 messageLabel.textProperty().set("Choose amount, and click the table to place a bet");
@@ -676,6 +686,7 @@ public class GameSceneController implements Initializable {
         PlayerViewWithAmount player = findPlayerInPane(name);
         return player.getAmount();
     }
+//TODO what if connect to server is wrong
 
     private void setPlayerResigned(String name) {
         PlayerViewWithAmount player = findPlayerInPane(name);
@@ -719,6 +730,7 @@ public class GameSceneController implements Initializable {
                 try {
                     service.makeBet(amount.getValue(), betType, numbers, getPlayerId());
                     clearBet();
+                    numOfBets.set(numOfBets.intValue() + 1);
                 } catch (InvalidParameters_Exception ex) {
                     onException.set(true);
                 }
@@ -727,7 +739,6 @@ public class GameSceneController implements Initializable {
     }
 
     private void clearBet() {
-        FinishBettingButton.setDisable(false);
         setAmount(0);
         numbers.clear();
     }
@@ -953,15 +964,11 @@ public class GameSceneController implements Initializable {
         }).start();
     }
 //TODO: check XML
+
     private void checkForServerEvents() {
         new Thread(() -> {
             try {
                 List<Event> events = service.getEvents(lastEventId, getPlayerId());
-                eventsForView.clear();
-                for(Event event : events){
-                    eventsForView.add(eventToString(event));
-                    eventsListView.scrollTo(eventsForView.size()-1);
-                }
                 lastEventId = events.isEmpty() ? lastEventId : events.get(events.size() - 1).getId();
                 events.stream().forEach((Event event) -> {
                     switch (event.getType()) {
@@ -971,12 +978,11 @@ public class GameSceneController implements Initializable {
                             break;
                         case GAME_START:
                             init();
-                            eventsListView.getItems().add("The Game has Started");
+                            addStringToFeed("The Game has Started");
                             isGameActive.set(true);
                             new Thread(() -> {
                                 try {
                                     startCheckingForServerEvents();
-
                                 } catch (InterruptedException ex) {
                                     onException.set(true);
                                 }
@@ -984,22 +990,29 @@ public class GameSceneController implements Initializable {
                             break;
                         case WINNING_NUMBER:
                             spinRoulette(event.getWinningNumber());
+                            numOfBets.set(0);
                             break;
                         case RESULTS_SCORES:
                             setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) + event.getAmount());
+                            if (!isMyEvent(event.getPlayerName())) {
+                                addStringToFeed(event.getPlayerName() + " won " + event.getAmount() + "$");
+                            }
                             break;
                         case PLAYER_RESIGNED:
                             setPlayerResigned(event.getPlayerName());
+                            addStringToFeed(event.getPlayerName() + " has resigned");
                             //TODO if server retierd me??
                             break;
                         case PLAYER_BET:
                             setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) - event.getAmount());
-//                            });
-                            eventsListView.getItems().add(event.getPlayerName() + " bet " + event.getAmount() + "$ on " + event.getBetType());
-                            //TODO print in the feed
+                            if (!isMyEvent(event.getPlayerName())) {
+                                addStringToFeed(event.getPlayerName() + " bet " + event.getAmount() + "$ on " + event.getBetType());
+                            }
                             break;
                         case PLAYER_FINISHED_BETTING:
-                            //TODO print in the feed
+                            if (!isMyEvent(event.getPlayerName())) {
+                                addStringToFeed(event.getPlayerName() + " has finished betting");
+                            }
                             break;
                         default:
                             onException.set(true);
@@ -1009,6 +1022,10 @@ public class GameSceneController implements Initializable {
                 onException.set(true);
             }
         }).start();
+    }
+
+    private Boolean isMyEvent(String eventPlayerName) {
+        return getPlayerName().equals(eventPlayerName);
     }
 
     private void buildPlayersMap() {
@@ -1046,23 +1063,11 @@ public class GameSceneController implements Initializable {
             this.amount.set(amount);
         });
     }
-    
-    private String eventToString (Event event){
-        StringBuilder result = new StringBuilder();
-        
-//        if(!event.getPlayerName().isEmpty()){
-//            result.append(event.getPlayerName());
-//            result.append(" ");
-//        }
-        result.append(event.getType());
-//        
-//        if(event.getBetType() != null){
-//            result.append(" ");
-//            result.append(event.getBetType());
-//            result.append(" ");
-//            result.append(event.getAmount());
-//        }
-//        
-        return result.toString();
+
+    private void addStringToFeed(String str) {
+        Platform.runLater(() -> {
+            eventsForView.add(str);
+            eventsListView.scrollTo(eventsForView.size() - 1);
+        });
     }
 }

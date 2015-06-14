@@ -37,14 +37,10 @@ public class Program extends Application {
     private static RouletteWebServiceService service = null;
     private static RouletteWebService gameWebService = null;
     private static Stage thisPrimaryStage = null;
-    ;
     private StringBuilder gameName = null;
     private StringBuilder playerName = null;
     private AtomicInteger playerId = null;
-    ;
     private static String[] args = null;
-
-    ;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
