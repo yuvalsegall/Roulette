@@ -975,58 +975,58 @@ public class GameSceneController implements Initializable {
 
     private void checkForServerEvents() {
         new Thread(() -> {
+            List<Event> events = new ArrayList<>();
             try {
-                List<Event> events = service.getEvents(lastEventId, getPlayerId());
-                lastEventId = events.isEmpty() ? lastEventId : events.get(events.size() - 1).getId();
-                events.stream().forEach((Event event) -> {
-                    switch (event.getType()) {
-                        case GAME_OVER:
-                            isGameActive.set(false);
-                            popupGoodbyeDialog("Game Over", "The game has ended.");
-                            break;
-                        case GAME_START:
-                            init();
-                            addStringToFeed("The Game has Started");
-                            isGameActive.set(true);
-                            new Thread(() -> {
-                                try {
-                                    startCheckingForServerEvents();
-                                } catch (InterruptedException ex) {
-                                    onException.set(true);
-                                }
-                            }).start();
-                            break;
-                        case WINNING_NUMBER:
-                            spinRoulette(event.getWinningNumber());
-                            numOfBets.set(0);
-                            break;
-                        case RESULTS_SCORES:
-                            setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) + event.getAmount());
-                            addStringToFeed(event.getPlayerName() + " won " + event.getAmount() + "$");
-                            break;
-                        case PLAYER_RESIGNED:
-                            setPlayerResigned(event.getPlayerName());
-                            addStringToFeed(event.getPlayerName() + " has resigned");
-                            //TODO if server retierd me??
-                            break;
-                        case PLAYER_BET:
-                            setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) - event.getAmount());
-                            if (!isMyEvent(event.getPlayerName())) {
-                                addStringToFeed(event.getPlayerName() + " bet " + event.getAmount() + "$ on " + event.getBetType());
-                            }
-                            break;
-                        case PLAYER_FINISHED_BETTING:
-                            if (!isMyEvent(event.getPlayerName())) {
-                                addStringToFeed(event.getPlayerName() + " has finished betting");
-                            }
-                            break;
-                        default:
-                            onException.set(true);
-                    }
-                });
+                events = service.getEvents(lastEventId, getPlayerId());
             } catch (InvalidParameters_Exception ex) {
                 onException.set(true);
             }
+            lastEventId = events.isEmpty() ? lastEventId : events.get(events.size() - 1).getId();
+            events.stream().forEach((Event event) -> {
+                switch (event.getType()) {
+                    case GAME_OVER:
+                        isGameActive.set(false);
+                        popupGoodbyeDialog("Game Over", "The game has ended.");
+                        break;
+                    case GAME_START:
+                        init();
+                        addStringToFeed("The Game has Started");
+                        isGameActive.set(true);
+                        new Thread(() -> {
+                            startCheckingForServerEvents();
+                        }).start();
+                        break;
+                    case WINNING_NUMBER:
+                        spinRoulette(event.getWinningNumber());
+                        numOfBets.set(0);
+                        break;
+                    case RESULTS_SCORES:
+                        setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) + event.getAmount());
+                        addStringToFeed(event.getPlayerName() + " won " + event.getAmount() + "$");
+                        break;
+                    case PLAYER_RESIGNED:
+                        if (isMyEvent(event.getPlayerName())) {
+                            popupGoodbyeDialog("Message from server", "You timed out, ");
+                        } else {
+                            setPlayerResigned(event.getPlayerName());
+                            addStringToFeed(event.getPlayerName() + " has resigned");
+                        }
+                        break;
+                    case PLAYER_BET:
+                        setPlayerMoney(event.getPlayerName(), getPlayerMoney(event.getPlayerName()) - event.getAmount());
+                        if (!isMyEvent(event.getPlayerName())) {
+                            addStringToFeed(event.getPlayerName() + " bet " + event.getAmount() + "$ on " + event.getBetType());
+                        }
+                        break;
+                    case PLAYER_FINISHED_BETTING:
+                        if (!isMyEvent(event.getPlayerName())) {
+                            addStringToFeed(event.getPlayerName() + " has finished betting");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
         }).start();
     }
 
@@ -1057,10 +1057,14 @@ public class GameSceneController implements Initializable {
         }).start();
     }
 
-    private void startCheckingForServerEvents() throws InterruptedException {
-        while (isGameActive.getValue()) {
-            checkForServerEvents();
-            Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
+    private void startCheckingForServerEvents() {
+        try {
+            while (isGameActive.getValue()) {
+                checkForServerEvents();
+                Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
+            }
+        } catch (InterruptedException ex) {
+            onException.set(true);
         }
     }
 
