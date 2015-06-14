@@ -183,7 +183,7 @@ public class PropertiesSceneController implements Initializable {
                 setPlayerName(playerNameTextField.getText());
                 finishedInit.set(Boolean.TRUE);
             } catch (GameDoesNotExists_Exception | InvalidParameters_Exception ex) {
-                onException.set(true);
+                showError(ex.getMessage());
             }
         }).start();
     }
@@ -198,7 +198,7 @@ public class PropertiesSceneController implements Initializable {
                 updateServerGamesView();
             } catch (InvalidParameters_Exception | FileNotFoundException | DuplicateGameName_Exception | InvalidXML_Exception ex) {
                 System.out.println(ex.getMessage());
-                onException.set(true);
+                showError(ex.getMessage());
             }
         }).start();
     }
@@ -212,7 +212,6 @@ public class PropertiesSceneController implements Initializable {
         new Thread(() -> {
             try {
                 initiateXMLGame(XMLFile);
-                finishedInit.set(true);
             } catch (DuplicateGameName_Exception | InvalidParameters_Exception | InvalidXML_Exception | FileNotFoundException ex) {
                 showError(ex.getMessage());
             }
@@ -237,7 +236,7 @@ public class PropertiesSceneController implements Initializable {
                 service.createGame((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
                 updateServerGamesView();
             } catch (InvalidParameters_Exception | DuplicateGameName_Exception ex) {
-                onException.set(true);
+                showError(ex.getMessage());
             }
         }).start();
     }
@@ -284,31 +283,36 @@ public class PropertiesSceneController implements Initializable {
 
     private void showError(String message) {
         if (!isErrorMessageShown) {
-            isErrorMessageShown = true;
-            errorMessageLabel.setText(message);
-            FadeTransition animation = new FadeTransition();
-            animation.setNode(errorMessageLabel);
-            animation.setDuration(Duration.seconds(0.3));
-            animation.setFromValue(0.0);
-            animation.setToValue(1.0);
-            animation.play();
+            Platform.runLater(() -> {
+                isErrorMessageShown = true;
+                errorMessageLabel.setText(message);
+                FadeTransition animation = new FadeTransition();
+                animation.setNode(errorMessageLabel);
+                animation.setDuration(Duration.seconds(0.3));
+                animation.setFromValue(0.0);
+                animation.setToValue(1.0);
+                animation.play();
+            });
         }
         updateCreateGameButtonState();
+        updateJoinButtonState();
     }
 
     private void hideError() {
         if (isErrorMessageShown) {
-            FadeTransition animation = FadeTransitionBuilder.create()
-                    .node(errorMessageLabel)
-                    .duration(Duration.seconds(0.3))
-                    .fromValue(1.0)
-                    .toValue(0.0)
-                    .build();
-            animation.play();
-
+            Platform.runLater(() -> {
+                FadeTransition animation = FadeTransitionBuilder.create()
+                        .node(errorMessageLabel)
+                        .duration(Duration.seconds(0.3))
+                        .fromValue(1.0)
+                        .toValue(0.0)
+                        .build();
+                animation.play();
+            });
             isErrorMessageShown = false;
             errorMessageLabel.textProperty().setValue("");
             updateCreateGameButtonState();
+            updateJoinButtonState();
         }
     }
 

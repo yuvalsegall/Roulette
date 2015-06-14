@@ -581,7 +581,7 @@ public class GameSceneController implements Initializable {
                 clearChips();
                 service.finishBetting(getPlayerId());
             } catch (InvalidParameters_Exception ex) {
-                onException.set(true);
+                showError(ex.getMessage());
             }
         }).start();
     }
@@ -733,7 +733,7 @@ public class GameSceneController implements Initializable {
                     clearBet();
                     numOfBets.set(numOfBets.intValue() + 1);
                 } catch (InvalidParameters_Exception ex) {
-                    onException.set(true);
+                    showError(ex.getMessage());
                 }
             }).start();
         }
@@ -927,14 +927,13 @@ public class GameSceneController implements Initializable {
         alert.setTitle("One moment and the game begin!");
         alert.setContentText("Waitting for the game to start...");
         alert.show();
-//        TODO show and hide
         new Thread(() -> {
             while (!isGameActive.getValue()) {
                 try {
                     checkForServerEvents();
                     Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
                 } catch (InterruptedException ex) {
-                    onException.set(true);
+                    showError(ex.getMessage());
                 }
             }
             Platform.runLater(() -> {
@@ -967,7 +966,7 @@ public class GameSceneController implements Initializable {
             try {
                 service.resign(getPlayerId());
             } catch (InvalidParameters_Exception ex) {
-                onException.set(true);
+                showError(ex.getMessage());
             }
         }).start();
     }
@@ -979,7 +978,7 @@ public class GameSceneController implements Initializable {
             try {
                 events = service.getEvents(lastEventId, getPlayerId());
             } catch (InvalidParameters_Exception ex) {
-                onException.set(true);
+                showError(ex.getMessage());
             }
             lastEventId = events.isEmpty() ? lastEventId : events.get(events.size() - 1).getId();
             events.stream().forEach((Event event) -> {
@@ -1052,7 +1051,7 @@ public class GameSceneController implements Initializable {
                     );
                 });
             } catch (GameDoesNotExists_Exception ex) {
-                onException.set(true);
+                showError(ex.getMessage());
             }
         }).start();
     }
@@ -1064,7 +1063,7 @@ public class GameSceneController implements Initializable {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(SEC_BETWEEN_SERVER_CALLS));
             }
         } catch (InterruptedException ex) {
-            onException.set(true);
+            showError(ex.getMessage());
         }
     }
 
