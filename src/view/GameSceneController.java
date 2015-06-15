@@ -728,7 +728,7 @@ public class GameSceneController implements Initializable {
     private void placeBet(AnchorPane parent) {
         if (!isPlayerHasMoneyForBet()) {
             showError("You cannot place money you do not have");
-            parent.getChildren().remove(parent.getChildren().size() - 1);
+            removeLastChips(parent);
             clearBet();
         } else {
             new Thread(() -> {
@@ -737,10 +737,18 @@ public class GameSceneController implements Initializable {
                     clearBet();
                     numOfBets.set(numOfBets.intValue() + 1);
                 } catch (InvalidParameters_Exception ex) {
+                    clearBet();
+                    removeLastChips(parent);
                     showError(ex.getMessage());
                 }
             }).start();
         }
+    }
+
+    private void removeLastChips(AnchorPane parent) {
+        Platform.runLater(() -> {
+            parent.getChildren().remove(parent.getChildren().size() - 1);
+        });
     }
 
     private void clearBet() {

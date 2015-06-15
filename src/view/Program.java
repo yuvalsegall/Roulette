@@ -97,7 +97,7 @@ public class Program extends Application {
                         primaryStage.setScene(nextScene);
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
-                        popupErrorDialog();
+                        relaunch();
                     }
                 });
             }
@@ -114,7 +114,7 @@ public class Program extends Application {
         });
         propertiesSceneController.getOnException().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                popupErrorDialog();
+                relaunch();
             }
         });
         return propertiesSceneController;
@@ -139,7 +139,7 @@ public class Program extends Application {
         });
         gameSceneController.getOnException().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                popupErrorDialog();
+                relaunch();
             }
         });
         return gameSceneController;
@@ -158,7 +158,7 @@ public class Program extends Application {
         try {
             start(thisPrimaryStage);
         } catch (IOException ex) {
-            popupErrorDialog();
+            relaunch();
         }
     }
 
@@ -217,11 +217,11 @@ public class Program extends Application {
         }
     }
 
-    private void popupErrorDialog() {
+    private void relaunch() {
         try {
             start(thisPrimaryStage);
         } catch (IOException ex) {
-            popupErrorDialog();
+            relaunch();
         }
     }
 }

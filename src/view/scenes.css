@@ -23,7 +23,7 @@
 }
 
 .error{
-    -fx-text-fill: gray;
+    -fx-text-fill: red;
     -fx-padding: 50;
 }
 

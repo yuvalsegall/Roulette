@@ -769,7 +769,7 @@
                                         <Insets left="10.0" />
                                     </GridPane.margin>
                                 </Label>
-                                <Label fx:id="ballPossitionLabel" styleClass="themeLabel" text="ball pos" textFill="WHITE" GridPane.rowIndex="1">
+                                <Label fx:id="ballPossitionLabel" styleClass="themeLabel" text="" textFill="WHITE" GridPane.rowIndex="1">
                                     <GridPane.margin>
                                         <Insets left="10.0" />
                                     </GridPane.margin>

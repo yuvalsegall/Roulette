@@ -44,17 +44,6 @@ import ws.roulette.RouletteWebService;
  */
 public class PropertiesSceneController implements Initializable {
 
-    private static final int MIN_NUM = 0;
-    private static final int MAX_COMP_PLAYERS = 6;
-    private static final int MAX_HUMAN_PLAYERS = 6;
-    private static final int MAX_PLAYERS = 6;
-    private static final int FROM_MIN_WAGES = 0;
-    private static final int TO_MIN_WAGES = 1;
-    private static final int FROM_MAX_WAGES = 1;
-    private static final int TO_MAX_WAGES = 10;
-    private static final int MIN_INITIAL_SUM_OF_MONEY = 10;
-    private static final int MAX_INITIAL_SUM_OF_MONEY = 100;
-
     private RouletteWebService service;
     private StringBuilder gameName;
     private StringBuilder playerName;
@@ -65,7 +54,7 @@ public class PropertiesSceneController implements Initializable {
     private SimpleBooleanProperty exitGame;
     private SimpleBooleanProperty onException;
     private String targetGame;
-    List<String> games;
+    private List<String> games;
 
     private Stage primaryStage;
     @FXML
@@ -154,26 +143,6 @@ public class PropertiesSceneController implements Initializable {
         this.playerName = playerName;
     }
 
-    private void paramsCheck(int computerPlayers, int humanPlayers, int minWages, int maxWages, int initalSumOfMoney) throws Exception {
-        playersCountCheck(computerPlayers, humanPlayers);
-        propertiesCheck(minWages, maxWages, initalSumOfMoney);
-    }
-
-    private void propertiesCheck(int minWages, int maxWages, int initalSumOfMoney) throws Exception {
-        if (minWages < FROM_MIN_WAGES || minWages > TO_MIN_WAGES || maxWages < FROM_MAX_WAGES || maxWages > TO_MAX_WAGES || initalSumOfMoney < MIN_INITIAL_SUM_OF_MONEY || initalSumOfMoney > MAX_INITIAL_SUM_OF_MONEY) {
-            throw new Exception();
-        }
-    }
-
-    private void playersCountCheck(int computerPlayers, int humanPlayers) throws Exception {
-        if (computerPlayers < MIN_NUM || computerPlayers > MAX_COMP_PLAYERS || humanPlayers < MIN_NUM || humanPlayers > MAX_HUMAN_PLAYERS || computerPlayers + humanPlayers > MAX_PLAYERS || computerPlayers + humanPlayers < MIN_NUM + 1) {
-            throw new Exception();
-        }
-        if (humanPlayers == MIN_NUM) {
-            throw new Exception();
-        }
-    }
-
     @FXML
     private void joinGame() {
         new Thread(() -> {
@@ -229,8 +198,7 @@ public class PropertiesSceneController implements Initializable {
     }
 
     @FXML
-    private void createGame(ActionEvent event) throws Exception {
-        paramsCheck((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) minWagesSlider.getValue(), (int) maxWagesSlider.getValue(), (int) initialSumOfMoneySlider.getValue());
+    private void createGame(ActionEvent event) {
         new Thread(() -> {
             try {
                 service.createGame((int) numOfComputerPlayersSlider.getValue(), (int) numOfHumanPlayersSlider.getValue(), (int) initialSumOfMoneySlider.getValue(), (int) maxWagesSlider.getValue(), (int) minWagesSlider.getValue(), gameNameTextField.getText(), RouletteType.valueOf(tableTypeComboBox.getValue().toString()));
