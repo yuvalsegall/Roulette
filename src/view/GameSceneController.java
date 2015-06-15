@@ -694,9 +694,11 @@ public class GameSceneController implements Initializable {
     }
 
     private void setPlayerResigned(String name) {
-        PlayerViewWithAmount player = findPlayerInPane(name);
-        player.getName().getStyleClass().remove("themeLabel");
-        player.getName().getStyleClass().add("redThemeLabel");
+        if (!name.equals(getPlayerName())) {
+            PlayerViewWithAmount player = findPlayerInPane(name);
+            player.getName().getStyleClass().remove("themeLabel");
+            player.getName().getStyleClass().add("redThemeLabel");
+        }
     }
 
     private void clearChips() {
