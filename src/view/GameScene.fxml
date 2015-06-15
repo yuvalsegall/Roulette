@@ -761,7 +761,7 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <Label fx:id="messageLabel" styleClass="themeLabel" text="Label" textFill="WHITE">
+                                <Label fx:id="messageLabel" styleClass="themeLabel" text="" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="18.0" />
                                     </font>

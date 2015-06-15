@@ -216,24 +216,12 @@ public class Program extends Application {
             launch(args);
         }
     }
-//TODO deal onEXception
+
     private void popupErrorDialog() {
         try {
             start(thisPrimaryStage);
         } catch (IOException ex) {
             popupErrorDialog();
         }
-//        new Thread(() -> {
-//            Platform.runLater(() -> {
-//                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                alert.setTitle("Error");
-//                alert.setContentText("Something went wrong... lets start over...");
-//                alert.showAndWait();
-//                if (args != null) {
-//                    exit(1);
-//                }
-//            });
-//        }).start();
-//TODO exception doesnt work
     }
 }

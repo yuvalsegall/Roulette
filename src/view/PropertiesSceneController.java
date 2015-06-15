@@ -112,10 +112,10 @@ public class PropertiesSceneController implements Initializable {
             onGameNameOrTableTypeOrPlayersChange();
         });
         playerNameTextField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-            updateJoinButtonState();
+            onPlayerNameChange();
         });
         onGameNameOrTableTypeOrPlayersChange();
-        updateJoinButtonState();
+        onPlayerNameChange();
     }
 
     public void init() {
@@ -219,13 +219,13 @@ public class PropertiesSceneController implements Initializable {
     }
 
     private void onGameNameOrTableTypeOrPlayersChange() {
-        updateCreateGameButtonState();
         hideError();
+        updateCreateGameButtonState();
     }
 
     private void onPlayerNameChange() {
-        updateJoinButtonState();
         hideError();
+        updateJoinButtonState();
     }
 
     @FXML
@@ -282,8 +282,8 @@ public class PropertiesSceneController implements Initializable {
     }
 
     private void showError(String message) {
-        if (!isErrorMessageShown) {
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            if (!isErrorMessageShown) {
                 isErrorMessageShown = true;
                 errorMessageLabel.setText(message);
                 FadeTransition animation = new FadeTransition();
@@ -292,15 +292,15 @@ public class PropertiesSceneController implements Initializable {
                 animation.setFromValue(0.0);
                 animation.setToValue(1.0);
                 animation.play();
-            });
-        }
-        updateCreateGameButtonState();
-        updateJoinButtonState();
+            }
+            updateCreateGameButtonState();
+            updateJoinButtonState();
+        });
     }
 
     private void hideError() {
-        if (isErrorMessageShown) {
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            if (isErrorMessageShown) {
                 FadeTransition animation = FadeTransitionBuilder.create()
                         .node(errorMessageLabel)
                         .duration(Duration.seconds(0.3))
@@ -308,12 +308,12 @@ public class PropertiesSceneController implements Initializable {
                         .toValue(0.0)
                         .build();
                 animation.play();
-            });
-            isErrorMessageShown = false;
-            errorMessageLabel.textProperty().setValue("");
-            updateCreateGameButtonState();
-            updateJoinButtonState();
-        }
+                isErrorMessageShown = false;
+                errorMessageLabel.textProperty().setValue("");
+                updateCreateGameButtonState();
+                updateJoinButtonState();
+            }
+        });
     }
 
     @FXML

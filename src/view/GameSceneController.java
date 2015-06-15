@@ -579,10 +579,10 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void finishedBettingClicked(ActionEvent event) {
+        FinishBettingButton.setDisable(true);
+        clearChips();
         new Thread(() -> {
             try {
-                FinishBettingButton.setDisable(true);
-                clearChips();
                 service.finishBetting(getPlayerId());
             } catch (InvalidParameters_Exception ex) {
                 showError(ex.getMessage());
@@ -966,15 +966,16 @@ public class GameSceneController implements Initializable {
 
     @FXML
     private void onRetire(ActionEvent event) {
+        popupGoodbyeDialog("Retire Game", "You retired from the game");
         new Thread(() -> {
             try {
+                Thread.sleep(TimeUnit.SECONDS.toMillis(5));
                 service.resign(getPlayerId());
-            } catch (InvalidParameters_Exception ex) {
+            } catch (InvalidParameters_Exception | InterruptedException ex) {
                 showError(ex.getMessage());
             }
         }).start();
     }
-//TODO: check XML
 
     private void checkForServerEvents() {
         new Thread(() -> {
@@ -1009,7 +1010,7 @@ public class GameSceneController implements Initializable {
                         break;
                     case PLAYER_RESIGNED:
                         if (isMyEvent(event.getPlayerName())) {
-                            popupGoodbyeDialog("Message from server", "You timed out, ");
+                            popupGoodbyeDialog("Message from server", "You timed out");
                         } else {
                             setPlayerResigned(event.getPlayerName());
                             addStringToFeed(event.getPlayerName() + " has resigned");
